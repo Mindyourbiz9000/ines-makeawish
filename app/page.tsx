@@ -27,21 +27,25 @@ export default async function HomePage() {
   const goals = data ?? [];
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
-      <header className="mb-10 flex flex-col items-center text-center">
+    <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
+      <header className="mb-8 flex items-center gap-5 sm:gap-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/inespnjv2.png"
           alt="Avatar d'InesPNJ"
-          className="mb-5 h-28 w-28 rounded-full border-4 border-neon-pink object-cover shadow-glow-pink"
+          className="h-20 w-20 shrink-0 rounded-full border-4 border-neon-pink object-cover shadow-glow-pink sm:h-24 sm:w-24"
         />
-        <h1 className="neon-title text-6xl sm:text-7xl">InesPNJ</h1>
-        <p className="mt-2 text-2xl text-white/90 sm:text-3xl">Donation goals</p>
-        <p className="mt-3 text-sm uppercase tracking-[0.35em] text-neon-blue/80">
-          Living the dream · Make-A-Wish
-        </p>
-        <div className="mt-6">
-          <Socials />
+        <div className="flex min-w-0 flex-col">
+          <h1 className="neon-title text-4xl leading-none sm:text-5xl">
+            InesPNJ
+          </h1>
+          <p className="mt-1 text-lg text-white/90 sm:text-xl">Donation goals</p>
+          <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-neon-blue/80 sm:text-xs">
+            Living the dream · Make-A-Wish
+          </p>
+          <div className="mt-3">
+            <Socials />
+          </div>
         </div>
       </header>
 

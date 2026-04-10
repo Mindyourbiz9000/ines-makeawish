@@ -33,25 +33,25 @@ function DiscordIcon({ className }: { className?: string }) {
 
 export default function Socials() {
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex items-center gap-2">
       <a
         href="https://www.instagram.com/inespnj/"
         target="_blank"
         rel="noopener noreferrer"
-        className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/90 backdrop-blur transition-all hover:border-neon-pink hover:bg-neon-pink/10 hover:text-white hover:shadow-glow-pink"
+        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-neon-pink hover:bg-neon-pink/10 hover:text-white hover:shadow-glow-pink"
         aria-label="Suivre InesPNJ sur Instagram"
       >
-        <InstagramIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
+        <InstagramIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Instagram</span>
       </a>
       <a
         href="https://discord.gg/qdvuaat6UP"
         target="_blank"
         rel="noopener noreferrer"
-        className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/90 backdrop-blur transition-all hover:border-neon-blue hover:bg-neon-blue/10 hover:text-white hover:shadow-glow"
+        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-neon-blue hover:bg-neon-blue/10 hover:text-white hover:shadow-glow"
         aria-label="Rejoindre le Discord d'InesPNJ"
       >
-        <DiscordIcon className="h-4 w-4 transition-transform group-hover:scale-110" />
+        <DiscordIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Discord</span>
       </a>
     </div>

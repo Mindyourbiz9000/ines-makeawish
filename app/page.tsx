@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
+import Leaderboard from "@/components/Leaderboard";
 
 // Toujours rendre côté serveur à la demande (pas de cache).
 export const dynamic = "force-dynamic";
@@ -50,6 +51,8 @@ export default async function HomePage() {
       </header>
 
       <GoalList initialGoals={goals} editable showCounter />
+
+      <Leaderboard />
     </main>
   );
 }

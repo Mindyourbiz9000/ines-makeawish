@@ -14,7 +14,7 @@ type LeaderboardResponse = {
   source: string;
 };
 
-const POLL_INTERVAL_MS = 30_000;
+const POLL_INTERVAL_MS = 10_000;
 
 const currencySymbols: Record<string, string> = {
   EUR: "€",
@@ -79,7 +79,7 @@ export default function Leaderboard() {
         <h2 className="neon-title text-2xl sm:text-3xl">Top donateurs</h2>
         {fetchedAt && (
           <span className="text-[10px] uppercase tracking-widest text-white/40">
-            Live · maj 30s
+            Live · maj 10s
           </span>
         )}
       </header>

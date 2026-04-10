@@ -31,9 +31,23 @@ function DiscordIcon({ className }: { className?: string }) {
   );
 }
 
+function HeartIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+    </svg>
+  );
+}
+
 export default function Socials() {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <a
         href="https://www.instagram.com/inespnj/"
         target="_blank"
@@ -53,6 +67,16 @@ export default function Socials() {
       >
         <DiscordIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Discord</span>
+      </a>
+      <a
+        href="https://streamlabscharity.com/teams/@living-the-dream-2026/living-the-dream-2026?member=883764207819036315&l=fr-FR"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group inline-flex items-center gap-2 rounded-full border-2 border-neon-pink bg-gradient-to-r from-neon-pink via-fuchsia-500 to-neon-yellow px-4 py-2 text-sm font-bold uppercase tracking-wide text-white shadow-glow-pink transition-all hover:scale-105 hover:shadow-glow-pink sm:text-base"
+        aria-label="Faire un don à InesPNJ via Streamlabs Charity"
+      >
+        <HeartIcon className="h-4 w-4 transition-transform group-hover:scale-125 sm:h-5 sm:w-5" />
+        <span>Faire un don</span>
       </a>
     </div>
   );

@@ -58,9 +58,11 @@ body {
   }
 }
 
-/* Titre "Donation goals" avec effet néon rose */
+/* Titre "Donation goals" avec effet néon rose.
+   Utilise Pacifico (chargée via <link> dans layout.tsx) pour un J
+   majuscule clairement lisible — Brush Script MT ressemblait trop à un G. */
 .neon-title {
-  font-family: "Brush Script MT", "Pacifico", cursive;
+  font-family: "Pacifico", cursive;
   color: #ff9ed1;
   text-shadow:
     0 0 6px #ff3aa6,

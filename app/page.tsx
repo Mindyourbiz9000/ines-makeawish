@@ -31,7 +31,7 @@ export default async function HomePage() {
       <header className="mb-10 flex flex-col items-center text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/inespnj.png"
+          src="/inespnjv2.png"
           alt="Avatar d'InesPNJ"
           className="mb-5 h-28 w-28 rounded-full border-4 border-neon-pink object-cover shadow-glow-pink"
         />

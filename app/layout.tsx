@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "InesPNJ · Donation goals",
   description: "Donation goals du stream caritatif Make-A-Wish d'InesPNJ",
   icons: {
-    icon: "/inespnj.png",
-    apple: "/inespnj.png",
+    icon: "/inespnjv2.png",
+    apple: "/inespnjv2.png",
   },
 };
 

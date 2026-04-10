@@ -25,7 +25,6 @@ export default async function HomePage() {
   }
 
   const goals = data ?? [];
-  const totalDone = goals.filter((g) => g.completed).length;
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
@@ -41,15 +40,12 @@ export default async function HomePage() {
         <p className="mt-3 text-sm uppercase tracking-[0.35em] text-neon-blue/80">
           Living the dream · Make-A-Wish
         </p>
-        <p className="mt-5 text-white/70">
-          {totalDone} / {goals.length} paliers débloqués
-        </p>
         <div className="mt-6">
           <Socials />
         </div>
       </header>
 
-      <GoalList initialGoals={goals} editable />
+      <GoalList initialGoals={goals} editable showCounter />
     </main>
   );
 }

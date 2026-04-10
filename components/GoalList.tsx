@@ -101,7 +101,7 @@ export default function GoalList({
           <span className="tabular-nums font-semibold text-white">
             {totalDone}
           </span>{" "}
-          / {goals.length} paliers débloqués
+          / {goals.length} paliers déjà fait
         </p>
       )}
       <ul className="space-y-3">

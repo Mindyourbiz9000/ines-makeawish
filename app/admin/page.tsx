@@ -25,7 +25,7 @@ export default async function AdminPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12 sm:py-16">
       <header className="mb-10 flex flex-col items-center gap-2 text-center">
-        <h1 className="neon-title text-5xl sm:text-6xl">Admin</h1>
+        <h1 className="neon-title text-5xl sm:text-6xl">InesPNJ · Admin</h1>
         <p className="text-white/70">
           Coche les paliers au fur et à mesure — les viewers voient les
           changements en direct (rafraîchissement toutes les 3s).

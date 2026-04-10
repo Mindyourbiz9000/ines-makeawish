@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ines - Make a Wish | Donation goals",
-  description: "Donation goals du stream caritatif Make-A-Wish d'Ines",
+  title: "InesPNJ · Donation goals",
+  description: "Donation goals du stream caritatif Make-A-Wish d'InesPNJ",
+  icons: {
+    icon: "/ines-avatar.png",
+    apple: "/ines-avatar.png",
+  },
 };
 
 export default function RootLayout({

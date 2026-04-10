@@ -2,6 +2,7 @@ import { createServerClient } from "@/lib/supabase/server";
 import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
 import Leaderboard from "@/components/Leaderboard";
+import InesStats from "@/components/InesStats";
 
 // Toujours rendre côté serveur à la demande (pas de cache).
 export const dynamic = "force-dynamic";
@@ -47,6 +48,7 @@ export default async function HomePage() {
           <div className="mt-3">
             <Socials />
           </div>
+          <InesStats />
         </div>
       </header>
 

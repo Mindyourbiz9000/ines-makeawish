@@ -39,15 +39,6 @@ export default async function HomePage() {
       </header>
 
       <GoalList initialGoals={goals} editable={false} />
-
-      <footer className="mt-12 text-center text-xs text-white/40">
-        <a
-          href="/admin"
-          className="transition-colors hover:text-neon-blue"
-        >
-          Mode admin
-        </a>
-      </footer>
     </main>
   );
 }

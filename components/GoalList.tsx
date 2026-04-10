@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createBrowserClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 
 type GoalRow = Database["public"]["Tables"]["donation_goals"]["Row"];
@@ -12,31 +11,40 @@ type Props = {
   editable?: boolean;
 };
 
+const POLL_INTERVAL_MS = 3000;
+
 export default function GoalList({ initialGoals, editable = false }: Props) {
   const [goals, setGoals] = useState<GoalRow[]>(initialGoals);
   const [pendingIds, setPendingIds] = useState<Set<number>>(new Set());
 
-  // Realtime: s'abonner aux changements de la table donation_goals.
+  // Polling: on refetch toute la liste toutes les 3s pour avoir les updates.
   useEffect(() => {
-    const supabase = createBrowserClient();
-    const channel = supabase
-      .channel("donation_goals-changes")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "donation_goals" },
-        (payload) => {
-          const updated = payload.new as GoalRow;
-          setGoals((prev) =>
-            prev.map((g) => (g.id === updated.id ? updated : g))
-          );
-        }
-      )
-      .subscribe();
+    let cancelled = false;
 
+    async function tick() {
+      try {
+        const res = await fetch("/api/goals", { cache: "no-store" });
+        if (!res.ok) return;
+        const body = (await res.json()) as { goals: GoalRow[] };
+        if (!cancelled && Array.isArray(body.goals)) {
+          setGoals((prev) => {
+            // Ne pas écraser un palier qui est en train d'être toggle côté client.
+            return body.goals.map((g) =>
+              pendingIds.has(g.id) ? prev.find((p) => p.id === g.id) ?? g : g
+            );
+          });
+        }
+      } catch {
+        // ignore (réseau instable, on retentera au prochain tick)
+      }
+    }
+
+    const interval = setInterval(tick, POLL_INTERVAL_MS);
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      clearInterval(interval);
     };
-  }, []);
+  }, [pendingIds]);
 
   async function toggle(goal: GoalRow) {
     if (!editable) return;
@@ -55,7 +63,6 @@ export default function GoalList({ initialGoals, editable = false }: Props) {
         body: JSON.stringify({ id: goal.id, completed: next }),
       });
       if (!res.ok) {
-        // rollback
         setGoals((prev) =>
           prev.map((g) =>
             g.id === goal.id ? { ...g, completed: goal.completed } : g

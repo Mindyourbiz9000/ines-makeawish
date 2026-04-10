@@ -1,5 +1,7 @@
-// Types minimaux générés à la main pour la table donation_goals.
-// Si tu ajoutes des colonnes, mets-les à jour ici.
+// Types minimaux écrits à la main pour la table donation_goals.
+// Même structure que celle produite par `supabase gen types typescript`,
+// pour que @supabase/supabase-js infère correctement les paramètres
+// de .update() / .insert() / .select().
 export type Database = {
   public: {
     Tables: {
@@ -28,7 +30,20 @@ export type Database = {
           sort_order?: number;
           updated_at?: string;
         };
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 };

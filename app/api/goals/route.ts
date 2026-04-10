@@ -1,23 +1,28 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { createServerClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-const COOKIE_NAME = "ines_admin";
+// GET /api/goals → renvoie tous les paliers triés.
+// Utilisé par le polling côté client pour rafraîchir l'état.
+export async function GET() {
+  const supabase = createServerClient();
+  const { data, error } = await supabase
+    .from("donation_goals")
+    .select("*")
+    .order("sort_order", { ascending: true });
 
-function isAuthorized(): boolean {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) return false;
-  const token = cookies().get(COOKIE_NAME)?.value;
-  return token === expected;
-}
-
-export async function PATCH(request: Request) {
-  if (!isAuthorized()) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  return NextResponse.json({ goals: data ?? [] });
+}
+
+// PATCH /api/goals → toggle un palier.
+// Aucune auth: pour un tout petit projet. Ne partage pas l'URL /admin si
+// tu ne veux pas que les viewers puissent cocher/décocher les paliers.
+export async function PATCH(request: Request) {
   let body: { id?: number; completed?: boolean };
   try {
     body = await request.json();

@@ -116,7 +116,11 @@ export default function GoalList({
                   : "hover:border-neon-blue/60 hover:bg-white/10"
               }`}
             >
-              <label className="flex w-full cursor-pointer items-start gap-3">
+              <label
+                className={`flex w-full items-start gap-3 ${
+                  editable ? "cursor-pointer" : "cursor-default"
+                }`}
+              >
                 <input
                   type="checkbox"
                   checked={goal.completed}

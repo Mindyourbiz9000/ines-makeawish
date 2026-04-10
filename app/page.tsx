@@ -52,7 +52,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      <GoalList initialGoals={goals} editable showCounter />
+      <GoalList initialGoals={goals} showCounter />
 
       <Leaderboard />
     </main>

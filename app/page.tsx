@@ -38,7 +38,7 @@ export default async function HomePage() {
         </p>
       </header>
 
-      <GoalList initialGoals={goals} editable={false} />
+      <GoalList initialGoals={goals} editable />
     </main>
   );
 }

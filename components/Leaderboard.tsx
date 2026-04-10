@@ -76,7 +76,7 @@ export default function Leaderboard() {
   return (
     <section className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur sm:p-6">
       <header className="mb-4 flex items-baseline justify-between">
-        <h2 className="neon-title text-2xl sm:text-3xl">Top donateurs</h2>
+        <h2 className="neon-title text-2xl sm:text-3xl">Top Streamers</h2>
         {fetchedAt && (
           <span className="text-[10px] uppercase tracking-widest text-white/40">
             Live · maj 10s

@@ -131,13 +131,12 @@ export default function GoalList({
                     goal.completed ? "non fait" : "fait"
                   }`}
                 />
-                <span className="flex flex-wrap items-baseline gap-x-2 text-base sm:text-lg">
-                  <span className="font-bold text-neon-yellow tabular-nums">
+                <span className="flex min-w-0 flex-1 items-baseline gap-3 text-base sm:text-lg">
+                  <span className="w-16 shrink-0 text-right font-bold text-neon-yellow tabular-nums sm:w-20">
                     {goal.amount}€
                   </span>
-                  <span className="text-white/50">~</span>
                   <span
-                    className={`text-white ${
+                    className={`min-w-0 flex-1 text-white ${
                       goal.completed
                         ? "line-through decoration-neon-pink decoration-2"
                         : ""

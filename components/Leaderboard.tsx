@@ -2,30 +2,19 @@
 
 import { useEffect, useState } from "react";
 
-type Donor = {
+type Streamer = {
   name: string;
   amount: number;
-  currency: string;
 };
 
 type LeaderboardResponse = {
-  donors: Donor[];
+  streamers: Streamer[];
   fetchedAt: string;
-  source: string;
 };
 
 const POLL_INTERVAL_MS = 10_000;
 
-const currencySymbols: Record<string, string> = {
-  EUR: "€",
-  USD: "$",
-  GBP: "£",
-  CAD: "CA$",
-};
-
-function formatAmount(amount: number, currency: string): string {
-  const symbol = currencySymbols[currency] ?? currency;
-  // Supprime les décimales si c'est un entier rond
+function formatEuros(amount: number): string {
   const formatted =
     Number.isInteger(amount) || amount % 1 < 0.005
       ? Math.round(amount).toLocaleString("fr-FR")
@@ -33,11 +22,11 @@ function formatAmount(amount: number, currency: string): string {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
-  return `${formatted}${symbol}`;
+  return `${formatted}€`;
 }
 
 export default function Leaderboard() {
-  const [donors, setDonors] = useState<Donor[] | null>(null);
+  const [streamers, setStreamers] = useState<Streamer[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
 
@@ -49,14 +38,12 @@ export default function Leaderboard() {
         const res = await fetch("/api/leaderboard", { cache: "no-store" });
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
-          if (!cancelled) {
-            setError(body.error ?? `HTTP ${res.status}`);
-          }
+          if (!cancelled) setError(body.error ?? `HTTP ${res.status}`);
           return;
         }
         const body = (await res.json()) as LeaderboardResponse;
         if (!cancelled) {
-          setDonors(body.donors ?? []);
+          setStreamers(body.streamers ?? []);
           setFetchedAt(body.fetchedAt);
           setError(null);
         }
@@ -90,25 +77,23 @@ export default function Leaderboard() {
         </p>
       )}
 
-      {!error && donors === null && (
+      {!error && streamers === null && (
         <p className="text-sm text-white/50">Chargement du leaderboard…</p>
       )}
 
-      {!error && donors && donors.length === 0 && (
-        <p className="text-sm text-white/50">
-          Pas encore de donateur. Sois le premier !
-        </p>
+      {!error && streamers && streamers.length === 0 && (
+        <p className="text-sm text-white/50">Pas encore de streamer classé.</p>
       )}
 
-      {donors && donors.length > 0 && (
+      {streamers && streamers.length > 0 && (
         <ol className="space-y-2">
-          {donors.map((donor, i) => {
+          {streamers.map((streamer, i) => {
             const rank = i + 1;
             const medal =
               rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
             return (
               <li
-                key={`${donor.name}-${i}`}
+                key={`${streamer.name}-${i}`}
                 className="flex items-center justify-between gap-3 rounded-lg border border-white/5 bg-white/5 px-3 py-2"
               >
                 <div className="flex min-w-0 items-center gap-3">
@@ -122,11 +107,11 @@ export default function Leaderboard() {
                     {medal ?? rank}
                   </span>
                   <span className="truncate text-sm text-white sm:text-base">
-                    {donor.name}
+                    {streamer.name}
                   </span>
                 </div>
                 <span className="shrink-0 font-semibold text-neon-yellow tabular-nums">
-                  {formatAmount(donor.amount, donor.currency)}
+                  {formatEuros(streamer.amount)}
                 </span>
               </li>
             );

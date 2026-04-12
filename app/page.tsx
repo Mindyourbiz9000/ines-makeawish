@@ -30,6 +30,30 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
+      <section className="relative mb-8 overflow-hidden rounded-2xl border-2 border-neon-pink bg-gradient-to-br from-neon-pink/20 via-fuchsia-500/10 to-neon-yellow/20 px-5 py-6 text-center shadow-glow-pink sm:px-8 sm:py-8">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-30"
+          style={{
+            backgroundImage:
+              "radial-gradient(1.5px 1.5px at 15% 30%, #ffd84a, transparent), radial-gradient(1.5px 1.5px at 80% 20%, #ff3aa6, transparent), radial-gradient(1.5px 1.5px at 30% 80%, #4ad6ff, transparent), radial-gradient(1.5px 1.5px at 70% 75%, #ffd84a, transparent), radial-gradient(1.5px 1.5px at 50% 50%, #ff3aa6, transparent)",
+            backgroundSize: "300px 300px",
+          }}
+          aria-hidden="true"
+        />
+        <p className="relative neon-title text-2xl leading-tight sm:text-4xl">
+          ✨ Merci à tous ✨
+        </p>
+        <p className="relative mt-3 text-base font-semibold uppercase tracking-wider text-white sm:text-lg">
+          L&apos;event est fini, vous êtes des{" "}
+          <span className="text-neon-yellow">GOAT</span> !
+        </p>
+        <p className="relative mt-3 text-sm text-white/90 sm:text-base">
+          Special shout out à{" "}
+          <span className="neon-title text-xl sm:text-2xl">Jozy</span>{" "}
+          <span className="text-neon-pink">♥</span>
+        </p>
+      </section>
+
       <header className="mb-8 flex items-center gap-5 sm:gap-6">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

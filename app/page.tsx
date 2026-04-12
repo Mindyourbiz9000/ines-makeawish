@@ -59,6 +59,23 @@ export default async function HomePage() {
           <span className="neon-title text-xl sm:text-2xl">Jozy</span>{" "}
           <span className="text-neon-pink">♥</span>
         </p>
+        <a
+          href="https://www.twitch.tv/inespnj/videos?category=509663&filter=archives"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative mt-5 inline-flex items-center gap-2 rounded-full border-2 border-[#9146FF] bg-[#9146FF]/15 px-4 py-2 text-sm font-semibold text-white transition-all hover:scale-105 hover:bg-[#9146FF]/30 hover:shadow-[0_0_25px_rgba(145,70,255,0.6)] sm:text-base"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            className="h-4 w-4 text-[#b794ff] transition-transform group-hover:scale-110 sm:h-5 sm:w-5"
+            aria-hidden="true"
+          >
+            <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
+          </svg>
+          <span>Les rediffs sont ici</span>
+        </a>
       </section>
 
       <header className="mb-8 flex items-center gap-5 sm:gap-6">

@@ -3,6 +3,7 @@ import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
 import Leaderboard from "@/components/Leaderboard";
 import InesStats from "@/components/InesStats";
+import InesTotal from "@/components/InesTotal";
 
 // Toujours rendre côté serveur à la demande (pas de cache).
 export const dynamic = "force-dynamic";
@@ -47,7 +48,13 @@ export default async function HomePage() {
           L&apos;event est fini, vous êtes des{" "}
           <span className="text-neon-yellow">GOAT</span> !
         </p>
-        <p className="relative mt-3 text-sm text-white/90 sm:text-base">
+        <div className="relative">
+          <InesTotal />
+          <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-white/60 sm:text-xs">
+            Total récolté par InesPNJ
+          </p>
+        </div>
+        <p className="relative mt-4 text-sm text-white/90 sm:text-base">
           Special shout out à{" "}
           <span className="neon-title text-xl sm:text-2xl">Jozy</span>{" "}
           <span className="text-neon-pink">♥</span>

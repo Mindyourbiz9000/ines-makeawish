@@ -14,11 +14,14 @@ type JsonFeedItem = {
   url?: string;
   external_url?: string;
   title?: string;
+  date_published?: string;
 };
 
 type JsonFeed = {
   items?: JsonFeedItem[];
 };
+
+type VideoMeta = { id: string; date: string | null };
 
 const FEED_URL = "https://rss.app/feeds/v1.1/8DhlPr0ieIAeg7cV.json";
 const REVALIDATE_SECONDS = 3600; // 1h
@@ -30,23 +33,25 @@ function extractVideoId(url: string | undefined): string | null {
 }
 
 // Fetch non caché (la couche de cache est gérée par unstable_cache plus bas).
-async function fetchFreshVideoIds(): Promise<string[]> {
+async function fetchFreshVideoMeta(): Promise<VideoMeta[]> {
   try {
     const res = await fetch(FEED_URL, { cache: "no-store" });
     if (!res.ok) return [];
     const data = (await res.json()) as JsonFeed;
-    const ids: string[] = [];
+    const metas: VideoMeta[] = [];
+    const seen = new Set<string>();
     for (const item of data.items ?? []) {
       const id =
         extractVideoId(item.url) ??
         extractVideoId(item.external_url) ??
         extractVideoId(item.id);
-      if (id && !ids.includes(id)) {
-        ids.push(id);
-        if (ids.length === 3) break;
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        metas.push({ id, date: item.date_published ?? null });
+        if (metas.length === 3) break;
       }
     }
-    return ids;
+    return metas;
   } catch {
     return [];
   }
@@ -55,15 +60,26 @@ async function fetchFreshVideoIds(): Promise<string[]> {
 // Cache partagé entre toutes les requêtes. Survit à `force-dynamic`.
 // Revalidation toutes les 1h : max 24 hits RSS.app par jour, peu importe
 // le trafic.
-const getCachedVideoIds = unstable_cache(
-  fetchFreshVideoIds,
-  ["tiktok-reels-ids"],
+const getCachedVideoMeta = unstable_cache(
+  fetchFreshVideoMeta,
+  ["tiktok-reels-meta"],
   { revalidate: REVALIDATE_SECONDS, tags: ["tiktok"] }
 );
 
+function formatRelativeDate(iso: string | null): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default async function TikTokReels() {
-  const ids = await getCachedVideoIds();
-  if (ids.length === 0) return null;
+  const videos = await getCachedVideoMeta();
+  if (videos.length === 0) return null;
 
   return (
     <section className="mt-10">
@@ -71,22 +87,29 @@ export default async function TikTokReels() {
         Mes derniers TikToks
       </p>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {ids.map((id) => (
-          <div
-            key={id}
-            className="aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black"
-          >
-            <iframe
-              src={`https://www.tiktok.com/player/v1/${id}?music_info=0&description=0&rel=0&native_context_menu=0&closed_caption=0`}
-              className="h-full w-full"
-              allow="encrypted-media; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-              scrolling="no"
-              title={`TikTok video ${id}`}
-              loading="lazy"
-            />
-          </div>
-        ))}
+        {videos.map((video) => {
+          const dateLabel = formatRelativeDate(video.date);
+          return (
+            <div key={video.id} className="flex flex-col gap-2">
+              <div className="aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black">
+                <iframe
+                  src={`https://www.tiktok.com/player/v1/${video.id}?music_info=0&description=0&rel=0&native_context_menu=0&closed_caption=0`}
+                  className="h-full w-full"
+                  allow="encrypted-media; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                  scrolling="no"
+                  title={`TikTok video ${video.id}`}
+                  loading="lazy"
+                />
+              </div>
+              {dateLabel && (
+                <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/50">
+                  {dateLabel}
+                </p>
+              )}
+            </div>
+          );
+        })}
       </div>
       <p className="mt-4 text-center text-[10px] uppercase tracking-[0.25em] text-white/40">
         <a

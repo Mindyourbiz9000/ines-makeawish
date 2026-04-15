@@ -10,10 +10,8 @@ type TwitchStatus = {
 const POLL_INTERVAL_MS = 60_000;
 
 function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 10_000) return `${Math.round(n / 1_000)}K`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return `${n}`;
+  // Affiche le count entier avec séparateurs français : 14 670
+  return n.toLocaleString("fr-FR");
 }
 
 function TwitchIcon({ className }: { className?: string }) {

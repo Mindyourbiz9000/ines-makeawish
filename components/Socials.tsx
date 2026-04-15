@@ -101,7 +101,9 @@ export default async function Socials() {
   const twitchStatus = await fetchInitialTwitchStatus();
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col items-start gap-2">
+      <TwitchPill initial={twitchStatus} />
+      <div className="flex flex-wrap items-center gap-2">
       <a
         href="https://www.instagram.com/inespnj/"
         target="_blank"
@@ -122,7 +124,6 @@ export default async function Socials() {
         <DiscordIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Discord</span>
       </a>
-      <TwitchPill initial={twitchStatus} />
       <a
         href="https://www.tiktok.com/@inespnj"
         target="_blank"
@@ -143,6 +144,7 @@ export default async function Socials() {
         <YouTubeIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>YouTube</span>
       </a>
+      </div>
     </div>
   );
 }

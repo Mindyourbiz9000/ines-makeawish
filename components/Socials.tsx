@@ -76,7 +76,33 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
-export default function Socials() {
+// Count de followers Twitch via decapi.me (service public, pas d'auth).
+// Cache 10min côté Vercel (ISR).
+async function fetchTwitchFollowers(): Promise<number | null> {
+  try {
+    const res = await fetch(
+      "https://api.decapi.me/twitch/followcount/inespnj",
+      { next: { revalidate: 600 } }
+    );
+    if (!res.ok) return null;
+    const text = (await res.text()).trim();
+    const n = Number(text);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 10_000) return `${Math.round(n / 1_000)}K`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return `${n}`;
+}
+
+export default async function Socials() {
+  const twitchFollowers = await fetchTwitchFollowers();
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <a
@@ -108,6 +134,11 @@ export default function Socials() {
       >
         <TwitchIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Twitch</span>
+        {twitchFollowers !== null && (
+          <span className="ml-0.5 rounded-full bg-[#9146FF]/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white/90">
+            {formatCount(twitchFollowers)}
+          </span>
+        )}
       </a>
       <a
         href="https://www.tiktok.com/@inespnj"

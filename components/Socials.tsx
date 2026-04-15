@@ -76,13 +76,27 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
-// Followers Twitch — mis à jour manuellement.
-// L'API publique decapi.me est tombée, et l'API Helix officielle de Twitch
-// requiert un user token d'Ines avec scope moderator:read:followers.
-// Pour un event temporaire, le hardcode est le compromis le plus fiable.
-// Mets à jour ce nombre quand tu veux — édite ce fichier sur GitHub,
-// auto-redeploy en 30s.
-const TWITCH_FOLLOWERS = 48000;
+// Follower count Twitch via IVR.fi (service communautaire public, no auth).
+// Cache 10min côté Vercel (ISR). Fallback sur une valeur hardcodée si KO.
+const TWITCH_FOLLOWERS_FALLBACK = 14670;
+
+type IvrUser = { followers?: number | null };
+
+async function fetchTwitchFollowers(): Promise<number> {
+  try {
+    const res = await fetch(
+      "https://api.ivr.fi/v2/twitch/user?login=inespnj",
+      { next: { revalidate: 600 } }
+    );
+    if (!res.ok) return TWITCH_FOLLOWERS_FALLBACK;
+    const data = (await res.json()) as IvrUser[] | IvrUser;
+    const user = Array.isArray(data) ? data[0] : data;
+    const n = user?.followers;
+    return typeof n === "number" && n > 0 ? n : TWITCH_FOLLOWERS_FALLBACK;
+  } catch {
+    return TWITCH_FOLLOWERS_FALLBACK;
+  }
+}
 
 function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -91,7 +105,9 @@ function formatCount(n: number): string {
   return `${n}`;
 }
 
-export default function Socials() {
+export default async function Socials() {
+  const twitchFollowers = await fetchTwitchFollowers();
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <a
@@ -124,7 +140,7 @@ export default function Socials() {
         <TwitchIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Twitch</span>
         <span className="ml-0.5 rounded-full bg-[#9146FF]/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white/90">
-          {formatCount(TWITCH_FOLLOWERS)}
+          {formatCount(twitchFollowers)}
         </span>
       </a>
       <a

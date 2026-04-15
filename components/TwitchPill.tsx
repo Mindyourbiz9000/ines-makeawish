@@ -91,8 +91,9 @@ export default function TwitchPill({ initial }: { initial: TwitchStatus }) {
       )}
 
       {/* Follower count : badge bien visible */}
-      <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-bold tabular-nums text-white">
-        {formatCount(followers)}
+      <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-bold text-white">
+        <span className="tabular-nums">{formatCount(followers)}</span>
+        <span className="ml-1 font-semibold text-white/80">followers</span>
       </span>
     </a>
   );

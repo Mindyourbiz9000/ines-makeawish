@@ -6,15 +6,15 @@ type QA = { question: string; answer: string };
 // \u00A0 (nbsp) avant le « ? » : convention typographique française
 // + évite qu'un « ? » se retrouve seul sur sa ligne quand la question wrap.
 const QUESTIONS: QA[] = [
-  { question: "Quel est ton métier\u00A0?", answer: "Assistant de direction." },
-  { question: "Ton signe astrologique\u00A0?", answer: "Scorpion." },
+  { question: "Quel est ton métier\u00A0?", answer: "Assistante de direction" },
+  { question: "Ton signe astrologique\u00A0?", answer: "Scorpion" },
   {
     question: "Comment s'appelle ton chat\u00A0?",
-    answer: "Pachi (c'est une femelle).",
+    answer: "Pachi (c'est une femelle)",
   },
   {
     question: "C'est quoi ton aspirateur\u00A0?",
-    answer: "Ce n'est PAS un Dyson.",
+    answer: "Ce n'est PAS un Dyson",
   },
 ];
 

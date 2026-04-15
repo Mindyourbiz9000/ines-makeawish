@@ -50,31 +50,14 @@ export default function InesTotal() {
   }, []);
 
   return (
-    <div className="relative mt-5 flex items-center justify-center gap-3 sm:gap-4">
-      <span
-        className="text-2xl sm:text-4xl"
-        style={{ filter: "drop-shadow(0 0 8px #ffd84a)" }}
-        aria-hidden="true"
-      >
-        ⭐
-      </span>
-      <span
-        className="neon-title text-4xl leading-none tabular-nums sm:text-6xl"
-        style={{
-          color: "#fff6c2",
-          textShadow:
-            "0 0 8px #ffd84a, 0 0 18px #ffb347, 0 0 32px #ff3aa6",
-        }}
-      >
-        {amount === null ? "…" : formatEuros(amount)}
-      </span>
-      <span
-        className="text-2xl sm:text-4xl"
-        style={{ filter: "drop-shadow(0 0 8px #ffd84a)" }}
-        aria-hidden="true"
-      >
-        ⭐
-      </span>
-    </div>
+    <span
+      className="neon-title tabular-nums"
+      style={{
+        color: "#fff6c2",
+        textShadow: "0 0 6px #ffd84a, 0 0 14px #ffb347",
+      }}
+    >
+      {amount === null ? "…" : formatEuros(amount)}
+    </span>
   );
 }

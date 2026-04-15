@@ -6,6 +6,7 @@ import InesStats from "@/components/InesStats";
 import InesTotal from "@/components/InesTotal";
 import Setup from "@/components/Setup";
 import Questions from "@/components/Questions";
+import TikTokReels from "@/components/TikTokReels";
 
 // Toujours rendre côté serveur à la demande (pas de cache).
 export const dynamic = "force-dynamic";
@@ -80,6 +81,8 @@ export default async function HomePage() {
         <Setup />
         <Questions />
       </div>
+
+      <TikTokReels />
 
       <div
         className="my-16 h-[2px] w-full rounded-full sm:my-20"

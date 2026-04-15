@@ -4,6 +4,7 @@ import Socials from "@/components/Socials";
 import Leaderboard from "@/components/Leaderboard";
 import InesStats from "@/components/InesStats";
 import InesTotal from "@/components/InesTotal";
+import Setup from "@/components/Setup";
 
 // Toujours rendre côté serveur à la demande (pas de cache).
 export const dynamic = "force-dynamic";
@@ -86,8 +87,10 @@ export default async function HomePage() {
         </a>
       </section>
 
+      <Setup />
+
       <div
-        className="my-12 h-[2px] w-full rounded-full"
+        className="my-16 h-[2px] w-full rounded-full sm:my-20"
         style={{
           background:
             "linear-gradient(90deg, transparent 0%, #ff3aa6 20%, #ffd84a 50%, #4ad6ff 80%, transparent 100%)",

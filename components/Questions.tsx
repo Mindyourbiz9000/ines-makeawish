@@ -3,15 +3,17 @@
 
 type QA = { question: string; answer: string };
 
+// \u00A0 (nbsp) avant le « ? » : convention typographique française
+// + évite qu'un « ? » se retrouve seul sur sa ligne quand la question wrap.
 const QUESTIONS: QA[] = [
-  { question: "Quel est ton métier ?", answer: "Assistant de direction." },
-  { question: "Ton signe astrologique ?", answer: "Scorpion." },
+  { question: "Quel est ton métier\u00A0?", answer: "Assistant de direction." },
+  { question: "Ton signe astrologique\u00A0?", answer: "Scorpion." },
   {
-    question: "Comment s'appelle ton chat ?",
+    question: "Comment s'appelle ton chat\u00A0?",
     answer: "Pachi (c'est une femelle).",
   },
   {
-    question: "C'est quoi ton aspirateur ?",
+    question: "C'est quoi ton aspirateur\u00A0?",
     answer: "Ce n'est PAS un Dyson.",
   },
 ];
@@ -42,9 +44,9 @@ export default function Questions() {
         {QUESTIONS.map((qa) => (
           <li
             key={qa.question}
-            className="flex flex-col gap-0.5 py-2 sm:flex-row sm:items-baseline sm:gap-3"
+            className="grid grid-cols-1 gap-x-4 gap-y-0.5 py-2 md:grid-cols-[minmax(0,14rem)_1fr] md:items-baseline"
           >
-            <span className="shrink-0 text-[11px] uppercase tracking-[0.25em] text-neon-pink/80 sm:w-56">
+            <span className="text-[11px] uppercase tracking-[0.25em] text-neon-pink/80">
               {qa.question}
             </span>
             <span className="text-white/90">{qa.answer}</span>

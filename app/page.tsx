@@ -122,19 +122,24 @@ export default async function HomePage() {
                   <span aria-hidden="true">💖</span>
                   <span>Make a Wish · Avril 2026</span>
                 </span>
-                <svg
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4 shrink-0 transition-transform group-open/inner:rotate-180"
-                  aria-hidden="true"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
+                <span className="flex items-center gap-3">
+                  <span className="text-base normal-case tracking-normal sm:text-lg">
+                    <InesTotal />
+                  </span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-4 w-4 shrink-0 transition-transform group-open/inner:rotate-180"
+                    aria-hidden="true"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
               </summary>
 
               <div className="border-t border-white/10 px-4 py-5 sm:px-5 sm:py-6">

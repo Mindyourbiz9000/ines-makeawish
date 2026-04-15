@@ -5,6 +5,7 @@ import Leaderboard from "@/components/Leaderboard";
 import InesStats from "@/components/InesStats";
 import InesTotal from "@/components/InesTotal";
 import Setup from "@/components/Setup";
+import Questions from "@/components/Questions";
 
 // Toujours rendre côté serveur à la demande (pas de cache).
 export const dynamic = "force-dynamic";
@@ -87,7 +88,10 @@ export default async function HomePage() {
         </a>
       </section>
 
-      <Setup />
+      <div className="space-y-3">
+        <Setup />
+        <Questions />
+      </div>
 
       <div
         className="my-16 h-[2px] w-full rounded-full sm:my-20"

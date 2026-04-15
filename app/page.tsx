@@ -123,8 +123,13 @@ export default async function HomePage() {
                   <span>Make a Wish · Avril 2026</span>
                 </span>
                 <span className="flex items-center gap-3">
-                  <span className="text-base normal-case tracking-normal sm:text-lg">
-                    <InesTotal />
+                  <span className="flex items-baseline gap-1.5 normal-case tracking-normal">
+                    <span className="text-base sm:text-lg">
+                      <InesTotal />
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/60 sm:text-xs">
+                      récolté
+                    </span>
                   </span>
                   <svg
                     viewBox="0 0 24 24"

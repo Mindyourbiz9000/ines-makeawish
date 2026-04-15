@@ -1,7 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
-import Leaderboard from "@/components/Leaderboard";
 import InesStats from "@/components/InesStats";
 import InesTotal from "@/components/InesTotal";
 import Setup from "@/components/Setup";
@@ -95,39 +94,81 @@ export default async function HomePage() {
       />
 
       <section className="mt-10">
-        <p className="mb-6 text-center text-[10px] uppercase tracking-[0.3em] text-white/50 sm:text-xs">
-          Living the dream · Make-A-Wish · Donation goals
-        </p>
-
-        <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-center sm:px-8 sm:py-8">
-          <p className="text-xs uppercase tracking-[0.25em] text-white/50">
-            Total récolté — merci à tous
-          </p>
-          <p className="mt-3 text-4xl leading-none sm:text-6xl">
-            <InesTotal />
-          </p>
-          <div className="mt-4 flex justify-center">
-            <InesStats />
-          </div>
-          <p className="mt-5 text-xs text-white/60 sm:text-sm">
-            Shout-out à{" "}
-            <span className="font-semibold text-white/90">Jozy</span>{" "}
-            <span className="text-neon-pink">♥</span>
-            {" · "}
-            <a
-              href="https://www.twitch.tv/inespnj/videos?category=509663&filter=archives"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+        <details className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur open:border-white/30 open:shadow-glow">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-white sm:text-base">
+            <span className="flex items-center gap-2">
+              <span aria-hidden="true">📦</span>
+              <span>Past events</span>
+            </span>
+            <svg
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 shrink-0 transition-transform group-open:rotate-180"
+              aria-hidden="true"
             >
-              rediffs sur Twitch
-            </a>
-          </p>
-        </section>
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </summary>
 
-        <GoalList initialGoals={goals} showCounter />
+          <div className="border-t border-white/10 px-4 py-4 sm:px-5 sm:py-5">
+            <details className="group/inner rounded-2xl border border-white/10 bg-white/[0.03] open:border-neon-pink/40 open:shadow-glow-pink">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-white sm:text-base">
+                <span className="flex items-center gap-2">
+                  <span aria-hidden="true">💖</span>
+                  <span>Make a Wish · April 2026</span>
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4 shrink-0 transition-transform group-open/inner:rotate-180"
+                  aria-hidden="true"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </summary>
 
-        <Leaderboard />
+              <div className="border-t border-white/10 px-4 py-5 sm:px-5 sm:py-6">
+                <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-center sm:px-8 sm:py-8">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/50">
+                    Total récolté — merci à tous
+                  </p>
+                  <p className="mt-3 text-4xl leading-none sm:text-6xl">
+                    <InesTotal />
+                  </p>
+                  <div className="mt-4 flex justify-center">
+                    <InesStats />
+                  </div>
+                  <p className="mt-5 text-xs text-white/60 sm:text-sm">
+                    Shout-out à{" "}
+                    <span className="font-semibold text-white/90">Jozy</span>{" "}
+                    <span className="text-neon-pink">♥</span>
+                    {" · "}
+                    <a
+                      href="https://www.twitch.tv/inespnj/videos?category=509663&filter=archives"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+                    >
+                      rediffs sur Twitch
+                    </a>
+                  </p>
+                </section>
+
+                <GoalList initialGoals={goals} showCounter />
+              </div>
+            </details>
+          </div>
+        </details>
       </section>
     </main>
   );

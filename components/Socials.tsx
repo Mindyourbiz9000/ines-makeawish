@@ -76,22 +76,13 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
-// Count de followers Twitch via decapi.me (service public, pas d'auth).
-// Cache 10min côté Vercel (ISR).
-async function fetchTwitchFollowers(): Promise<number | null> {
-  try {
-    const res = await fetch(
-      "https://api.decapi.me/twitch/followcount/inespnj",
-      { next: { revalidate: 600 } }
-    );
-    if (!res.ok) return null;
-    const text = (await res.text()).trim();
-    const n = Number(text);
-    return Number.isFinite(n) && n > 0 ? n : null;
-  } catch {
-    return null;
-  }
-}
+// Followers Twitch — mis à jour manuellement.
+// L'API publique decapi.me est tombée, et l'API Helix officielle de Twitch
+// requiert un user token d'Ines avec scope moderator:read:followers.
+// Pour un event temporaire, le hardcode est le compromis le plus fiable.
+// Mets à jour ce nombre quand tu veux — édite ce fichier sur GitHub,
+// auto-redeploy en 30s.
+const TWITCH_FOLLOWERS = 48000;
 
 function formatCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
@@ -100,9 +91,7 @@ function formatCount(n: number): string {
   return `${n}`;
 }
 
-export default async function Socials() {
-  const twitchFollowers = await fetchTwitchFollowers();
-
+export default function Socials() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <a
@@ -134,11 +123,9 @@ export default async function Socials() {
       >
         <TwitchIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Twitch</span>
-        {twitchFollowers !== null && (
-          <span className="ml-0.5 rounded-full bg-[#9146FF]/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white/90">
-            {formatCount(twitchFollowers)}
-          </span>
-        )}
+        <span className="ml-0.5 rounded-full bg-[#9146FF]/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white/90">
+          {formatCount(TWITCH_FOLLOWERS)}
+        </span>
       </a>
       <a
         href="https://www.tiktok.com/@inespnj"

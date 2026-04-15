@@ -1,3 +1,5 @@
+import TwitchPill from "./TwitchPill";
+
 // Icônes Simple Icons (MIT) inlinées pour éviter une dépendance.
 // https://simpleicons.org/
 
@@ -27,21 +29,6 @@ function DiscordIcon({ className }: { className?: string }) {
       aria-hidden="true"
     >
       <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418Z" />
-    </svg>
-  );
-}
-
-function TwitchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      role="img"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
     </svg>
   );
 }
@@ -76,37 +63,42 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
-// Follower count Twitch via IVR.fi (service communautaire public, no auth).
-// Cache 10min côté Vercel (ISR). Fallback sur une valeur hardcodée si KO.
+// Fetch initial serveur pour éviter le flash "pas de badge" au premier rendu.
+// Le TwitchPill client poll ensuite /api/twitch-status toutes les 60s.
 const TWITCH_FOLLOWERS_FALLBACK = 14670;
 
-type IvrUser = { followers?: number | null };
+type IvrUser = {
+  followers?: number | null;
+  stream?: unknown | null;
+};
 
-async function fetchTwitchFollowers(): Promise<number> {
+async function fetchInitialTwitchStatus(): Promise<{
+  followers: number;
+  isLive: boolean;
+}> {
   try {
     const res = await fetch(
       "https://api.ivr.fi/v2/twitch/user?login=inespnj",
-      { next: { revalidate: 600 } }
+      { next: { revalidate: 30 } }
     );
-    if (!res.ok) return TWITCH_FOLLOWERS_FALLBACK;
+    if (!res.ok) {
+      return { followers: TWITCH_FOLLOWERS_FALLBACK, isLive: false };
+    }
     const data = (await res.json()) as IvrUser[] | IvrUser;
     const user = Array.isArray(data) ? data[0] : data;
-    const n = user?.followers;
-    return typeof n === "number" && n > 0 ? n : TWITCH_FOLLOWERS_FALLBACK;
+    const followers =
+      typeof user?.followers === "number" && user.followers > 0
+        ? user.followers
+        : TWITCH_FOLLOWERS_FALLBACK;
+    const isLive = user?.stream != null;
+    return { followers, isLive };
   } catch {
-    return TWITCH_FOLLOWERS_FALLBACK;
+    return { followers: TWITCH_FOLLOWERS_FALLBACK, isLive: false };
   }
 }
 
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 10_000) return `${Math.round(n / 1_000)}K`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return `${n}`;
-}
-
 export default async function Socials() {
-  const twitchFollowers = await fetchTwitchFollowers();
+  const twitchStatus = await fetchInitialTwitchStatus();
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -130,19 +122,7 @@ export default async function Socials() {
         <DiscordIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Discord</span>
       </a>
-      <a
-        href="https://www.twitch.tv/inespnj"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-[#9146FF] hover:bg-[#9146FF]/15 hover:text-white hover:shadow-[0_0_18px_rgba(145,70,255,0.5)]"
-        aria-label="Suivre InesPNJ sur Twitch"
-      >
-        <TwitchIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-        <span>Twitch</span>
-        <span className="ml-0.5 rounded-full bg-[#9146FF]/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white/90">
-          {formatCount(twitchFollowers)}
-        </span>
-      </a>
+      <TwitchPill initial={twitchStatus} />
       <a
         href="https://www.tiktok.com/@inespnj"
         target="_blank"

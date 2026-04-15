@@ -1,5 +1,13 @@
 // Server component : fetch le flux RSS.app (JSON Feed 1.1) et affiche
-// les 3 derniers TikToks d'@inespnj. Cache 1h côté Vercel via ISR.
+// les 3 derniers TikToks d'@inespnj.
+//
+// On utilise `unstable_cache` (et NON juste `fetch(..., { next: { revalidate }})`)
+// parce que app/page.tsx a `dynamic = "force-dynamic"` qui désactive le cache
+// de tous les fetch de la page. `unstable_cache` est indépendant de ce flag :
+// il garantit 1 seul hit RSS.app toutes les REVALIDATE_SECONDS, peu importe
+// le nombre de visiteurs. Essentiel pour ne pas exploser le free tier.
+
+import { unstable_cache } from "next/cache";
 
 type JsonFeedItem = {
   id?: string;
@@ -13,7 +21,7 @@ type JsonFeed = {
 };
 
 const FEED_URL = "https://rss.app/feeds/v1.1/8DhlPr0ieIAeg7cV.json";
-const REVALIDATE_SECONDS = 3600;
+const REVALIDATE_SECONDS = 3600; // 1h
 
 function extractVideoId(url: string | undefined): string | null {
   if (!url) return null;
@@ -21,11 +29,10 @@ function extractVideoId(url: string | undefined): string | null {
   return match ? match[1] : null;
 }
 
-async function fetchLatestVideoIds(): Promise<string[]> {
+// Fetch non caché (la couche de cache est gérée par unstable_cache plus bas).
+async function fetchFreshVideoIds(): Promise<string[]> {
   try {
-    const res = await fetch(FEED_URL, {
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
+    const res = await fetch(FEED_URL, { cache: "no-store" });
     if (!res.ok) return [];
     const data = (await res.json()) as JsonFeed;
     const ids: string[] = [];
@@ -45,8 +52,17 @@ async function fetchLatestVideoIds(): Promise<string[]> {
   }
 }
 
+// Cache partagé entre toutes les requêtes. Survit à `force-dynamic`.
+// Revalidation toutes les 1h : max 24 hits RSS.app par jour, peu importe
+// le trafic.
+const getCachedVideoIds = unstable_cache(
+  fetchFreshVideoIds,
+  ["tiktok-reels-ids"],
+  { revalidate: REVALIDATE_SECONDS, tags: ["tiktok"] }
+);
+
 export default async function TikTokReels() {
-  const ids = await fetchLatestVideoIds();
+  const ids = await getCachedVideoIds();
   if (ids.length === 0) return null;
 
   return (

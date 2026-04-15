@@ -24,7 +24,7 @@ export default function Questions() {
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-white sm:text-base">
         <span className="flex items-center gap-2">
           <span aria-hidden="true">💬</span>
-          <span>See my questions</span>
+          <span>Questions fréquentes (à ne plus poser)</span>
         </span>
         <svg
           viewBox="0 0 24 24"

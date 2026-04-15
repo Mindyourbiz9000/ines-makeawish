@@ -53,7 +53,7 @@ export default async function HomePage() {
 
       <section className="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-10 text-center sm:px-8 sm:py-16">
         <p className="text-xs uppercase tracking-[0.35em] text-white/50 sm:text-sm">
-          Now it&apos;s time to
+          C&apos;est parti pour
         </p>
         <h2 className="neon-title mt-3 text-5xl leading-none sm:text-7xl">
           #freeines

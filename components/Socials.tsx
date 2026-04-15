@@ -31,20 +31,6 @@ function DiscordIcon({ className }: { className?: string }) {
   );
 }
 
-function HeartIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="currentColor"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-    </svg>
-  );
-}
-
 export default function Socials() {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -68,14 +54,6 @@ export default function Socials() {
         <DiscordIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
         <span>Discord</span>
       </a>
-      <span
-        className="inline-flex cursor-not-allowed items-center gap-2 rounded-full border-2 border-white/20 bg-white/5 px-4 py-2 text-sm font-bold uppercase tracking-wide text-white/40 sm:text-base"
-        aria-disabled="true"
-        title="L'event est terminé"
-      >
-        <HeartIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-        <span>Faire un don</span>
-      </span>
     </div>
   );
 }

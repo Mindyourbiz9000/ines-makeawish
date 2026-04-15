@@ -58,13 +58,14 @@ export default async function TikTokReels() {
         {ids.map((id) => (
           <div
             key={id}
-            className="aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black/40"
+            className="aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black"
           >
             <iframe
-              src={`https://www.tiktok.com/embed/v2/${id}`}
+              src={`https://www.tiktok.com/player/v1/${id}?music_info=0&description=0&rel=0&native_context_menu=0&closed_caption=0`}
               className="h-full w-full"
-              allow="encrypted-media; picture-in-picture; web-share"
+              allow="encrypted-media; picture-in-picture; web-share; fullscreen"
               allowFullScreen
+              scrolling="no"
               title={`TikTok video ${id}`}
               loading="lazy"
             />

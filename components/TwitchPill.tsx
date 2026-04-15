@@ -64,8 +64,8 @@ export default function TwitchPill({ initial }: { initial: TwitchStatus }) {
       rel="noopener noreferrer"
       className={
         isLive
-          ? "group inline-flex items-center gap-1.5 rounded-full border border-red-500/70 bg-red-500/10 px-3 py-1 text-xs text-white backdrop-blur transition-all hover:bg-red-500/20 hover:shadow-[0_0_18px_rgba(239,68,68,0.6)]"
-          : "group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-[#9146FF] hover:bg-[#9146FF]/15 hover:text-white hover:shadow-[0_0_18px_rgba(145,70,255,0.5)]"
+          ? "group inline-flex items-center gap-2 rounded-full border border-[#9146FF] bg-[#9146FF]/25 px-3.5 py-1.5 text-xs font-semibold text-white shadow-[0_0_14px_rgba(145,70,255,0.45)] backdrop-blur transition-all hover:bg-[#9146FF]/35 hover:shadow-[0_0_22px_rgba(145,70,255,0.75)]"
+          : "group inline-flex items-center gap-2 rounded-full border border-[#9146FF]/70 bg-[#9146FF]/15 px-3.5 py-1.5 text-xs font-semibold text-white shadow-[0_0_10px_rgba(145,70,255,0.25)] backdrop-blur transition-all hover:bg-[#9146FF]/25 hover:shadow-[0_0_18px_rgba(145,70,255,0.55)]"
       }
       aria-label={
         isLive
@@ -73,22 +73,27 @@ export default function TwitchPill({ initial }: { initial: TwitchStatus }) {
           : "Suivre InesPNJ sur Twitch"
       }
     >
+      <TwitchIcon className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:scale-110" />
+      <span>Twitch</span>
+
+      {/* Status dot : vert animé si live, rouge statique sinon */}
       {isLive ? (
-        <span className="relative flex h-2 w-2 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+        <span
+          className="relative flex h-2.5 w-2.5 shrink-0"
+          aria-label="En live"
+        >
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-80" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.9)]" />
         </span>
       ) : (
-        <TwitchIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
+        <span
+          className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-red-500 shadow-[0_0_6px_rgba(239,68,68,0.7)]"
+          aria-label="Hors ligne"
+        />
       )}
-      <span>{isLive ? "LIVE" : "Twitch"}</span>
-      <span
-        className={
-          isLive
-            ? "ml-0.5 rounded-full bg-red-500/30 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white"
-            : "ml-0.5 rounded-full bg-[#9146FF]/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-white/90"
-        }
-      >
+
+      {/* Follower count : badge bien visible */}
+      <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-bold tabular-nums text-white">
         {formatCount(followers)}
       </span>
     </a>

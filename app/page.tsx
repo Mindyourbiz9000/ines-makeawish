@@ -59,7 +59,9 @@ export default async function HomePage() {
           aria-hidden="true"
         />
         <p className="relative neon-title text-4xl leading-tight sm:text-6xl">
-          Now it&apos;s time to free Ines !
+          Now it&apos;s time to
+          <br />
+          free InesPNJ !
         </p>
         <p className="relative mx-auto mt-4 max-w-md text-sm text-white/80 sm:text-base">
           L&apos;event Make-A-Wish est terminé — place aux tips pour
@@ -83,6 +85,16 @@ export default async function HomePage() {
           <span>Faire un don</span>
         </a>
       </section>
+
+      <div
+        className="my-12 h-[2px] w-full rounded-full"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 0%, #ff3aa6 20%, #ffd84a 50%, #4ad6ff 80%, transparent 100%)",
+          boxShadow: "0 0 12px rgba(255, 58, 166, 0.6)",
+        }}
+        aria-hidden="true"
+      />
 
       <section className="mt-10">
         <div className="mb-6 text-center">

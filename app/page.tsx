@@ -98,7 +98,7 @@ export default async function HomePage() {
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-white sm:text-base">
             <span className="flex items-center gap-2">
               <span aria-hidden="true">📦</span>
-              <span>Past events</span>
+              <span>Événements passés</span>
             </span>
             <svg
               viewBox="0 0 24 24"
@@ -120,7 +120,7 @@ export default async function HomePage() {
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl px-5 py-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/80 transition-colors hover:text-white sm:text-base">
                 <span className="flex items-center gap-2">
                   <span aria-hidden="true">💖</span>
-                  <span>Make a Wish · April 2026</span>
+                  <span>Make a Wish · Avril 2026</span>
                 </span>
                 <svg
                   viewBox="0 0 24 24"

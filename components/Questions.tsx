@@ -1,28 +1,29 @@
 // FAQ déroulante — questions fréquentes d'Ines.
 // Utilise <details>/<summary> natifs — aucun JS requis.
 
-type QA = { question: string; answer: string };
+type QA = { question: string; answer: string; href?: string };
 
-//   (nbsp) avant le « ? » : convention typographique française
+//   (nbsp) avant le « ? » : convention typographique française
 // + évite qu'un « ? » se retrouve seul sur sa ligne quand la question wrap.
 const QUESTIONS: QA[] = [
-  { question: "Quel est ton métier ?", answer: "Assistante de direction (bientôt streameuse professionnelle dans le top 1 français)" },
-  { question: "Ton signe astrologique ?", answer: "Scorpion" },
+  { question: "Quel est ton métier ?", answer: "Assistante de direction (bientôt streameuse professionnelle dans le top 1 français)" },
+  { question: "Ton signe astrologique ?", answer: "Scorpion" },
   {
-    question: "Comment s'appelle ton chat ?",
+    question: "Comment s'appelle ton chat ?",
     answer: "Pachi (c'est une femelle)",
   },
   {
-    question: "C'est quoi ton aspirateur ?",
+    question: "C'est quoi ton aspirateur ?",
     answer: "Ce n'est PAS un Dyson",
   },
   {
-    question: "C'est quoi ta date de naissance ?",
+    question: "C'est quoi ta date de naissance ?",
     answer: "3 novembre 1997 (28 ans)",
   },
   {
-    question: "Qui est ton meilleur ami connu ?",
+    question: "Qui est ton meilleur ami connu ?",
     answer: "BigFlo",
+    href: "https://www.instagram.com/bigflo/",
   },
 ];
 
@@ -57,7 +58,15 @@ export default function Questions() {
             <span className="text-[11px] uppercase tracking-[0.25em] text-neon-pink/80">
               {qa.question}
             </span>
-            <span className="text-white/90">{qa.answer}</span>
+            <span className="text-white/90">
+              {qa.href ? (
+                <a href={qa.href} target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+                  {qa.answer}
+                </a>
+              ) : (
+                qa.answer
+              )}
+            </span>
           </li>
         ))}
       </ul>

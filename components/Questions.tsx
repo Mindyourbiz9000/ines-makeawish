@@ -25,6 +25,11 @@ const QUESTIONS: QA[] = [
     answer: "BigFlo",
     href: "https://www.instagram.com/bigflo/",
   },
+  {
+    question: "Déjà clashée par ?",
+    answer: "Booba",
+    href: "https://www.instagram.com/piratefinal/",
+  },
 ];
 
 export default function Questions() {

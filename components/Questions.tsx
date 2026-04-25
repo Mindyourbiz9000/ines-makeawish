@@ -20,6 +20,10 @@ const QUESTIONS: QA[] = [
     question: "C'est quoi ta date de naissance ?",
     answer: "3 novembre 1997 (28 ans)",
   },
+  {
+    question: "C’est quoi ton meilleur ami connu ?",
+    answer: "BigFlo",
+  },
 ];
 
 export default function Questions() {

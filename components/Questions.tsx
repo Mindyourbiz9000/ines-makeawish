@@ -18,7 +18,7 @@ const QUESTIONS: QA[] = [
   },
   {
     question: "C'est quoi ta date de naissance ?",
-    answer: "3 novembre 1998 (28 ans)",
+    answer: "3 novembre 1997 (28 ans)",
   },
 ];
 

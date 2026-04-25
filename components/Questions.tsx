@@ -21,7 +21,7 @@ const QUESTIONS: QA[] = [
     answer: "3 novembre 1997 (28 ans)",
   },
   {
-    question: "C’est quoi ton meilleur ami connu ?",
+    question: "Qui est ton meilleur ami connu ?",
     answer: "BigFlo",
   },
 ];

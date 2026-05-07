@@ -6,7 +6,8 @@ type GearItem = { label: string; value: string };
 const GEAR: GearItem[] = [
   { label: "Caméra", value: "OBSBOT Tiny 2 Lite" },
   { label: "Clavier", value: "YUNZII B87" },
-  { label: "Micro", value: "Shure MV6" },
+  { label: "Micro", value: "Shure SM7B" },
+  { label: "Casque", value: "Beyerdynamic DT 770 PRO" },
   { label: "Carte mère", value: "MSI MPG B550 Gaming Plus" },
   { label: "Processeur", value: "AMD Ryzen 7 5800X" },
   {

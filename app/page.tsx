@@ -50,6 +50,32 @@ export default async function HomePage() {
         </div>
       </header>
 
+      <section className="mb-8 text-center">
+        <a
+          href="https://lively-dusk-33d860.netlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-600 px-6 py-5 text-lg font-bold uppercase tracking-wide text-night-900 shadow-[0_0_25px_rgba(255,200,80,0.55)] transition-all hover:scale-[1.02] sm:px-10 sm:py-6 sm:text-2xl"
+        >
+          <span aria-hidden="true">✨</span>
+          <span>Venez découvrir PARIS RP</span>
+          <svg
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5 transition-transform group-hover:translate-x-1 sm:h-6 sm:w-6"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </section>
+
       <section className="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-10 text-center sm:px-8 sm:py-16">
         <p className="text-xs uppercase tracking-[0.35em] text-white/50 sm:text-sm">
           Il est temps de
@@ -73,32 +99,6 @@ export default async function HomePage() {
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
           <span>Faire un don</span>
-        </a>
-      </section>
-
-      <section className="mb-10 text-center">
-        <a
-          href="https://lively-dusk-33d860.netlify.app"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-neon-blue to-neon-pink px-6 py-5 text-lg font-bold uppercase tracking-wide text-white shadow-glow transition-all hover:scale-[1.02] sm:px-10 sm:py-6 sm:text-2xl"
-        >
-          <span aria-hidden="true">✨</span>
-          <span>Venez découvrir PARIS RP</span>
-          <svg
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-5 w-5 transition-transform group-hover:translate-x-1 sm:h-6 sm:w-6"
-            aria-hidden="true"
-          >
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
         </a>
       </section>
 

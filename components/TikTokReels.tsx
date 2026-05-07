@@ -20,7 +20,7 @@ type JsonFeed = {
   items?: JsonFeedItem[];
 };
 
-const FEED_URL = "https://rss.app/feeds/v1.1/8DhlPr0ieIAeg7cV.json";
+const FEED_URL = "https://r.inks.page/feed/OgYkYyhl";
 const REVALIDATE_SECONDS = 3600; // 1h
 
 function extractVideoId(url: string | undefined): string | null {

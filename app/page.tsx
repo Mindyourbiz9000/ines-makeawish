@@ -84,7 +84,7 @@ export default async function HomePage() {
           className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-neon-blue to-neon-pink px-6 py-5 text-lg font-bold uppercase tracking-wide text-white shadow-glow transition-all hover:scale-[1.02] sm:px-10 sm:py-6 sm:text-2xl"
         >
           <span aria-hidden="true">✨</span>
-          <span>Venez Découvrir PARIS RP</span>
+          <span>Venez découvrir PARIS RP</span>
           <svg
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"

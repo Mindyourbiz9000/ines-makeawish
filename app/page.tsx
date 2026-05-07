@@ -51,9 +51,7 @@ export default async function HomePage() {
 
       <section className="mb-8 text-center">
         <a
-          href="https://lively-dusk-33d860.netlify.app"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/parisrp"
           className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-600 px-6 py-5 text-lg font-bold uppercase tracking-wide text-night-900 shadow-[0_0_25px_rgba(255,200,80,0.55)] transition-all hover:scale-[1.02] sm:px-10 sm:py-6 sm:text-2xl"
         >
           <span aria-hidden="true">✨</span>

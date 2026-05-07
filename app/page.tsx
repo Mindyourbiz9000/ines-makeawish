@@ -76,6 +76,32 @@ export default async function HomePage() {
         </a>
       </section>
 
+      <section className="mb-10 text-center">
+        <a
+          href="https://lively-dusk-33d860.netlify.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-neon-blue to-neon-pink px-6 py-5 text-lg font-bold uppercase tracking-wide text-white shadow-glow transition-all hover:scale-[1.02] sm:px-10 sm:py-6 sm:text-2xl"
+        >
+          <span aria-hidden="true">✨</span>
+          <span>Venez découvrir parp</span>
+          <svg
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-5 w-5 transition-transform group-hover:translate-x-1 sm:h-6 sm:w-6"
+            aria-hidden="true"
+          >
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </a>
+      </section>
+
       <div className="space-y-3">
         <Setup />
         <Questions />

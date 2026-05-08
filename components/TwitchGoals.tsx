@@ -148,43 +148,9 @@ function GoalRow({ goal }: { goal: TwitchGoal }) {
   );
 }
 
-// Fallback affiché si la requête GraphQL ne renvoie rien (schéma indéterminé,
-// rate limit, etc.). Valeurs basées sur le snapshot Twitch About visible publiquement.
-// À mettre à jour manuellement de temps en temps si les goals évoluent.
-const FALLBACK_GOALS: TwitchGoal[] = [
-  {
-    type: "FOLLOWERS",
-    description: "Followers",
-    current: 16870,
-    target: 17000,
-    achieved: false,
-  },
-  {
-    type: "NEW_SUBSCRIPTIONS",
-    description: "New subs",
-    current: 62,
-    target: 100,
-    achieved: false,
-  },
-  {
-    type: "BITS",
-    description: "Bits",
-    current: 23929,
-    target: 1000,
-    achieved: true,
-  },
-  {
-    type: "PLUS_LEVEL",
-    description: "Plus level 2",
-    current: 30,
-    target: 300,
-    achieved: false,
-  },
-];
-
 export default async function TwitchGoals({ login }: { login: string }) {
-  const fetched = await fetchTwitchGoals(login);
-  const goals = fetched.length > 0 ? fetched : FALLBACK_GOALS;
+  const goals = await fetchTwitchGoals(login);
+  if (goals.length === 0) return null;
   return (
     <section className="mt-12">
       <SectionHeader

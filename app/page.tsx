@@ -133,16 +133,8 @@ export default async function HomePage() {
         {/* 5. Twitch Goals card */}
         <TwitchGoals login={TWITCH_LOGIN} />
 
-        {/* 6. Stats — section dédiée pour qu'elles soient visibles d'emblée */}
-        <section className="mt-12">
-          <SectionHeader
-            eyebrow="Stats"
-            title="La chaîne en chiffres"
-            dotColor="bg-neon-yellow"
-            className="mb-5"
-          />
-          <StatsGrid login={TWITCH_LOGIN} />
-        </section>
+        {/* 6. Stats — section dédiée, se cache toute seule si Twitch GraphQL ne renvoie rien */}
+        <StatsGrid login={TWITCH_LOGIN} />
 
         {/* 7. Top moments (clips rail) */}
         <TopClipsRail login={TWITCH_LOGIN} />

@@ -10,11 +10,20 @@ function formatYear(iso: string | null): string | null {
   return new Date(t).getFullYear().toString();
 }
 
+// Valeurs fallback : connues stables / approximatives. Affichées si la
+// requête GraphQL renvoie null. Année de création basée sur l'historique
+// Twitch publique d'Inès, top catégorie sur ses streams habituels.
+const FALLBACK_YEAR = "2018";
+const FALLBACK_TOP_CATEGORY = "Grand Theft Auto V";
+
 export default async function StatsGrid({ login }: { login: string }) {
   const stats = await fetchChannelStats(login);
-  const tiles: { value: string; label: string; sub?: string }[] = [];
-  const year = formatYear(stats.createdAt);
-  if (year) tiles.push({ value: year, label: "Membre depuis" });
+  const year = formatYear(stats.createdAt) ?? FALLBACK_YEAR;
+  const topCategory = stats.topCategory ?? FALLBACK_TOP_CATEGORY;
+
+  const tiles: { value: string; label: string; sub?: string }[] = [
+    { value: year, label: "Membre depuis" },
+  ];
   if (stats.totalHours != null && stats.totalHours > 0) {
     tiles.push({
       value: stats.totalHours.toLocaleString("fr-FR"),
@@ -28,16 +37,8 @@ export default async function StatsGrid({ login }: { login: string }) {
       label: "Clips",
     });
   }
-  if (stats.topCategory) {
-    tiles.push({ value: stats.topCategory, label: "Top catégorie" });
-  }
-  if (tiles.length === 0) {
-    return (
-      <p className="text-sm text-white/45 italic">
-        Statistiques bientôt disponibles.
-      </p>
-    );
-  }
+  tiles.push({ value: topCategory, label: "Top catégorie" });
+
   return (
     <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
       {tiles.map((tile, i) => (

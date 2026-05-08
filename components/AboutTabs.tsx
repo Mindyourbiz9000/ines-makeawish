@@ -2,23 +2,21 @@
 
 import { useState, type ReactNode } from "react";
 
-type Tab = "setup" | "questions" | "stats";
+type Tab = "setup" | "questions";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "setup", label: "Setup" },
   { id: "questions", label: "Questions" },
-  { id: "stats", label: "Stats" },
 ];
 
 type Props = {
   setup: ReactNode;
   questions: ReactNode;
-  stats: ReactNode;
 };
 
-export default function AboutTabs({ setup, questions, stats }: Props) {
+export default function AboutTabs({ setup, questions }: Props) {
   const [active, setActive] = useState<Tab>("setup");
-  const panes: Record<Tab, ReactNode> = { setup, questions, stats };
+  const panes: Record<Tab, ReactNode> = { setup, questions };
   return (
     <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl p-2">
       <div role="tablist" className="flex gap-1">

@@ -1,6 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
+import TwitchPill from "@/components/TwitchPill";
 import InesStats from "@/components/InesStats";
 import InesTotal from "@/components/InesTotal";
 import Setup from "@/components/Setup";
@@ -14,6 +15,7 @@ import StatsGrid from "@/components/StatsGrid";
 import AboutTabs from "@/components/AboutTabs";
 import MobileDonateBar from "@/components/MobileDonateBar";
 import SectionHeader from "@/components/SectionHeader";
+import { fetchLiveState } from "@/lib/twitch";
 
 const TWITCH_LOGIN = "inespnj";
 
@@ -24,10 +26,13 @@ export const revalidate = 0;
 
 export default async function HomePage() {
   const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("donation_goals")
-    .select("*")
-    .order("sort_order", { ascending: true });
+  const [{ data, error }, live] = await Promise.all([
+    supabase
+      .from("donation_goals")
+      .select("*")
+      .order("sort_order", { ascending: true }),
+    fetchLiveState(TWITCH_LOGIN),
+  ]);
 
   if (error) {
     return (
@@ -52,7 +57,7 @@ export default async function HomePage() {
         <ParisRpRibbon />
 
         {/* 2. Identity strip + socials */}
-        <header className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
+        <header className="mt-6 flex flex-col gap-4">
           <div className="flex items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -60,16 +65,26 @@ export default async function HomePage() {
               alt="Avatar d'InesPNJ"
               className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-white/10 sm:h-20 sm:w-20"
             />
-            <div className="flex flex-col gap-1">
+            <div className="min-w-0 flex-1">
               <h1 className="neon-title text-3xl leading-none sm:text-4xl">
                 InesPNJ
               </h1>
-              <p className="text-[12px] tracking-tight text-white/55">
+              <p className="mt-1 text-[12px] tracking-tight text-white/55">
                 Streameuse Twitch · #freeines
               </p>
             </div>
+            <div className="hidden sm:block">
+              <TwitchPill
+                initial={{ followers: live.followers, isLive: live.isLive }}
+              />
+            </div>
           </div>
-          <div className="sm:ml-auto">
+          <div className="flex items-center justify-between gap-3">
+            <div className="sm:hidden">
+              <TwitchPill
+                initial={{ followers: live.followers, isLive: live.isLive }}
+              />
+            </div>
             <Socials />
           </div>
         </header>
@@ -118,13 +133,24 @@ export default async function HomePage() {
         {/* 5. Twitch Goals card */}
         <TwitchGoals login={TWITCH_LOGIN} />
 
-        {/* 6. Top moments (clips rail) */}
+        {/* 6. Stats — section dédiée pour qu'elles soient visibles d'emblée */}
+        <section className="mt-12">
+          <SectionHeader
+            eyebrow="Stats"
+            title="La chaîne en chiffres"
+            dotColor="bg-neon-yellow"
+            className="mb-5"
+          />
+          <StatsGrid login={TWITCH_LOGIN} />
+        </section>
+
+        {/* 7. Top moments (clips rail) */}
         <TopClipsRail login={TWITCH_LOGIN} />
 
-        {/* 7. Prochains lives */}
+        {/* 8. Prochains lives */}
         <ScheduleList login={TWITCH_LOGIN} />
 
-        {/* 8. À propos d'Inès — tabs Setup / Questions / Stats */}
+        {/* 9. À propos d'Inès — tabs Setup / Questions */}
         <section id="about" className="mt-12">
           <SectionHeader
             eyebrow="À propos"
@@ -132,14 +158,10 @@ export default async function HomePage() {
             dotColor="bg-neon-blue"
             className="mb-5"
           />
-          <AboutTabs
-            setup={<Setup />}
-            questions={<Questions />}
-            stats={<StatsGrid login={TWITCH_LOGIN} />}
-          />
+          <AboutTabs setup={<Setup />} questions={<Questions />} />
         </section>
 
-        {/* 9. Événements passés — Make a Wish archivé */}
+        {/* 10. Événements passés — Make a Wish archivé */}
         <section className="mt-16 border-t border-white/[0.06] pt-8">
           <details className="group">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm font-medium uppercase tracking-[0.22em] text-white/65 transition-colors hover:text-white">
@@ -224,14 +246,14 @@ export default async function HomePage() {
           </details>
         </section>
 
-        {/* 10. Footer */}
+        {/* 11. Footer */}
         <footer className="mt-24 flex flex-col items-center justify-between gap-4 border-t border-white/[0.05] pt-8 text-[12px] text-white/40 sm:flex-row">
           <Socials variant="footer" />
           <span>© InesPNJ {new Date().getFullYear()}</span>
         </footer>
       </main>
 
-      {/* 11. Sticky mobile donate bar */}
+      {/* 12. Sticky mobile donate bar */}
       <MobileDonateBar />
     </>
   );

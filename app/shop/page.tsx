@@ -16,12 +16,12 @@ export const metadata = {
 };
 
 const PRODUCTS = [
-  { code: "T-shirt", name: "SLAY", index: 1, imageSrc: "/shop/placeholder/tshirt-slay.png" },
-  { code: "Sweat", name: "SLAY", index: 2, imageSrc: "/shop/placeholder/sweat-slay.png" },
-  { code: "Hoodie", name: "SLAY", index: 3, imageSrc: "/shop/placeholder/hoodie-slay.png" },
-  { code: "Casquette", name: "SLAY", index: 4, imageSrc: "/shop/placeholder/cap-slay.png" },
-  { code: "Mug", name: "SLAY", index: 5, imageSrc: "/shop/placeholder/mug-slay.png" },
-  { code: "Stickers", name: "SLAY", index: 6, imageSrc: "/shop/placeholder/stickers-slay.png" },
+  { code: "T-shirt", name: "SLAY", index: 1, imageSrc: "/shop/placeholder/tshirt-noir.jpg" },
+  { code: "T-shirt cropped", name: "SLAY", index: 2, imageSrc: "/shop/placeholder/tshirt-cropped.jpg" },
+  { code: "Sweat", name: "SLAY", index: 3, imageSrc: "/shop/placeholder/sweat-blanc.jpg" },
+  { code: "Sweat rosé", name: "SLAY", index: 4, imageSrc: "/shop/placeholder/sweat-rose.jpg" },
+  { code: "Hoodie", name: "SLAY", index: 5, imageSrc: "/shop/placeholder/hoodie-noir.jpg" },
+  { code: "Hoodie crème", name: "SLAY", index: 6, imageSrc: "/shop/placeholder/hoodie-creme.jpg" },
 ];
 
 export default function ShopPage() {

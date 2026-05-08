@@ -185,7 +185,27 @@ type GoalsResponse = {
   } | null;
 };
 
-const GOALS_QUERY = /* GraphQL */ `
+// Note: la documentation officielle (Helix) utilise le terme "creator goals".
+// Le champ GraphQL est très probablement `creatorGoals` plutôt que `goals`.
+// On essaie plusieurs variantes pour être robuste si Twitch change la convention.
+
+const GOALS_QUERY_CREATOR = /* GraphQL */ `
+  query ChannelCreatorGoals($login: String!) {
+    user(login: $login) {
+      id
+      creatorGoals {
+        id
+        type
+        description
+        currentAmount
+        targetAmount
+        isAchieved
+      }
+    }
+  }
+`;
+
+const GOALS_QUERY_LEGACY = /* GraphQL */ `
   query ChannelGoals($login: String!) {
     user(login: $login) {
       id
@@ -201,10 +221,30 @@ const GOALS_QUERY = /* GraphQL */ `
   }
 `;
 
+type GoalNode = {
+  id: string;
+  type: string;
+  description: string | null;
+  currentAmount: number;
+  targetAmount: number;
+  isAchieved: boolean;
+};
+
+type CreatorGoalsResponse = {
+  user: { creatorGoals: GoalNode[] | null } | null;
+};
+
 export async function fetchTwitchGoals(login: string): Promise<TwitchGoal[]> {
-  const data = await gql<GoalsResponse>(GOALS_QUERY, { login }, 60);
-  if (!data?.user?.goals) return [];
-  return data.user.goals.map((g) => ({
+  // Try `creatorGoals` first (matches Helix API naming).
+  const a = await gql<CreatorGoalsResponse>(GOALS_QUERY_CREATOR, { login }, 60);
+  let nodes = a?.user?.creatorGoals ?? null;
+  if (!nodes) {
+    // Fall back to legacy `goals` field.
+    const b = await gql<GoalsResponse>(GOALS_QUERY_LEGACY, { login }, 60);
+    nodes = b?.user?.goals ?? null;
+  }
+  if (!nodes) return [];
+  return nodes.map((g) => ({
     type: g.type,
     description: g.description ?? "",
     current: g.currentAmount,

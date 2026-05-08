@@ -17,10 +17,13 @@ function formatInt(n: number): string {
 }
 
 function formatHours(n: number): string {
-  // SullyGnome renvoie déjà la valeur en heures pour gamestreamedtime.
-  // On affiche avec 1 décimale si < 10h, sinon entier.
-  if (n < 10) return `${n.toFixed(1)} h`;
-  return `${Math.round(n).toLocaleString("fr-FR")} h`;
+  // n = heures décimales (ex: 14.75). Affichage "14h 45min" / "4h" / "30min".
+  const total = Math.round(n * 60); // minutes totales
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+  if (h === 0) return `${m}min`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m.toString().padStart(2, "0")}min`;
 }
 
 function formatDelta(n: number): string {

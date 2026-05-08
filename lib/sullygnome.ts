@@ -78,49 +78,78 @@ function pieUrl(metric: string, period: SullyPeriod): string {
 }
 
 // ---------------------------------------------------------------------------
-// Parsers (Highcharts config shapes)
+// Parsers (Chart.js config shapes — confirmé via /api/debug/sullygnome)
+//
+// Structure réelle des réponses SullyGnome :
+//   {
+//     type: "line" | "pie",
+//     options: { ... },
+//     data: {
+//       labels: string[],           // pie: noms de slices ; line: timestamps
+//       datasets: [{
+//         label: string,
+//         data: number[] | { x, y }[]
+//       }]
+//     },
+//     custom: { ... }
+//   }
+//
+// Pour les pies de `channelgamestreamedtime`, les valeurs sont en QUARTS D'HEURE
+// (unités de 15 min) — confirmé par le `custom.maxvalue` qui dit "14 hours, 45
+// minutes" pour une valeur de 59 (= 59/4 = 14.75 h).
 // ---------------------------------------------------------------------------
 
-type LineConfig = {
-  series?: Array<{
-    name?: string;
-    data?: Array<[number, number]> | number[];
-  }>;
+type ChartJsResponse<T> = {
+  type?: string;
+  data?: {
+    labels?: string[];
+    datasets?: Array<{
+      label?: string;
+      data?: T[];
+    }>;
+  };
 };
 
-type PieConfig = {
-  series?: Array<{
-    name?: string;
-    data?: Array<{ name?: string; y?: number }>;
-  }>;
-};
+type LinePoint = number | { x?: unknown; y?: number };
 
-function lineSeriesValues(cfg: LineConfig | null): number[] {
-  if (!cfg?.series?.[0]?.data) return [];
-  const data = cfg.series[0].data;
+function lineSeriesValues(cfg: ChartJsResponse<LinePoint> | null): number[] {
+  const data = cfg?.data?.datasets?.[0]?.data;
+  if (!Array.isArray(data)) return [];
   const values: number[] = [];
   for (const point of data) {
-    if (typeof point === "number") {
+    if (typeof point === "number" && Number.isFinite(point)) {
       values.push(point);
-    } else if (Array.isArray(point) && typeof point[1] === "number") {
-      values.push(point[1]);
+    } else if (
+      point &&
+      typeof point === "object" &&
+      "y" in point &&
+      typeof point.y === "number" &&
+      Number.isFinite(point.y)
+    ) {
+      values.push(point.y);
     }
   }
   return values;
 }
 
-function topPieSlice(cfg: PieConfig | null): { name: string; value: number } | null {
-  if (!cfg?.series?.[0]?.data) return null;
+function topPieSlice(
+  cfg: ChartJsResponse<number> | null
+): { name: string; value: number } | null {
+  const labels = cfg?.data?.labels;
+  const values = cfg?.data?.datasets?.[0]?.data;
+  if (!Array.isArray(labels) || !Array.isArray(values)) return null;
   let best: { name: string; value: number } | null = null;
-  for (const slice of cfg.series[0].data) {
+  for (let i = 0; i < labels.length; i++) {
+    const name = labels[i];
+    const value = values[i];
     if (
-      typeof slice.y === "number" &&
-      slice.y > 0 &&
-      typeof slice.name === "string" &&
-      slice.name.trim() !== ""
+      typeof name === "string" &&
+      name.trim() !== "" &&
+      typeof value === "number" &&
+      value > 0
     ) {
-      if (!best || slice.y > best.value) {
-        best = { name: slice.name, value: slice.y };
+      if (!best || value > best.value) {
+        best = { name, value };
       }
     }
   }
@@ -162,10 +191,10 @@ export async function fetchSullyGnomeStats(
 ): Promise<SullyStats | null> {
   const REVALIDATE = 21600; // 6h
   const [viewersCfg, followersCfg, gameTimePie, gameViewersPie] = await Promise.all([
-    fetchJson<LineConfig>(lineUrl("ChannelViewers", period), REVALIDATE),
-    fetchJson<LineConfig>(lineUrl("ChannelFollowers", period), REVALIDATE),
-    fetchJson<PieConfig>(pieUrl("channelgamestreamedtime", period), REVALIDATE),
-    fetchJson<PieConfig>(pieUrl("channelgameavgviewers", period), REVALIDATE),
+    fetchJson<ChartJsResponse<LinePoint>>(lineUrl("ChannelViewers", period), REVALIDATE),
+    fetchJson<ChartJsResponse<LinePoint>>(lineUrl("ChannelFollowers", period), REVALIDATE),
+    fetchJson<ChartJsResponse<number>>(pieUrl("channelgamestreamedtime", period), REVALIDATE),
+    fetchJson<ChartJsResponse<number>>(pieUrl("channelgameavgviewers", period), REVALIDATE),
   ]);
 
   // Peak + average viewers depuis la série de viewers (on ignore les zéros — quand la
@@ -184,16 +213,17 @@ export async function fetchSullyGnomeStats(
       ? followersValues[followersValues.length - 1] - followersValues[0]
       : null;
 
-  // Top jeu par temps streamé.
+  // Top jeu par temps streamé. Les valeurs sont en QUARTS D'HEURE (15 min units),
+  // on convertit en heures décimales pour l'affichage.
   const topTime = topPieSlice(gameTimePie);
   const topGameByTime = topTime
-    ? { name: topTime.name, hours: topTime.value }
+    ? { name: topTime.name, hours: topTime.value / 4 }
     : null;
 
-  // Top jeu par viewers moyen.
+  // Top jeu par viewers moyen. Valeurs en viewers entiers, pas de conversion.
   const topViewers = topPieSlice(gameViewersPie);
   const topGameByViewers = topViewers
-    ? { name: topViewers.name, viewers: topViewers.value }
+    ? { name: topViewers.name, viewers: Math.round(topViewers.value) }
     : null;
 
   // Si toutes les requêtes ont raté (réseau down, Cloudflare, etc.), on ne renvoie rien.

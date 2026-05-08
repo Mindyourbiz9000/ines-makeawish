@@ -62,6 +62,7 @@ export default async function AdminProductsPage() {
               {/* Edit form */}
               <form
                 action={updateProductAction}
+                encType="multipart/form-data"
                 className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2"
               >
                 <input type="hidden" name="id" value={p.id} />
@@ -115,17 +116,33 @@ export default async function AdminProductsPage() {
                   />
                 </label>
 
-                <label className="block md:col-span-2">
-                  <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-                    Image (chemin /public)
-                  </span>
-                  <input
-                    name="image_src"
-                    defaultValue={p.image_src ?? ""}
-                    className={inputBase}
-                    placeholder="/shop/placeholder/..."
-                  />
-                </label>
+                <div className="md:col-span-2">
+                  <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-white/45">
+                    Image
+                  </p>
+                  <div className="flex flex-col gap-2 rounded-md bg-white/[0.02] p-3 ring-1 ring-white/[0.06] sm:flex-row sm:items-center">
+                    <input
+                      type="file"
+                      name="image_file"
+                      accept="image/*"
+                      className="block w-full text-[13px] text-white/85 file:mr-3 file:min-h-[36px] file:rounded-md file:border-0 file:bg-white/[0.08] file:px-3 file:text-[12px] file:uppercase file:tracking-[0.18em] file:font-semibold file:text-white file:transition-colors hover:file:bg-white/[0.14]"
+                    />
+                    <span className="text-[11px] text-white/35 sm:whitespace-nowrap">
+                      {p.image_src ? "Remplace l'actuelle si choisi" : "Sélectionne une image"}
+                    </span>
+                  </div>
+                  <details className="mt-2">
+                    <summary className="cursor-pointer text-[11px] uppercase tracking-[0.18em] text-white/35 hover:text-white/60">
+                      Ou saisir un chemin /public manuellement
+                    </summary>
+                    <input
+                      name="image_src"
+                      defaultValue={p.image_src ?? ""}
+                      className={`${inputBase} mt-2`}
+                      placeholder="/shop/placeholder/..."
+                    />
+                  </details>
+                </div>
 
                 <label className="block md:col-span-2">
                   <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
@@ -241,6 +258,7 @@ export default async function AdminProductsPage() {
         </p>
         <form
           action={createProductAction}
+          encType="multipart/form-data"
           className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2"
         >
           <label className="block">
@@ -274,12 +292,32 @@ export default async function AdminProductsPage() {
               placeholder="6500"
             />
           </label>
-          <label className="block md:col-span-2">
-            <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-              Image (chemin /public)
-            </span>
-            <input name="image_src" className={inputBase} placeholder="/shop/placeholder/hoodie-noir.jpg" />
-          </label>
+          <div className="md:col-span-2">
+            <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-white/45">
+              Image
+            </p>
+            <div className="rounded-md bg-white/[0.02] p-3 ring-1 ring-white/[0.06]">
+              <input
+                type="file"
+                name="image_file"
+                accept="image/*"
+                className="block w-full text-[13px] text-white/85 file:mr-3 file:min-h-[36px] file:rounded-md file:border-0 file:bg-white/[0.08] file:px-3 file:text-[12px] file:uppercase file:tracking-[0.18em] file:font-semibold file:text-white file:transition-colors hover:file:bg-white/[0.14]"
+              />
+              <p className="mt-1 text-[11px] text-white/35">
+                Upload une image (jpg/png/webp, max 8 MB) — elle sera servie depuis Supabase Storage.
+              </p>
+            </div>
+            <details className="mt-2">
+              <summary className="cursor-pointer text-[11px] uppercase tracking-[0.18em] text-white/35 hover:text-white/60">
+                Ou saisir un chemin /public manuellement
+              </summary>
+              <input
+                name="image_src"
+                className={`${inputBase} mt-2`}
+                placeholder="/shop/placeholder/hoodie-noir.jpg"
+              />
+            </details>
+          </div>
           <label className="block md:col-span-2">
             <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
               Description

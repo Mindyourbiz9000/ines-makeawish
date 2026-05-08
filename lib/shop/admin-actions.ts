@@ -10,6 +10,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/types";
+
+type ProductUpdate = Database["public"]["Tables"]["shop_products"]["Update"];
 
 const SIZES_DEFAULT = ["XS", "S", "M", "L", "XL", "XXL"];
 
@@ -33,6 +36,78 @@ function readBool(form: FormData, key: string): boolean {
 }
 
 // ============================================================
+// Image upload (Supabase Storage)
+// ============================================================
+
+const SHOP_BUCKET = "shop-images";
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
+
+function slugifyForFilename(input: string): string {
+  return (
+    input
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "") // remove accents
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60) || "product"
+  );
+}
+
+/**
+ * Upload une image vers le bucket Storage 'shop-images' et retourne son URL
+ * publique. Renvoie null si le fichier est absent ou invalide.
+ */
+async function uploadProductImage(
+  file: File,
+  slug: string
+): Promise<string | null> {
+  if (!file || file.size === 0) return null;
+  if (file.size > MAX_IMAGE_BYTES) {
+    throw new Error(
+      `Image trop volumineuse (${Math.round(file.size / 1024 / 1024)} MB) — max ${MAX_IMAGE_BYTES / 1024 / 1024} MB`
+    );
+  }
+  const supabase = createServerClient();
+  const ext =
+    file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") ||
+    (file.type === "image/png" ? "png" : "jpg");
+  const path = `${slugifyForFilename(slug)}-${Date.now()}.${ext}`;
+  const buffer = await file.arrayBuffer();
+  const { error } = await supabase.storage
+    .from(SHOP_BUCKET)
+    .upload(path, buffer, {
+      contentType: file.type || "image/jpeg",
+      upsert: false,
+    });
+  if (error) {
+    throw new Error(`Upload image : ${error.message}`);
+  }
+  const { data } = supabase.storage.from(SHOP_BUCKET).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/**
+ * Lit le couple (image_file, image_src) du form. Si un fichier est fourni,
+ * l'upload et retourne sa public URL. Sinon retourne le chemin texte (ou
+ * undefined pour ne pas toucher au champ existant en update).
+ */
+async function resolveImageSrc(
+  formData: FormData,
+  slug: string
+): Promise<string | null | undefined> {
+  const file = formData.get("image_file");
+  if (file instanceof File && file.size > 0) {
+    return uploadProductImage(file, slug);
+  }
+  // Pas de fichier : on regarde le champ texte (fallback / chemin /public manuel)
+  const textPath = formData.get("image_src");
+  if (typeof textPath !== "string") return undefined; // champ absent
+  const trimmed = textPath.trim();
+  return trimmed === "" ? null : trimmed;
+}
+
+// ============================================================
 // PRODUCTS
 // ============================================================
 
@@ -44,7 +119,8 @@ export async function createProductAction(formData: FormData) {
     throw new Error("slug, code et name sont obligatoires");
   }
   const description = readString(formData, "description");
-  const image_src = readString(formData, "image_src");
+  const resolvedImage = await resolveImageSrc(formData, slug);
+  const image_src = resolvedImage === undefined ? null : resolvedImage;
   const price_cents = readNumber(formData, "price_cents", 0);
   const sort_order = readNumber(formData, "sort_order", 0);
   const sizesRaw = readString(formData, "sizes");
@@ -86,19 +162,25 @@ export async function createProductAction(formData: FormData) {
 export async function updateProductAction(formData: FormData) {
   const id = readNumber(formData, "id");
   if (!id) throw new Error("id manquant");
+  const slug = readString(formData, "slug");
+  const resolvedImage = await resolveImageSrc(formData, slug ?? `product-${id}`);
   const supabase = createServerClient();
+  const update: ProductUpdate = {
+    slug: slug ?? undefined,
+    code: readString(formData, "code") ?? undefined,
+    name: readString(formData, "name") ?? undefined,
+    description: readString(formData, "description"),
+    price_cents: readNumber(formData, "price_cents", 0),
+    sort_order: readNumber(formData, "sort_order", 0),
+    active: readBool(formData, "active"),
+  };
+  // Ne touche au champ image_src QUE si l'utilisateur a fourni quelque chose
+  if (resolvedImage !== undefined) {
+    update.image_src = resolvedImage;
+  }
   const { error } = await supabase
     .from("shop_products")
-    .update({
-      slug: readString(formData, "slug") ?? undefined,
-      code: readString(formData, "code") ?? undefined,
-      name: readString(formData, "name") ?? undefined,
-      description: readString(formData, "description"),
-      image_src: readString(formData, "image_src"),
-      price_cents: readNumber(formData, "price_cents", 0),
-      sort_order: readNumber(formData, "sort_order", 0),
-      active: readBool(formData, "active"),
-    })
+    .update(update)
     .eq("id", id);
   if (error) throw new Error(`Update produit : ${error.message}`);
   revalidatePath("/shop/admin");

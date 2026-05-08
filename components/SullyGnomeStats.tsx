@@ -100,7 +100,7 @@ export default async function SullyGnomeStats({
             <StatTile
               accent="yellow"
               icon={<GamepadIcon className="h-full w-full" />}
-              label="Top jeu joué"
+              label="Top catégorie"
               value={stats.topGameByTime.name}
               sub={formatHours(stats.topGameByTime.hours)}
             />
@@ -112,7 +112,7 @@ export default async function SullyGnomeStats({
             <StatTile
               accent="purple"
               icon={<FlameIcon className="h-full w-full" />}
-              label="Top jeu en viewers"
+              label="Top catégorie en viewers"
               value={stats.topGameByViewers.name}
               sub={`${formatInt(stats.topGameByViewers.viewers)} viewers en moyenne`}
             />

@@ -72,31 +72,27 @@ export function StatTile({
 }: CommonProps) {
   const a = ACCENTS[accent];
   return (
-    <div className="group relative overflow-hidden rounded-2xl bg-white/[0.03] p-4 ring-1 ring-white/10 transition-colors hover:bg-white/[0.05] sm:p-5">
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white/[0.03] p-4 ring-1 ring-white/10 transition-colors hover:bg-white/[0.05] sm:p-5">
       <div
         aria-hidden="true"
-        className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent`}
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent"
       />
-      <div className="flex items-start gap-3">
-        <div
-          className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${a.iconBg} ${a.text}`}
-        >
-          <span className="h-5 w-5">{icon}</span>
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] uppercase tracking-[0.18em] text-white/45 sm:text-[11px]">
-            {label}
-          </p>
-          <p className="line-clamp-2 text-base font-semibold leading-tight text-white sm:text-lg">
-            {value}
-          </p>
-          {sub ? (
-            <p className="mt-0.5 text-[11px] tabular-nums text-white/50">
-              {sub}
-            </p>
-          ) : null}
-        </div>
+      <div
+        className={`mb-3 grid h-10 w-10 shrink-0 place-items-center rounded-xl ${a.iconBg} ${a.text}`}
+      >
+        <span className="h-5 w-5">{icon}</span>
       </div>
+      <p className="text-[10px] uppercase tracking-[0.18em] text-white/45 sm:text-[11px]">
+        {label}
+      </p>
+      <p className="mt-1 break-words text-lg font-semibold leading-tight text-white sm:text-xl">
+        {value}
+      </p>
+      {sub ? (
+        <p className="mt-auto pt-2 text-[11px] tabular-nums text-white/50">
+          {sub}
+        </p>
+      ) : null}
     </div>
   );
 }

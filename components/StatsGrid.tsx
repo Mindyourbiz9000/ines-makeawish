@@ -105,7 +105,7 @@ export default function StatsGrid({ live }: { live: TwitchLiveState }) {
         dotColor="bg-neon-yellow"
         className="mb-5"
       />
-      <div className={`grid gap-3 ${gridColsClass(tiles.length)}`}>
+      <div className={`grid auto-rows-fr gap-3 ${gridColsClass(tiles.length)}`}>
         {tiles}
       </div>
     </section>

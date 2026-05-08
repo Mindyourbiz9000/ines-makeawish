@@ -62,7 +62,7 @@ export default async function SullyGnomeStats({
         dotColor="bg-neon-blue"
         className="mb-5"
       />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+      <div className="grid auto-rows-fr grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
         {hasHero ? (
           <div className="sm:col-span-2 md:col-span-2 md:row-span-2">
             <HeroStatTile

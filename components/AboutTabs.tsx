@@ -5,8 +5,8 @@ import { useState, type ReactNode } from "react";
 type Tab = "setup" | "questions";
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: "setup", label: "Setup" },
   { id: "questions", label: "Questions" },
+  { id: "setup", label: "Setup" },
 ];
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function AboutTabs({ setup, questions }: Props) {
-  const [active, setActive] = useState<Tab>("setup");
+  const [active, setActive] = useState<Tab>("questions");
   const panes: Record<Tab, ReactNode> = { setup, questions };
   return (
     <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl p-2">

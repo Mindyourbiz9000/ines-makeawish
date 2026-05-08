@@ -8,9 +8,6 @@ import Setup from "@/components/Setup";
 import Questions from "@/components/Questions";
 import ParisRpRibbon from "@/components/ParisRpRibbon";
 import LiveBanner from "@/components/LiveBanner";
-import TwitchGoals from "@/components/TwitchGoals";
-import TopClipsRail from "@/components/TopClipsRail";
-import ScheduleList from "@/components/ScheduleList";
 import StatsGrid from "@/components/StatsGrid";
 import AboutTabs from "@/components/AboutTabs";
 import MobileDonateBar from "@/components/MobileDonateBar";
@@ -125,22 +122,13 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* 4. Twitch Now card (live state ou dernier VOD) */}
-        <LiveBanner login={TWITCH_LOGIN} />
+        {/* 4. Twitch Now card (live state ou dernier replay) */}
+        <LiveBanner live={live} />
 
-        {/* 5. Twitch Goals card */}
-        <TwitchGoals login={TWITCH_LOGIN} />
+        {/* 5. Stats — alimentées par IVR.fi, se cache toute seule si pas de données */}
+        <StatsGrid live={live} />
 
-        {/* 6. Stats — section dédiée, se cache toute seule si Twitch GraphQL ne renvoie rien */}
-        <StatsGrid login={TWITCH_LOGIN} />
-
-        {/* 7. Top moments (clips rail) */}
-        <TopClipsRail login={TWITCH_LOGIN} />
-
-        {/* 8. Prochains lives */}
-        <ScheduleList login={TWITCH_LOGIN} />
-
-        {/* 9. À propos d'Inès — tabs Setup / Questions */}
+        {/* 6. À propos d'Inès — tabs Setup / Questions */}
         <section id="about" className="mt-12">
           <SectionHeader
             eyebrow="À propos"

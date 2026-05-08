@@ -1,22 +1,18 @@
-// Server component : carte "Twitch Now" qui s'adapte selon que la chaîne est live ou pas.
+// Carte "Twitch Now" qui s'adapte au statut live d'Inès. 100% IVR.fi, plus de GraphQL.
 //
-// - En live : carte rouge animée avec thumbnail, titre, viewers, catégorie, CTA "Regarder sur Twitch".
-// - Offline : carte neutre avec le dernier VOD (titre, durée, vues), CTA "Voir le replay".
-// - Si offline ET aucun VOD trouvé : on n'affiche rien (le slot disparaît).
+// - En live : carte rouge animée avec thumbnail + viewers + titre + catégorie + CTA Twitch.
+// - Offline : carte neutre avec le titre du dernier broadcast + catégorie + CTA "Voir les replays".
+// - Si aucune info de last broadcast non plus, on affiche au moins un cadre minimal qui pointe
+//   vers Twitch — pas de fake data, pas de section vide non plus.
 
-import { fetchLiveState, fetchRecentVods } from "@/lib/twitch";
+import type { TwitchLiveState } from "@/lib/twitch";
 
 const TWITCH_CHANNEL_URL = "https://www.twitch.tv/inespnj";
+const TWITCH_VIDEOS_URL =
+  "https://www.twitch.tv/inespnj/videos?filter=archives";
 
 function formatViewers(n: number): string {
   return n.toLocaleString("fr-FR");
-}
-
-function formatDuration(seconds: number): string {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  if (h > 0) return `${h}h ${m.toString().padStart(2, "0")}`;
-  return `${m} min`;
 }
 
 function formatRelative(iso: string | null): string {
@@ -41,12 +37,7 @@ function thumb(url: string | null, width = 360, height = 200): string | null {
     .replace("{height}", String(height));
 }
 
-export default async function LiveBanner({ login }: { login: string }) {
-  const [live, vods] = await Promise.all([
-    fetchLiveState(login),
-    fetchRecentVods(login, 1),
-  ]);
-
+export default function LiveBanner({ live }: { live: TwitchLiveState }) {
   if (live.isLive && live.stream) {
     const thumbUrl = thumb(live.stream.thumbnailUrl, 640, 360);
     return (
@@ -113,32 +104,32 @@ export default async function LiveBanner({ login }: { login: string }) {
     );
   }
 
-  // Offline state — show the last VOD if we have one, else hide.
-  const lastVod = vods[0];
-  if (!lastVod) return null;
+  // Offline state — IVR's lastBroadcast (no thumbnail, no view count, no length).
+  // On affiche ce qu'on a + lien vers la liste des replays.
+  if (!live.lastBroadcast?.title) return null;
 
-  const thumbUrl = thumb(lastVod.thumbnailUrl, 640, 360);
+  const banner = thumb(live.offlineImageUrl, 640, 360);
   return (
     <section className="mt-6 sm:mt-8 rounded-3xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl px-5 py-5 sm:px-6 sm:py-6">
       <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em]">
         <span className="h-2 w-2 rounded-full bg-white/30" />
         <span className="text-white/55">Dernier replay</span>
-        {lastVod.publishedAt ? (
+        {live.lastBroadcast.startedAt ? (
           <>
             <span className="text-white/20">·</span>
             <span className="text-xs normal-case tracking-normal text-white/45">
-              {formatRelative(lastVod.publishedAt)}
+              {formatRelative(live.lastBroadcast.startedAt)}
             </span>
           </>
         ) : null}
       </div>
       <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
         <div className="w-full sm:w-[180px] aspect-video shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10 bg-night-900">
-          {thumbUrl ? (
+          {banner ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={thumbUrl}
-              alt={`Miniature ${lastVod.title}`}
+              src={banner}
+              alt={`Bannière offline d'InesPNJ`}
               className="h-full w-full object-cover"
             />
           ) : (
@@ -149,30 +140,21 @@ export default async function LiveBanner({ login }: { login: string }) {
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="text-base sm:text-lg font-semibold leading-snug text-white line-clamp-2">
-            {lastVod.title}
+            {live.lastBroadcast.title}
           </h3>
-          <div className="mt-1.5 inline-flex flex-wrap items-center gap-2 text-[12px] text-white/55">
-            <span className="tabular-nums">
-              {formatDuration(lastVod.lengthSeconds)}
-            </span>
-            <span className="h-1 w-1 rounded-full bg-white/40" />
-            <span className="tabular-nums">
-              {lastVod.viewCount.toLocaleString("fr-FR")} vues
-            </span>
-            {lastVod.game ? (
-              <>
-                <span className="h-1 w-1 rounded-full bg-white/40" />
-                <span>{lastVod.game}</span>
-              </>
-            ) : null}
-          </div>
+          {live.lastBroadcast.game ? (
+            <div className="mt-1.5 inline-flex items-center gap-2 text-[12px] text-white/55">
+              <span className="h-1 w-1 rounded-full bg-white/40" />
+              <span>{live.lastBroadcast.game}</span>
+            </div>
+          ) : null}
           <a
-            href={lastVod.url}
+            href={TWITCH_VIDEOS_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 text-sm font-semibold text-white/90 transition-colors hover:bg-white/[0.10]"
           >
-            Voir le replay
+            Voir les replays
             <svg
               viewBox="0 0 24 24"
               fill="none"

@@ -1,7 +1,7 @@
-// Server component : grille 2x2 (mobile) / 4-up (desktop) de stats publiques de la chaîne.
-// Membre depuis · heures streamées · clips · top catégorie. Tous optionnels.
+// Tuiles de stats publiques : 100% IVR.fi (créationCompte, followers, dernière catégorie, statut).
+// Pas de fake data — chaque tuile n'apparaît que si on a la vraie valeur.
 
-import { fetchChannelStats } from "@/lib/twitch";
+import type { TwitchLiveState } from "@/lib/twitch";
 import SectionHeader from "./SectionHeader";
 
 function formatYear(iso: string | null): string | null {
@@ -11,30 +11,34 @@ function formatYear(iso: string | null): string | null {
   return new Date(t).getFullYear().toString();
 }
 
-export default async function StatsGrid({ login }: { login: string }) {
-  const stats = await fetchChannelStats(login);
-  const year = formatYear(stats.createdAt);
+function formatFollowers(n: number | null): string | null {
+  if (n == null || n <= 0) return null;
+  return n.toLocaleString("fr-FR");
+}
 
-  const tiles: { value: string; label: string; sub?: string }[] = [];
+function formatStatus(roles: TwitchLiveState["roles"]): string | null {
+  if (roles.isPartner) return "Partenaire";
+  if (roles.isAffiliate) return "Affilié";
+  return null;
+}
+
+export default function StatsGrid({ live }: { live: TwitchLiveState }) {
+  const tiles: { value: string; label: string }[] = [];
+
+  const year = formatYear(live.createdAt);
   if (year) tiles.push({ value: year, label: "Membre depuis" });
-  if (stats.totalHours != null && stats.totalHours > 0) {
-    tiles.push({
-      value: stats.totalHours.toLocaleString("fr-FR"),
-      label: "Heures streamées",
-      sub: " h",
-    });
-  }
-  if (stats.totalClips != null && stats.totalClips > 0) {
-    tiles.push({
-      value: stats.totalClips.toLocaleString("fr-FR"),
-      label: "Clips",
-    });
-  }
-  if (stats.topCategory) {
-    tiles.push({ value: stats.topCategory, label: "Top catégorie" });
+
+  const followers = formatFollowers(live.followers);
+  if (followers) tiles.push({ value: followers, label: "Followers" });
+
+  if (live.lastBroadcast?.game) {
+    tiles.push({ value: live.lastBroadcast.game, label: "Dernière catégorie" });
   }
 
-  // Pas de données réelles → on n'affiche rien. Pas de valeurs inventées.
+  const status = formatStatus(live.roles);
+  if (status) tiles.push({ value: status, label: "Statut" });
+
+  // Pas de vraies données → on ne rend rien (jamais de section vide ou inventée).
   if (tiles.length === 0) return null;
 
   return (
@@ -53,9 +57,6 @@ export default async function StatsGrid({ login }: { login: string }) {
           >
             <p className="text-2xl font-semibold tabular-nums text-white">
               {tile.value}
-              {tile.sub ? (
-                <span className="text-base text-white/55">{tile.sub}</span>
-              ) : null}
             </p>
             <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/45">
               {tile.label}

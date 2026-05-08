@@ -16,12 +16,12 @@ export const metadata = {
 };
 
 const PRODUCTS = [
-  { code: "TEE · N°01", name: "SLAY", index: 1, imageSrc: "/shop/placeholder/tshirt-slay.png" },
-  { code: "SWEAT · N°02", name: "SLAY", index: 2, imageSrc: "/shop/placeholder/sweat-slay.png" },
-  { code: "HOODIE · N°03", name: "SLAY", index: 3, imageSrc: "/shop/placeholder/hoodie-slay.png" },
-  { code: "CAP · N°04", name: "SLAY", index: 4, imageSrc: "/shop/placeholder/cap-slay.png" },
-  { code: "MUG · N°05", name: "SLAY", index: 5, imageSrc: "/shop/placeholder/mug-slay.png" },
-  { code: "STICKERS · N°06", name: "SLAY", index: 6, imageSrc: "/shop/placeholder/stickers-slay.png" },
+  { code: "T-shirt", name: "SLAY", index: 1, imageSrc: "/shop/placeholder/tshirt-slay.png" },
+  { code: "Sweat", name: "SLAY", index: 2, imageSrc: "/shop/placeholder/sweat-slay.png" },
+  { code: "Hoodie", name: "SLAY", index: 3, imageSrc: "/shop/placeholder/hoodie-slay.png" },
+  { code: "Casquette", name: "SLAY", index: 4, imageSrc: "/shop/placeholder/cap-slay.png" },
+  { code: "Mug", name: "SLAY", index: 5, imageSrc: "/shop/placeholder/mug-slay.png" },
+  { code: "Stickers", name: "SLAY", index: 6, imageSrc: "/shop/placeholder/stickers-slay.png" },
 ];
 
 export default function ShopPage() {
@@ -40,7 +40,7 @@ export default function ShopPage() {
             aria-hidden="true"
             className="h-1.5 w-1.5 animate-pulse rounded-full bg-neon-pink"
           />
-          <span>Preview · N°01</span>
+          <span>Boutique · Aperçu</span>
         </div>
       </nav>
 
@@ -48,8 +48,8 @@ export default function ShopPage() {
 
       <section className="mt-16 sm:mt-24">
         <SectionHeader
-          eyebrow="Index — 06 items"
-          title="The drop"
+          eyebrow="Le catalogue · 6 articles"
+          title="Le merch"
           className="mb-10"
         />
         <div className="grid grid-cols-1 gap-x-4 gap-y-10 xs:grid-cols-2 sm:grid-cols-3">

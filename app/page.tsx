@@ -79,14 +79,12 @@ export default async function HomePage() {
               />
             </div>
           </div>
-          <div className="flex items-center justify-between gap-3">
-            <div className="sm:hidden">
-              <TwitchPill
-                initial={{ followers: live.followers, isLive: live.isLive }}
-              />
-            </div>
-            <Socials />
+          <div className="sm:hidden">
+            <TwitchPill
+              initial={{ followers: live.followers, isLive: live.isLive }}
+            />
           </div>
+          <Socials />
         </header>
 
         {/* 3. Hero (compact) */}

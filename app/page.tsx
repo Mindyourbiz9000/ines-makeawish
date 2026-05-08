@@ -9,6 +9,7 @@ import Questions from "@/components/Questions";
 import ParisRpRibbon from "@/components/ParisRpRibbon";
 import LiveBanner from "@/components/LiveBanner";
 import StatsGrid from "@/components/StatsGrid";
+import SullyGnomeStats from "@/components/SullyGnomeStats";
 import AboutTabs from "@/components/AboutTabs";
 import MobileDonateBar from "@/components/MobileDonateBar";
 import SectionHeader from "@/components/SectionHeader";
@@ -128,7 +129,10 @@ export default async function HomePage() {
         {/* 5. Stats — alimentées par IVR.fi, se cache toute seule si pas de données */}
         <StatsGrid live={live} />
 
-        {/* 6. À propos d'Inès — tabs Setup / Questions */}
+        {/* 6. Stats 7 jours — scrapées depuis sullygnome.com, se cache si scraping rate */}
+        <SullyGnomeStats login={TWITCH_LOGIN} period={7} />
+
+        {/* 7. À propos d'Inès — tabs Setup / Questions */}
         <section id="about" className="mt-12">
           <SectionHeader
             eyebrow="À propos"

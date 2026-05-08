@@ -113,7 +113,7 @@ export default function LiveBanner({ live }: { live: TwitchLiveState }) {
     <section className="mt-6 sm:mt-8 rounded-3xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-xl px-5 py-5 sm:px-6 sm:py-6">
       <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.28em]">
         <span className="h-2 w-2 rounded-full bg-white/30" />
-        <span className="text-white/55">Dernier replay</span>
+        <span className="text-white/55">Dernier stream</span>
         {live.lastBroadcast.startedAt ? (
           <>
             <span className="text-white/20">·</span>

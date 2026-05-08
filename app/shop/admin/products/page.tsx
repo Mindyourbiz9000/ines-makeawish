@@ -67,9 +67,12 @@ export default async function AdminProductsPage() {
               >
                 <input type="hidden" name="id" value={p.id} />
 
-                <div className="md:col-span-2 flex items-baseline justify-between gap-3">
+                <div className="md:col-span-2 flex flex-wrap items-baseline justify-between gap-3">
                   <p className="text-[11px] uppercase tracking-[0.22em] text-white/45">
-                    #{p.id} · {p.slug}
+                    #{p.id} ·{" "}
+                    <span className="font-mono normal-case tracking-normal text-white/55">
+                      /shop/{p.slug}
+                    </span>
                   </p>
                   <span
                     className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ${
@@ -82,16 +85,9 @@ export default async function AdminProductsPage() {
                   </span>
                 </div>
 
-                <label className="block">
+                <label className="block md:col-span-2">
                   <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-                    Slug
-                  </span>
-                  <input name="slug" defaultValue={p.slug} className={inputBase} />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-                    Code
+                    Code (label court)
                   </span>
                   <input name="code" defaultValue={p.code} className={inputBase} />
                 </label>
@@ -254,7 +250,7 @@ export default async function AdminProductsPage() {
         <h2 className="text-xl font-medium text-white">Ajouter un produit</h2>
         <p className="mt-1 text-sm text-white/55">
           Le produit est créé avec ses tailles initiales et un stock de 10 par
-          défaut.
+          défaut. L&apos;URL (slug) est générée automatiquement depuis le code.
         </p>
         <form
           action={createProductAction}
@@ -263,15 +259,9 @@ export default async function AdminProductsPage() {
         >
           <label className="block">
             <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-              Slug *
+              Code * <span className="text-white/35">(label court, ex. &quot;Hoodie crème&quot;)</span>
             </span>
-            <input name="slug" required className={inputBase} placeholder="hoodie-noir" />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-              Code *
-            </span>
-            <input name="code" required className={inputBase} placeholder="Hoodie" />
+            <input name="code" required className={inputBase} placeholder="Hoodie crème" />
           </label>
           <label className="block">
             <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">

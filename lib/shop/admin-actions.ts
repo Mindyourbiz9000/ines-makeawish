@@ -42,16 +42,51 @@ function readBool(form: FormData, key: string): boolean {
 const SHOP_BUCKET = "shop-images";
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
 
-function slugifyForFilename(input: string): string {
+/**
+ * Slug URL-safe à partir d'un texte libre. Lowercase, sans accents, sans
+ * caractères spéciaux, espaces et underscores → tirets, dashes consécutifs
+ * collapsed, leading/trailing dashes trimmés. Max 60 chars. Renvoie "produit"
+ * si l'entrée est vide après nettoyage.
+ */
+function slugify(input: string): string {
   return (
     input
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[̀-ͯ]/g, "") // remove accents
+      // Strip combining diacritical marks (accents)
+      .replace(/[̀-ͯ]/g, "")
+      // Tout ce qui n'est pas alphanum devient un dash
       .replace(/[^a-z0-9]+/g, "-")
+      // Collapse multiple dashes
+      .replace(/-+/g, "-")
+      // Trim leading/trailing dashes
       .replace(/^-+|-+$/g, "")
-      .slice(0, 60) || "product"
+      .slice(0, 60) || "produit"
   );
+}
+
+// Alias retro-compatible (utilisé par uploadProductImage pour le filename)
+const slugifyForFilename = slugify;
+
+/**
+ * Cherche un slug unique dans shop_products. Si `base` existe déjà, essaie
+ * `base-2`, `base-3`, ... jusqu'à 50, puis fallback timestamp.
+ */
+async function findUniqueProductSlug(base: string): Promise<string> {
+  const supabase = createServerClient();
+  const seed = slugify(base);
+  let candidate = seed;
+  for (let i = 2; i <= 50; i++) {
+    const { data } = await supabase
+      .from("shop_products")
+      .select("id")
+      .eq("slug", candidate)
+      .maybeSingle();
+    if (!data) return candidate;
+    candidate = `${seed}-${i}`;
+  }
+  // Hyper rare : 50 collisions. Fallback avec timestamp.
+  return `${seed}-${Date.now()}`;
 }
 
 /**
@@ -112,12 +147,14 @@ async function resolveImageSrc(
 // ============================================================
 
 export async function createProductAction(formData: FormData) {
-  const slug = readString(formData, "slug");
   const code = readString(formData, "code");
   const name = readString(formData, "name");
-  if (!slug || !code || !name) {
-    throw new Error("slug, code et name sont obligatoires");
+  if (!code || !name) {
+    throw new Error("code et nom sont obligatoires");
   }
+  // Slug auto-généré à partir du code (ex. "Hoodie crème" → "hoodie-creme").
+  // En cas de collision, suffixe -2, -3, etc.
+  const slug = await findUniqueProductSlug(code);
   const description = readString(formData, "description");
   const resolvedImage = await resolveImageSrc(formData, slug);
   const image_src = resolvedImage === undefined ? null : resolvedImage;
@@ -162,11 +199,17 @@ export async function createProductAction(formData: FormData) {
 export async function updateProductAction(formData: FormData) {
   const id = readNumber(formData, "id");
   if (!id) throw new Error("id manquant");
-  const slug = readString(formData, "slug");
-  const resolvedImage = await resolveImageSrc(formData, slug ?? `product-${id}`);
+  // On NE met PAS à jour le slug en édition : changer un slug casserait les
+  // URLs déjà partagées. Pour renommer un slug, supprime + recrée le produit.
   const supabase = createServerClient();
+  const { data: existing } = await supabase
+    .from("shop_products")
+    .select("slug")
+    .eq("id", id)
+    .maybeSingle();
+  const slug = existing?.slug ?? `product-${id}`;
+  const resolvedImage = await resolveImageSrc(formData, slug);
   const update: ProductUpdate = {
-    slug: slug ?? undefined,
     code: readString(formData, "code") ?? undefined,
     name: readString(formData, "name") ?? undefined,
     description: readString(formData, "description"),

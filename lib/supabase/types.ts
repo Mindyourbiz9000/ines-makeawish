@@ -32,6 +32,24 @@ export type Database = {
         };
         Relationships: [];
       };
+      cached_data: {
+        Row: {
+          key: string;
+          payload: unknown;
+          fetched_at: string;
+        };
+        Insert: {
+          key: string;
+          payload: unknown;
+          fetched_at?: string;
+        };
+        Update: {
+          key?: string;
+          payload?: unknown;
+          fetched_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

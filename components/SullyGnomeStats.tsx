@@ -1,7 +1,7 @@
 // Stats agrégées sur N jours via les endpoints JSON Highcharts de sullygnome.com.
 // Renvoie null si les requêtes échouent (Cloudflare, network, schema changé).
 
-import { fetchSullyGnomeStats, type SullyPeriod } from "@/lib/sullygnome";
+import { getCachedSullyStats, type SullyPeriod } from "@/lib/sullygnome";
 import SectionHeader from "./SectionHeader";
 
 const PERIOD_LABEL: Record<SullyPeriod, string> = {
@@ -48,7 +48,7 @@ export default async function SullyGnomeStats({
   login: string;
   period?: SullyPeriod;
 }) {
-  const stats = await fetchSullyGnomeStats(login, period);
+  const stats = await getCachedSullyStats(login, period);
   if (!stats) return null;
 
   // 4 tuiles max pour un grid propre. Ordre = priorité éditoriale (designer + analyst) :

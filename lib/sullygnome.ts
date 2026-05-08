@@ -1,3 +1,5 @@
+import { createServerClient } from "./supabase/server";
+
 // Stats SullyGnome via leurs endpoints JSON internes (Highcharts config).
 // Bien plus fiable que le HTML scraping : les endpoints renvoient des objets
 // Highcharts avec series[0].data, faciles à parser, peu sujets aux faux positifs.
@@ -126,7 +128,32 @@ function topPieSlice(cfg: PieConfig | null): { name: string; value: number } | n
 }
 
 // ---------------------------------------------------------------------------
-// Public API
+// Cached version (read from Supabase)
+// ---------------------------------------------------------------------------
+
+export const SULLY_CACHE_KEY = (login: string, period: SullyPeriod) =>
+  `sullygnome:${login.toLowerCase()}:${period}`;
+
+export async function getCachedSullyStats(
+  login: string,
+  period: SullyPeriod = 7
+): Promise<SullyStats | null> {
+  try {
+    const supabase = createServerClient();
+    const { data, error } = await supabase
+      .from("cached_data")
+      .select("payload")
+      .eq("key", SULLY_CACHE_KEY(login, period))
+      .maybeSingle();
+    if (error || !data?.payload) return null;
+    return data.payload as SullyStats;
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Live fetch (used by the cron to refresh the cache)
 // ---------------------------------------------------------------------------
 
 export async function fetchSullyGnomeStats(

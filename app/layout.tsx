@@ -18,7 +18,7 @@ const display = Pacifico({
 
 export const metadata: Metadata = {
   title: "InesPNJ",
-  description: "InesPNJ · Stream caritatif Make-A-Wish",
+  description: "InesPNJ · Streameuse Twitch · #freeines",
   icons: {
     icon: "/inespnjv2.png",
     apple: "/inespnjv2.png",

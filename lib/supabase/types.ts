@@ -50,6 +50,231 @@ export type Database = {
         };
         Relationships: [];
       };
+      shop_products: {
+        Row: {
+          id: number;
+          slug: string;
+          code: string;
+          name: string;
+          description: string | null;
+          image_src: string | null;
+          price_cents: number;
+          sort_order: number;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          slug: string;
+          code: string;
+          name: string;
+          description?: string | null;
+          image_src?: string | null;
+          price_cents: number;
+          sort_order?: number;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          slug?: string;
+          code?: string;
+          name?: string;
+          description?: string | null;
+          image_src?: string | null;
+          price_cents?: number;
+          sort_order?: number;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      shop_product_variants: {
+        Row: {
+          id: number;
+          product_id: number;
+          size: string;
+          stock: number;
+          active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          product_id: number;
+          size: string;
+          stock?: number;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          product_id?: number;
+          size?: string;
+          stock?: number;
+          active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      shop_orders: {
+        Row: {
+          id: number;
+          ref: string;
+          status:
+            | "pending"
+            | "paid"
+            | "shipped"
+            | "delivered"
+            | "cancelled"
+            | "refunded";
+          customer_email: string | null;
+          customer_name: string | null;
+          shipping: unknown | null;
+          subtotal_cents: number;
+          total_cents: number;
+          currency: string;
+          mock: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          ref: string;
+          status?:
+            | "pending"
+            | "paid"
+            | "shipped"
+            | "delivered"
+            | "cancelled"
+            | "refunded";
+          customer_email?: string | null;
+          customer_name?: string | null;
+          shipping?: unknown | null;
+          subtotal_cents: number;
+          total_cents: number;
+          currency?: string;
+          mock?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          ref?: string;
+          status?:
+            | "pending"
+            | "paid"
+            | "shipped"
+            | "delivered"
+            | "cancelled"
+            | "refunded";
+          customer_email?: string | null;
+          customer_name?: string | null;
+          shipping?: unknown | null;
+          subtotal_cents?: number;
+          total_cents?: number;
+          currency?: string;
+          mock?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      shop_order_items: {
+        Row: {
+          id: number;
+          order_id: number;
+          product_id: number | null;
+          variant_id: number | null;
+          code: string;
+          name: string;
+          size: string;
+          quantity: number;
+          unit_price_cents: number;
+        };
+        Insert: {
+          id?: number;
+          order_id: number;
+          product_id?: number | null;
+          variant_id?: number | null;
+          code: string;
+          name: string;
+          size: string;
+          quantity: number;
+          unit_price_cents: number;
+        };
+        Update: {
+          id?: number;
+          order_id?: number;
+          product_id?: number | null;
+          variant_id?: number | null;
+          code?: string;
+          name?: string;
+          size?: string;
+          quantity?: number;
+          unit_price_cents?: number;
+        };
+        Relationships: [];
+      };
+      shop_deliveries: {
+        Row: {
+          id: number;
+          order_id: number;
+          carrier: string | null;
+          tracking_number: string | null;
+          status:
+            | "preparing"
+            | "shipped"
+            | "in_transit"
+            | "delivered"
+            | "exception";
+          shipped_at: string | null;
+          delivered_at: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: number;
+          order_id: number;
+          carrier?: string | null;
+          tracking_number?: string | null;
+          status?:
+            | "preparing"
+            | "shipped"
+            | "in_transit"
+            | "delivered"
+            | "exception";
+          shipped_at?: string | null;
+          delivered_at?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          order_id?: number;
+          carrier?: string | null;
+          tracking_number?: string | null;
+          status?:
+            | "preparing"
+            | "shipped"
+            | "in_transit"
+            | "delivered"
+            | "exception";
+          shipped_at?: string | null;
+          delivered_at?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

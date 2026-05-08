@@ -36,6 +36,11 @@ function gridColsClass(count: number): string {
       return "grid-cols-2";
     case 3:
       return "grid-cols-1 sm:grid-cols-3";
+    case 4:
+      return "grid-cols-2 md:grid-cols-4";
+    case 5:
+      // 2 cols mobile (2+2+1), 3 cols medium (3+2 propre), 5 cols large.
+      return "grid-cols-2 md:grid-cols-3 lg:grid-cols-5";
     default:
       return "grid-cols-2 md:grid-cols-4";
   }
@@ -51,11 +56,12 @@ export default async function SullyGnomeStats({
   const stats = await getCachedSullyStats(login, period);
   if (!stats) return null;
 
-  // 4 tuiles max pour un grid propre. Ordre = priorité éditoriale (designer + analyst) :
-  // 1. Pic viewers — moment fort
-  // 2. Viewers moyen — santé
-  // 3. Followers gagnés — croissance
-  // 4. Top jeu joué — focus du moment
+  // 5 tuiles, ordre = priorité éditoriale (designer + analyst) :
+  // 1. Pic viewers       — moment fort de la semaine
+  // 2. Viewers moyen     — santé générale
+  // 3. Followers gagnés  — signal de croissance
+  // 4. Top jeu joué      — sur quoi elle a passé le plus de temps
+  // 5. Top jeu en viewers — ce qui marche le mieux
   const tiles: { value: string; label: string; sub?: string }[] = [];
 
   if (stats.peakViewers != null) {
@@ -79,8 +85,15 @@ export default async function SullyGnomeStats({
   if (stats.topGameByTime) {
     tiles.push({
       value: stats.topGameByTime.name,
-      label: "Top catégorie",
+      label: "Top jeu joué",
       sub: formatHours(stats.topGameByTime.hours),
+    });
+  }
+  if (stats.topGameByViewers) {
+    tiles.push({
+      value: stats.topGameByViewers.name,
+      label: "Top jeu en viewers",
+      sub: `${formatInt(stats.topGameByViewers.viewers)} viewers`,
     });
   }
 

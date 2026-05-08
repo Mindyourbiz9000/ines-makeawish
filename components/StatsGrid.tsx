@@ -1,8 +1,14 @@
-// Tuiles de stats publiques : 100% IVR.fi (createdAt, followers, dernière catégorie, statut).
-// Pas de fake data — chaque tuile n'apparaît que si on a la vraie valeur.
+// Tuiles IVR : followers / année compte / statut. 3 tuiles compactes avec icônes.
 
 import type { TwitchLiveState } from "@/lib/twitch";
 import SectionHeader from "./SectionHeader";
+import { StatTile } from "./StatTile";
+import {
+  CalendarIcon,
+  HeartIcon,
+  VerifiedIcon,
+  GamepadIcon,
+} from "./icons/StatIcons";
 
 function formatYear(iso: string | null): string | null {
   if (!iso) return null;
@@ -23,12 +29,11 @@ function formatStatus(roles: TwitchLiveState["roles"]): string | null {
 }
 
 function gridColsClass(count: number): string {
-  // Tailwind needs literal class names — on les liste explicitement.
   switch (count) {
     case 1:
       return "grid-cols-1";
     case 2:
-      return "grid-cols-2";
+      return "grid-cols-1 sm:grid-cols-2";
     case 3:
       return "grid-cols-1 sm:grid-cols-3";
     default:
@@ -37,20 +42,58 @@ function gridColsClass(count: number): string {
 }
 
 export default function StatsGrid({ live }: { live: TwitchLiveState }) {
-  const tiles: { value: string; label: string }[] = [];
+  const tiles: React.ReactNode[] = [];
 
   const followers = formatFollowers(live.followers);
-  if (followers) tiles.push({ value: followers, label: "Followers" });
+  if (followers) {
+    tiles.push(
+      <StatTile
+        key="followers"
+        icon={<HeartIcon className="h-full w-full" />}
+        label="Followers"
+        value={followers}
+        accent="pink"
+      />
+    );
+  }
 
   const year = formatYear(live.createdAt);
-  if (year) tiles.push({ value: year, label: "Compte créé en" });
-
-  if (live.lastBroadcast?.game) {
-    tiles.push({ value: live.lastBroadcast.game, label: "Dernière catégorie" });
+  if (year) {
+    tiles.push(
+      <StatTile
+        key="created"
+        icon={<CalendarIcon className="h-full w-full" />}
+        label="Compte créé en"
+        value={year}
+        accent="blue"
+      />
+    );
   }
 
   const status = formatStatus(live.roles);
-  if (status) tiles.push({ value: status, label: "Statut" });
+  if (status) {
+    tiles.push(
+      <StatTile
+        key="status"
+        icon={<VerifiedIcon className="h-full w-full" />}
+        label="Statut"
+        value={status}
+        accent="purple"
+      />
+    );
+  }
+
+  if (live.lastBroadcast?.game) {
+    tiles.push(
+      <StatTile
+        key="last-game"
+        icon={<GamepadIcon className="h-full w-full" />}
+        label="Dernière catégorie"
+        value={live.lastBroadcast.game}
+        accent="yellow"
+      />
+    );
+  }
 
   if (tiles.length === 0) return null;
 
@@ -63,19 +106,7 @@ export default function StatsGrid({ live }: { live: TwitchLiveState }) {
         className="mb-5"
       />
       <div className={`grid gap-3 ${gridColsClass(tiles.length)}`}>
-        {tiles.map((tile, i) => (
-          <div
-            key={i}
-            className="rounded-2xl bg-white/[0.03] p-4 ring-1 ring-white/10"
-          >
-            <p className="truncate text-xl font-semibold tabular-nums text-white sm:text-2xl">
-              {tile.value}
-            </p>
-            <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-white/45">
-              {tile.label}
-            </p>
-          </div>
-        ))}
+        {tiles}
       </div>
     </section>
   );

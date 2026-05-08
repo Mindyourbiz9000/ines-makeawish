@@ -1,4 +1,4 @@
-// Tuiles de stats publiques : 100% IVR.fi (créationCompte, followers, dernière catégorie, statut).
+// Tuiles de stats publiques : 100% IVR.fi (createdAt, followers, dernière catégorie, statut).
 // Pas de fake data — chaque tuile n'apparaît que si on a la vraie valeur.
 
 import type { TwitchLiveState } from "@/lib/twitch";
@@ -22,14 +22,28 @@ function formatStatus(roles: TwitchLiveState["roles"]): string | null {
   return null;
 }
 
+function gridColsClass(count: number): string {
+  // Tailwind needs literal class names — on les liste explicitement.
+  switch (count) {
+    case 1:
+      return "grid-cols-1";
+    case 2:
+      return "grid-cols-2";
+    case 3:
+      return "grid-cols-1 sm:grid-cols-3";
+    default:
+      return "grid-cols-2 md:grid-cols-4";
+  }
+}
+
 export default function StatsGrid({ live }: { live: TwitchLiveState }) {
   const tiles: { value: string; label: string }[] = [];
 
-  const year = formatYear(live.createdAt);
-  if (year) tiles.push({ value: year, label: "Membre depuis" });
-
   const followers = formatFollowers(live.followers);
   if (followers) tiles.push({ value: followers, label: "Followers" });
+
+  const year = formatYear(live.createdAt);
+  if (year) tiles.push({ value: year, label: "Compte créé en" });
 
   if (live.lastBroadcast?.game) {
     tiles.push({ value: live.lastBroadcast.game, label: "Dernière catégorie" });
@@ -38,7 +52,6 @@ export default function StatsGrid({ live }: { live: TwitchLiveState }) {
   const status = formatStatus(live.roles);
   if (status) tiles.push({ value: status, label: "Statut" });
 
-  // Pas de vraies données → on ne rend rien (jamais de section vide ou inventée).
   if (tiles.length === 0) return null;
 
   return (
@@ -49,16 +62,16 @@ export default function StatsGrid({ live }: { live: TwitchLiveState }) {
         dotColor="bg-neon-yellow"
         className="mb-5"
       />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className={`grid gap-3 ${gridColsClass(tiles.length)}`}>
         {tiles.map((tile, i) => (
           <div
             key={i}
-            className="flex min-h-[88px] flex-col justify-between rounded-xl bg-white/[0.03] p-4 ring-1 ring-white/10"
+            className="rounded-2xl bg-white/[0.03] p-4 ring-1 ring-white/10"
           >
-            <p className="text-2xl font-semibold tabular-nums text-white">
+            <p className="truncate text-xl font-semibold tabular-nums text-white sm:text-2xl">
               {tile.value}
             </p>
-            <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/45">
+            <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-white/45">
               {tile.label}
             </p>
           </div>

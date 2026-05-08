@@ -1,5 +1,5 @@
-// Stats agrégées sur N jours scrapées depuis sullygnome.com.
-// Renvoie null si le scraping rate (Cloudflare, HTML changé, etc.).
+// Stats agrégées sur N jours via les endpoints JSON Highcharts de sullygnome.com.
+// Renvoie null si les requêtes échouent (Cloudflare, network, schema changé).
 
 import { fetchSullyGnomeStats, type SullyPeriod } from "@/lib/sullygnome";
 import SectionHeader from "./SectionHeader";
@@ -12,6 +12,35 @@ const PERIOD_LABEL: Record<SullyPeriod, string> = {
   365: "12 derniers mois",
 };
 
+function formatInt(n: number): string {
+  return Math.round(n).toLocaleString("fr-FR");
+}
+
+function formatHours(n: number): string {
+  // SullyGnome renvoie déjà la valeur en heures pour gamestreamedtime.
+  // On affiche avec 1 décimale si < 10h, sinon entier.
+  if (n < 10) return `${n.toFixed(1)} h`;
+  return `${Math.round(n).toLocaleString("fr-FR")} h`;
+}
+
+function formatDelta(n: number): string {
+  const sign = n > 0 ? "+" : n < 0 ? "−" : "";
+  return `${sign}${formatInt(Math.abs(n))}`;
+}
+
+function gridColsClass(count: number): string {
+  switch (count) {
+    case 1:
+      return "grid-cols-1";
+    case 2:
+      return "grid-cols-2";
+    case 3:
+      return "grid-cols-1 sm:grid-cols-3";
+    default:
+      return "grid-cols-2 md:grid-cols-4";
+  }
+}
+
 export default async function SullyGnomeStats({
   login,
   period = 7,
@@ -22,19 +51,38 @@ export default async function SullyGnomeStats({
   const stats = await fetchSullyGnomeStats(login, period);
   if (!stats) return null;
 
-  const tiles: { value: string; label: string }[] = [];
-  if (stats.hoursWatched)
-    tiles.push({ value: stats.hoursWatched, label: "Heures vues" });
-  if (stats.hoursStreamed)
-    tiles.push({ value: stats.hoursStreamed, label: "Heures streamées" });
-  if (stats.averageViewers)
-    tiles.push({ value: stats.averageViewers, label: "Viewers moyen" });
-  if (stats.peakViewers)
-    tiles.push({ value: stats.peakViewers, label: "Pic viewers" });
-  if (stats.streamsCount)
-    tiles.push({ value: stats.streamsCount, label: "Streams" });
-  if (stats.followersGained)
-    tiles.push({ value: stats.followersGained, label: "Followers gagnés" });
+  // 4 tuiles max pour un grid propre. Ordre = priorité éditoriale (designer + analyst) :
+  // 1. Pic viewers — moment fort
+  // 2. Viewers moyen — santé
+  // 3. Followers gagnés — croissance
+  // 4. Top jeu joué — focus du moment
+  const tiles: { value: string; label: string; sub?: string }[] = [];
+
+  if (stats.peakViewers != null) {
+    tiles.push({
+      value: formatInt(stats.peakViewers),
+      label: "Pic viewers",
+    });
+  }
+  if (stats.averageViewers != null) {
+    tiles.push({
+      value: formatInt(stats.averageViewers),
+      label: "Viewers moyen",
+    });
+  }
+  if (stats.followersGained != null) {
+    tiles.push({
+      value: formatDelta(stats.followersGained),
+      label: "Followers gagnés",
+    });
+  }
+  if (stats.topGameByTime) {
+    tiles.push({
+      value: stats.topGameByTime.name,
+      label: "Top catégorie",
+      sub: formatHours(stats.topGameByTime.hours),
+    });
+  }
 
   if (tiles.length === 0) return null;
 
@@ -46,17 +94,22 @@ export default async function SullyGnomeStats({
         dotColor="bg-neon-blue"
         className="mb-5"
       />
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className={`grid gap-3 ${gridColsClass(tiles.length)}`}>
         {tiles.map((tile, i) => (
           <div
             key={i}
-            className="flex min-h-[88px] flex-col justify-between rounded-xl bg-white/[0.03] p-4 ring-1 ring-white/10"
+            className="rounded-2xl bg-white/[0.03] p-4 ring-1 ring-white/10"
           >
-            <p className="text-2xl font-semibold tabular-nums text-white">
+            <p className="truncate text-xl font-semibold tabular-nums text-white sm:text-2xl">
               {tile.value}
             </p>
-            <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/45">
+            <p className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-white/45">
               {tile.label}
+              {tile.sub ? (
+                <span className="ml-1.5 normal-case tracking-normal text-white/40">
+                  · {tile.sub}
+                </span>
+              ) : null}
             </p>
           </div>
         ))}

@@ -97,53 +97,102 @@ async function fetchInitialTwitchStatus(): Promise<{
   }
 }
 
-export default async function Socials() {
+type SocialsVariant = "header" | "footer";
+
+export default async function Socials({
+  variant = "header",
+}: {
+  variant?: SocialsVariant;
+} = {}) {
   const twitchStatus = await fetchInitialTwitchStatus();
 
+  if (variant === "footer") {
+    return (
+      <div className="flex gap-2">
+        <a
+          href="https://www.instagram.com/inespnj/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:border-white/30 hover:bg-white/10"
+          aria-label="Instagram"
+        >
+          <InstagramIcon className="h-4 w-4" />
+        </a>
+        <a
+          href="https://discord.gg/qdvuaat6UP"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:border-white/30 hover:bg-white/10"
+          aria-label="Discord"
+        >
+          <DiscordIcon className="h-4 w-4" />
+        </a>
+        <a
+          href="https://www.tiktok.com/@inespnj"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:border-white/30 hover:bg-white/10"
+          aria-label="TikTok"
+        >
+          <TikTokIcon className="h-4 w-4" />
+        </a>
+        <a
+          href="https://www.youtube.com/@inespnj"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/5 text-white/70 transition hover:border-white/30 hover:bg-white/10"
+          aria-label="YouTube"
+        >
+          <YouTubeIcon className="h-4 w-4" />
+        </a>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-start gap-2">
+    <div className="flex flex-col items-start gap-3 sm:items-end">
       <TwitchPill initial={twitchStatus} />
       <div className="flex flex-wrap items-center gap-2">
-      <a
-        href="https://www.instagram.com/inespnj/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-neon-pink hover:bg-neon-pink/10 hover:text-white hover:shadow-glow-pink"
-        aria-label="Suivre InesPNJ sur Instagram"
-      >
-        <InstagramIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-        <span>Instagram</span>
-      </a>
-      <a
-        href="https://discord.gg/qdvuaat6UP"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-neon-blue hover:bg-neon-blue/10 hover:text-white hover:shadow-glow"
-        aria-label="Rejoindre le Discord d'InesPNJ"
-      >
-        <DiscordIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-        <span>Discord</span>
-      </a>
-      <a
-        href="https://www.tiktok.com/@inespnj"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-white hover:bg-white/10 hover:text-white hover:shadow-[0_0_18px_rgba(255,255,255,0.4)]"
-        aria-label="Suivre InesPNJ sur TikTok"
-      >
-        <TikTokIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-        <span>TikTok</span>
-      </a>
-      <a
-        href="https://www.youtube.com/@inespnj"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/90 backdrop-blur transition-all hover:border-[#FF0000] hover:bg-[#FF0000]/15 hover:text-white hover:shadow-[0_0_18px_rgba(255,0,0,0.5)]"
-        aria-label="Suivre InesPNJ sur YouTube"
-      >
-        <YouTubeIcon className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-        <span>YouTube</span>
-      </a>
+        <a
+          href="https://www.instagram.com/inespnj/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 text-sm text-white/90 backdrop-blur transition-all hover:border-white/30 hover:bg-white/[0.05]"
+          aria-label="Suivre InesPNJ sur Instagram"
+        >
+          <InstagramIcon className="h-4 w-4 transition-colors group-hover:text-[#E1306C]" />
+          <span>Instagram</span>
+        </a>
+        <a
+          href="https://discord.gg/qdvuaat6UP"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 text-sm text-white/90 backdrop-blur transition-all hover:border-white/30 hover:bg-white/[0.05]"
+          aria-label="Rejoindre le Discord d'InesPNJ"
+        >
+          <DiscordIcon className="h-4 w-4 transition-colors group-hover:text-[#5865F2]" />
+          <span>Discord</span>
+        </a>
+        <a
+          href="https://www.tiktok.com/@inespnj"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 text-sm text-white/90 backdrop-blur transition-all hover:border-white/30 hover:bg-white/[0.05]"
+          aria-label="Suivre InesPNJ sur TikTok"
+        >
+          <TikTokIcon className="h-4 w-4" />
+          <span>TikTok</span>
+        </a>
+        <a
+          href="https://www.youtube.com/@inespnj"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 text-sm text-white/90 backdrop-blur transition-all hover:border-white/30 hover:bg-white/[0.05]"
+          aria-label="Suivre InesPNJ sur YouTube"
+        >
+          <YouTubeIcon className="h-4 w-4 transition-colors group-hover:text-[#FF0000]" />
+          <span>YouTube</span>
+        </a>
       </div>
     </div>
   );

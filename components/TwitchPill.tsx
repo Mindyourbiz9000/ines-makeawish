@@ -62,8 +62,8 @@ export default function TwitchPill({ initial }: { initial: TwitchStatus }) {
       rel="noopener noreferrer"
       className={
         isLive
-          ? "group inline-flex items-center gap-2 rounded-full border border-[#9146FF] bg-[#9146FF]/25 px-3.5 py-1.5 text-xs font-semibold text-white shadow-[0_0_14px_rgba(145,70,255,0.45)] backdrop-blur transition-all hover:bg-[#9146FF]/35 hover:shadow-[0_0_22px_rgba(145,70,255,0.75)]"
-          : "group inline-flex items-center gap-2 rounded-full border border-[#9146FF]/70 bg-[#9146FF]/15 px-3.5 py-1.5 text-xs font-semibold text-white shadow-[0_0_10px_rgba(145,70,255,0.25)] backdrop-blur transition-all hover:bg-[#9146FF]/25 hover:shadow-[0_0_18px_rgba(145,70,255,0.55)]"
+          ? "group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[#9146FF] bg-[#9146FF]/25 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-[#9146FF]/35"
+          : "group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-[#9146FF]/70 bg-[#9146FF]/15 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-[#9146FF]/25"
       }
       aria-label={
         isLive
@@ -71,7 +71,7 @@ export default function TwitchPill({ initial }: { initial: TwitchStatus }) {
           : "Suivre InesPNJ sur Twitch"
       }
     >
-      <TwitchIcon className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:scale-110" />
+      <TwitchIcon className="h-4 w-4 shrink-0" />
       <span>Twitch</span>
 
       {/* Status dot : vert animé si live, rouge statique sinon */}

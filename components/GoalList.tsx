@@ -94,55 +94,90 @@ export default function GoalList({
     }
   }
 
+  const total = goals.length;
+  const pct = total > 0 ? (totalDone / total) * 100 : 0;
+
   return (
     <>
       {showCounter && (
-        <p className="mb-6 text-center text-white/70">
-          <span className="tabular-nums font-semibold text-white">
-            {totalDone}
-          </span>{" "}
-          / {goals.length} paliers déjà fait
-        </p>
+        <div className="mb-6">
+          <div className="mb-2 flex items-center justify-between text-[12px] text-white/55">
+            <span className="tabular-nums">
+              <span className="font-semibold text-white">{totalDone}</span> /{" "}
+              {total} paliers
+            </span>
+            <span className="tabular-nums">{Math.round(pct)}%</span>
+          </div>
+          <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.05]">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-neon-pink to-neon-yellow transition-[width] duration-500"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        </div>
       )}
-      <ul className="space-y-3">
+      <ul className="space-y-2">
         {goals.map((goal) => {
           const isPending = pendingIds.has(goal.id);
           return (
             <li
               key={goal.id}
-              className={`flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur transition-all ${
+              className={`rounded-2xl border border-white/[0.06] bg-white/[0.015] transition ${
                 goal.completed
-                  ? "opacity-60"
-                  : "hover:border-neon-blue/60 hover:bg-white/10"
+                  ? "opacity-50"
+                  : "hover:border-white/15 hover:bg-white/[0.04]"
               }`}
             >
               <label
-                className={`flex w-full items-start gap-3 ${
+                className={`flex w-full items-center gap-3 px-4 py-3.5 ${
                   editable ? "cursor-pointer" : "cursor-default"
                 }`}
               >
-                <input
-                  type="checkbox"
-                  checked={goal.completed}
-                  disabled={!editable || isPending}
-                  onChange={() => toggle(goal)}
-                  className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-neon-pink disabled:cursor-not-allowed"
-                  aria-label={`Marquer "${goal.label}" comme ${
-                    goal.completed ? "non fait" : "fait"
-                  }`}
-                />
-                <span className="flex min-w-0 flex-1 items-baseline gap-3 text-base sm:text-lg">
-                  <span className="w-16 shrink-0 text-right font-bold text-neon-yellow tabular-nums sm:w-20">
-                    {goal.amount}€
-                  </span>
+                {editable ? (
+                  <input
+                    type="checkbox"
+                    checked={goal.completed}
+                    disabled={isPending}
+                    onChange={() => toggle(goal)}
+                    className="h-5 w-5 shrink-0 cursor-pointer accent-neon-pink disabled:cursor-not-allowed"
+                    aria-label={`Marquer "${goal.label}" comme ${
+                      goal.completed ? "non fait" : "fait"
+                    }`}
+                  />
+                ) : (
                   <span
-                    className={`min-w-0 flex-1 text-white ${
+                    aria-hidden="true"
+                    className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border ${
                       goal.completed
-                        ? "line-through decoration-neon-pink decoration-2"
-                        : ""
+                        ? "border-neon-pink/40 text-neon-pink"
+                        : "border-white/15 text-transparent"
+                    }`}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                      className="h-3 w-3"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
+                <span className="flex min-w-0 flex-1 items-baseline gap-3">
+                  <span
+                    className={`min-w-0 flex-1 truncate text-[15px] ${
+                      goal.completed ? "text-white/60" : "text-white/95"
                     }`}
                   >
                     {goal.label}
+                  </span>
+                  <span
+                    className={`shrink-0 text-sm tabular-nums font-semibold ${
+                      goal.completed ? "text-white/40" : "text-neon-yellow"
+                    }`}
+                  >
+                    {goal.amount}€
                   </span>
                 </span>
               </label>

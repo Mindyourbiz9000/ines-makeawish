@@ -57,15 +57,14 @@ export default function InesStats() {
     rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
 
   return (
-    <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-neon-yellow/40 bg-neon-yellow/10 px-3 py-1.5 text-xs shadow-glow sm:text-sm">
-      <span className="font-semibold text-neon-yellow">
+    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1 text-xs text-white/80">
+      <span className="font-semibold">
         {medal ? `${medal} ` : ""}#{rank}
       </span>
-      <span className="text-white/40">·</span>
-      <span className="font-bold tabular-nums text-white">
+      <span className="text-white/30">·</span>
+      <span className="font-semibold tabular-nums text-white">
         {formatEuros(amount)}
       </span>
-      <span className="text-white/60">récoltés</span>
     </div>
   );
 }

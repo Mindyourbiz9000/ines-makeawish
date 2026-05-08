@@ -19,7 +19,13 @@ function formatEuros(amount: number): string {
   return `${formatted}€`;
 }
 
-export default function InesTotal() {
+type Variant = "display" | "subtle";
+
+export default function InesTotal({
+  variant = "display",
+}: {
+  variant?: Variant;
+} = {}) {
   const [amount, setAmount] = useState<number | null>(null);
 
   useEffect(() => {
@@ -49,6 +55,13 @@ export default function InesTotal() {
     };
   }, []);
 
+  if (variant === "subtle") {
+    return (
+      <span className="font-semibold tabular-nums text-neon-yellow">
+        {amount === null ? "…" : formatEuros(amount)}
+      </span>
+    );
+  }
   return (
     <span
       className="neon-title tabular-nums"

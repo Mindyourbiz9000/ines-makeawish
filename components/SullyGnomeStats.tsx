@@ -63,8 +63,9 @@ export default async function SullyGnomeStats({
         className="mb-5"
       />
       <div className="grid auto-rows-fr grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+        {/* Row 1 : hero (2 cols) + Viewers moyen (1) + Followers gagnés (1) */}
         {hasHero ? (
-          <div className="sm:col-span-2 md:col-span-2 md:row-span-2">
+          <div className="sm:col-span-2 md:col-span-2">
             <HeroStatTile
               accent="pink"
               icon={<EyeIcon className="h-full w-full" />}
@@ -93,24 +94,29 @@ export default async function SullyGnomeStats({
           />
         ) : null}
 
+        {/* Row 2 : Top jeu joué (2 cols) + Top jeu en viewers (2 cols) */}
         {stats.topGameByTime ? (
-          <StatTile
-            accent="yellow"
-            icon={<GamepadIcon className="h-full w-full" />}
-            label="Top jeu joué"
-            value={stats.topGameByTime.name}
-            sub={formatHours(stats.topGameByTime.hours)}
-          />
+          <div className="sm:col-span-2 md:col-span-2">
+            <StatTile
+              accent="yellow"
+              icon={<GamepadIcon className="h-full w-full" />}
+              label="Top jeu joué"
+              value={stats.topGameByTime.name}
+              sub={formatHours(stats.topGameByTime.hours)}
+            />
+          </div>
         ) : null}
 
         {stats.topGameByViewers ? (
-          <StatTile
-            accent="purple"
-            icon={<FlameIcon className="h-full w-full" />}
-            label="Top jeu en viewers"
-            value={stats.topGameByViewers.name}
-            sub={`${formatInt(stats.topGameByViewers.viewers)} viewers en moyenne`}
-          />
+          <div className="sm:col-span-2 md:col-span-2">
+            <StatTile
+              accent="purple"
+              icon={<FlameIcon className="h-full w-full" />}
+              label="Top jeu en viewers"
+              value={stats.topGameByViewers.name}
+              sub={`${formatInt(stats.topGameByViewers.viewers)} viewers en moyenne`}
+            />
+          </div>
         ) : null}
       </div>
       <p className="mt-3 text-[11px] text-white/35">

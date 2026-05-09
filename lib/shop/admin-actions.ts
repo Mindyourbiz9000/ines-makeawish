@@ -147,14 +147,16 @@ async function resolveImageSrc(
 // ============================================================
 
 export async function createProductAction(formData: FormData) {
-  const code = readString(formData, "code");
   const name = readString(formData, "name");
-  if (!code || !name) {
-    throw new Error("code et nom sont obligatoires");
+  if (!name) {
+    throw new Error("Le nom du produit est obligatoire");
   }
-  // Slug auto-généré à partir du code (ex. "Hoodie crème" → "hoodie-creme").
+  // Le "code" (label court) est auto-rempli avec le nom. Si l'admin a fourni
+  // un code explicite (champ avancé), on le respecte ; sinon code = name.
+  const code = readString(formData, "code") ?? name;
+  // Slug auto-généré à partir du nom (ex. "Hoodie crème" → "hoodie-creme").
   // En cas de collision, suffixe -2, -3, etc.
-  const slug = await findUniqueProductSlug(code);
+  const slug = await findUniqueProductSlug(name);
   const description = readString(formData, "description");
   const resolvedImage = await resolveImageSrc(formData, slug);
   const image_src = resolvedImage === undefined ? null : resolvedImage;
@@ -209,9 +211,13 @@ export async function updateProductAction(formData: FormData) {
     .maybeSingle();
   const slug = existing?.slug ?? `product-${id}`;
   const resolvedImage = await resolveImageSrc(formData, slug);
+  const newName = readString(formData, "name");
+  // Quand le nom change, on synchronise aussi le code (qui sert de label court)
+  // sauf si l'admin a fourni un code explicite.
+  const explicitCode = readString(formData, "code");
   const update: ProductUpdate = {
-    code: readString(formData, "code") ?? undefined,
-    name: readString(formData, "name") ?? undefined,
+    code: explicitCode ?? newName ?? undefined,
+    name: newName ?? undefined,
     description: readString(formData, "description"),
     price_cents: readNumber(formData, "price_cents", 0),
     sort_order: readNumber(formData, "sort_order", 0),

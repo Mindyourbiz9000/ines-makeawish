@@ -49,10 +49,16 @@ export default function ProductDetailPage({
         {/* Infos */}
         <div className="flex flex-col gap-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.32em] text-white/45">
-              {product.code}
-            </p>
-            <h1 className="mt-3 text-4xl font-medium tracking-[-0.02em] text-white sm:text-5xl">
+            {product.code && product.code !== product.name ? (
+              <p className="text-[11px] uppercase tracking-[0.32em] text-white/45">
+                {product.code}
+              </p>
+            ) : null}
+            <h1
+              className={`${
+                product.code && product.code !== product.name ? "mt-3" : ""
+              } text-4xl font-medium tracking-[-0.02em] text-white sm:text-5xl`}
+            >
               {product.name}
             </h1>
             <p className="mt-4 text-2xl font-medium tabular-nums text-white sm:text-3xl">

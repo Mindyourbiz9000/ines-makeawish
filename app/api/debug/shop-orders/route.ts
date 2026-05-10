@@ -34,6 +34,7 @@ export async function GET() {
     "shop_orders",
     "shop_order_items",
     "shop_deliveries",
+    "shop_settings",
   ];
   const results: Record<string, unknown> = {};
   for (const t of tables) {

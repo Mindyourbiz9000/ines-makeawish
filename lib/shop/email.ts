@@ -174,6 +174,97 @@ export async function sendTestEmail(to: string): Promise<SendResult> {
 // Notifications transactionnelles
 // ---------------------------------------------------------------
 
+type OrderLine = {
+  code: string;
+  name: string;
+  size: string;
+  quantity: number;
+  unit_price_cents: number;
+};
+
+function itemsTable(items: OrderLine[], totalCents: number): string {
+  const rows = items
+    .map(
+      (i) => `<tr>
+    <td style="padding:10px 0;font-size:14px;color:#0c1340;border-bottom:1px solid #f1ecdf">
+      <strong>${escapeHtml(i.name)}</strong>
+      <span style="color:#9ca3af"> · ${escapeHtml(i.size)} · ×${i.quantity}</span>
+    </td>
+    <td align="right" style="padding:10px 0;font-size:14px;color:#0c1340;border-bottom:1px solid #f1ecdf;font-variant-numeric:tabular-nums">
+      ${(i.unit_price_cents * i.quantity / 100).toFixed(2)} €
+    </td>
+  </tr>`
+    )
+    .join("");
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 0">
+  ${rows}
+  <tr>
+    <td style="padding:14px 0 0;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#9ca3af">Total</td>
+    <td align="right" style="padding:14px 0 0;font-size:20px;font-weight:600;color:#0c1340;font-variant-numeric:tabular-nums">
+      ${(totalCents / 100).toFixed(2)} €
+    </td>
+  </tr>
+</table>`;
+}
+
+export async function sendOrderPlacedCustomerEmail(args: {
+  to: string;
+  orderRef: string;
+  viewToken: string;
+  items: OrderLine[];
+  totalCents: number;
+  shipping?: ShippingInfo | null;
+}): Promise<SendResult> {
+  const trackingUrl = buildTrackingUrl(args.orderRef, args.viewToken);
+  const body = `<tr><td style="padding:36px 32px 32px">
+  <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Boutique InesPNJ</p>
+  <h1 style="margin:8px 0 0;font-size:28px;font-weight:600;line-height:1.2;color:#0c1340">Merci pour ta commande ❤️</h1>
+  <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:#374151">Ta commande <strong style="font-family:'SF Mono',Menlo,monospace;color:#0c1340">${escapeHtml(args.orderRef)}</strong> est bien enregistrée. L&apos;équipe te recontacte sous 24h pour finaliser le règlement, puis on prépare l&apos;expédition.</p>
+  ${trackingButton(trackingUrl, "Suivre ma commande")}
+  ${itemsTable(args.items, args.totalCents)}
+  ${shippingBlock(args.shipping ?? null)}
+  <p style="margin-top:32px;font-size:12px;line-height:1.5;color:#9ca3af">Bookmarke le lien de suivi — il est unique et privé. Une question ? Réponds simplement à cet email.</p>
+</td></tr>`;
+  return sendEmail({
+    to: args.to,
+    subject: `Commande ${args.orderRef} reçue · Boutique InesPNJ`,
+    html: shellHtml({
+      preheader: `Confirmation de ta commande ${args.orderRef}`,
+      bodyHtml: body,
+    }),
+    text: `Merci pour ta commande ${args.orderRef}. Suivi : ${trackingUrl}`,
+  });
+}
+
+export async function sendOrderPlacedAdminEmail(args: {
+  to: string;
+  orderRef: string;
+  customerName: string;
+  customerEmail: string;
+  items: OrderLine[];
+  totalCents: number;
+  shipping?: ShippingInfo | null;
+}): Promise<SendResult> {
+  const adminUrl = `${SHOP_BASE_URL}/shop/admin/deliveries`;
+  const body = `<tr><td style="padding:36px 32px 32px">
+  <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Backoffice InesPNJ</p>
+  <h1 style="margin:8px 0 0;font-size:26px;font-weight:600;line-height:1.2;color:#0c1340">Nouvelle commande 🎉</h1>
+  <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:#374151"><strong>${escapeHtml(args.customerName)}</strong> (${escapeHtml(args.customerEmail)}) vient de passer la commande <strong style="font-family:'SF Mono',Menlo,monospace;color:#0c1340">${escapeHtml(args.orderRef)}</strong>.</p>
+  ${trackingButton(adminUrl, "Ouvrir le backoffice")}
+  ${itemsTable(args.items, args.totalCents)}
+  ${shippingBlock(args.shipping ?? null)}
+</td></tr>`;
+  return sendEmail({
+    to: args.to,
+    subject: `🛍️ Nouvelle commande ${args.orderRef} · ${(args.totalCents / 100).toFixed(2)} €`,
+    html: shellHtml({
+      preheader: `${args.customerName} · ${(args.totalCents / 100).toFixed(2)} €`,
+      bodyHtml: body,
+    }),
+    text: `Nouvelle commande ${args.orderRef} de ${args.customerName} (${args.customerEmail}). Total : ${(args.totalCents / 100).toFixed(2)} €. Backoffice : ${adminUrl}`,
+  });
+}
+
 export async function sendOrderShippedEmail(args: {
   to: string;
   orderRef: string;

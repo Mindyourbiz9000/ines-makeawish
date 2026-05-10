@@ -222,6 +222,109 @@ export async function getOrderWithItems(id: number): Promise<{
   };
 }
 
+export type AdminOrderWithDelivery = {
+  order: AdminOrderRow;
+  delivery: AdminDeliveryRow | null;
+};
+
+/**
+ * Liste TOUTES les commandes (sauf "cancelled" / "refunded") avec leur
+ * livraison (si elle existe). Tri : non planifiées en premier, puis par
+ * statut de livraison (preparing → shipped → delivered), puis par date desc.
+ *
+ * Utilisé par /shop/admin/deliveries pour gérer livraisons + commandes
+ * en un seul endroit.
+ */
+export async function listOrdersForDeliveries(): Promise<AdminOrderWithDelivery[]> {
+  const supabase = createServerClient();
+  const { data: orders } = await supabase
+    .from("shop_orders")
+    .select("*")
+    .not("status", "in", "(cancelled,refunded)")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (!orders || orders.length === 0) return [];
+  const ids = orders.map((o) => o.id);
+  const [{ data: items }, { data: deliveries }] = await Promise.all([
+    supabase
+      .from("shop_order_items")
+      .select("order_id, quantity")
+      .in("order_id", ids),
+    supabase.from("shop_deliveries").select("*").in("order_id", ids),
+  ]);
+  const itemCounts = new Map<number, number>();
+  for (const it of items ?? []) {
+    itemCounts.set(it.order_id, (itemCounts.get(it.order_id) ?? 0) + it.quantity);
+  }
+  const deliveryByOrder = new Map<number, AdminDeliveryRow>();
+  for (const d of deliveries ?? []) {
+    deliveryByOrder.set(d.order_id, {
+      id: d.id,
+      order_id: d.order_id,
+      ref: "", // pas besoin ici, on a déjà l'order
+      carrier: d.carrier,
+      tracking_number: d.tracking_number,
+      status: d.status,
+      shipped_at: d.shipped_at,
+      delivered_at: d.delivered_at,
+      notes: d.notes,
+      updated_at: d.updated_at,
+    });
+  }
+  // Priorité d'affichage : pas de delivery → preparing → shipped → in_transit
+  // → delivered → exception. À l'intérieur d'un bucket, par date desc.
+  const STATUS_ORDER = {
+    none: 0,
+    preparing: 1,
+    shipped: 2,
+    in_transit: 3,
+    exception: 4,
+    delivered: 5,
+  } as const;
+  const rows: AdminOrderWithDelivery[] = orders.map((o) => ({
+    order: {
+      id: o.id,
+      ref: o.ref,
+      status: o.status,
+      customer_email: o.customer_email,
+      customer_name: o.customer_name,
+      subtotal_cents: o.subtotal_cents,
+      total_cents: o.total_cents,
+      currency: o.currency,
+      mock: o.mock,
+      created_at: o.created_at,
+      item_count: itemCounts.get(o.id) ?? 0,
+    },
+    delivery: deliveryByOrder.get(o.id) ?? null,
+  }));
+  rows.sort((a, b) => {
+    const aBucket = a.delivery
+      ? STATUS_ORDER[a.delivery.status] ?? 99
+      : STATUS_ORDER.none;
+    const bBucket = b.delivery
+      ? STATUS_ORDER[b.delivery.status] ?? 99
+      : STATUS_ORDER.none;
+    if (aBucket !== bBucket) return aBucket - bBucket;
+    return (
+      Date.parse(b.order.created_at) - Date.parse(a.order.created_at)
+    );
+  });
+  return rows;
+}
+
+export async function getOrderShipping(orderId: number): Promise<{
+  shipping: Record<string, unknown> | null;
+} | null> {
+  const supabase = createServerClient();
+  const { data } = await supabase
+    .from("shop_orders")
+    .select("shipping")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (!data) return null;
+  return { shipping: (data.shipping as Record<string, unknown> | null) ?? null };
+}
+
 export async function listAllDeliveries(): Promise<AdminDeliveryRow[]> {
   const supabase = createServerClient();
   const { data } = await supabase

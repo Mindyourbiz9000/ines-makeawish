@@ -222,9 +222,29 @@ export async function getOrderWithItems(id: number): Promise<{
   };
 }
 
+export type AdminDeliveryItem = {
+  code: string;
+  name: string;
+  size: string;
+  quantity: number;
+  unit_price_cents: number;
+};
+
+export type AdminDeliveryShipping = {
+  fullName?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  postalCode?: string | null;
+  city?: string | null;
+  country?: string | null;
+  phone?: string | null;
+};
+
 export type AdminOrderWithDelivery = {
   order: AdminOrderRow;
   delivery: AdminDeliveryRow | null;
+  items: AdminDeliveryItem[];
+  shipping: AdminDeliveryShipping | null;
 };
 
 /**
@@ -248,13 +268,22 @@ export async function listOrdersForDeliveries(): Promise<AdminOrderWithDelivery[
   const [{ data: items }, { data: deliveries }] = await Promise.all([
     supabase
       .from("shop_order_items")
-      .select("order_id, quantity")
+      .select("order_id, code, name, size, quantity, unit_price_cents")
       .in("order_id", ids),
     supabase.from("shop_deliveries").select("*").in("order_id", ids),
   ]);
   const itemCounts = new Map<number, number>();
+  const itemsByOrder = new Map<number, AdminDeliveryItem[]>();
   for (const it of items ?? []) {
     itemCounts.set(it.order_id, (itemCounts.get(it.order_id) ?? 0) + it.quantity);
+    if (!itemsByOrder.has(it.order_id)) itemsByOrder.set(it.order_id, []);
+    itemsByOrder.get(it.order_id)!.push({
+      code: it.code,
+      name: it.name,
+      size: it.size,
+      quantity: it.quantity,
+      unit_price_cents: it.unit_price_cents,
+    });
   }
   const deliveryByOrder = new Map<number, AdminDeliveryRow>();
   for (const d of deliveries ?? []) {
@@ -296,6 +325,8 @@ export async function listOrdersForDeliveries(): Promise<AdminOrderWithDelivery[
       item_count: itemCounts.get(o.id) ?? 0,
     },
     delivery: deliveryByOrder.get(o.id) ?? null,
+    items: itemsByOrder.get(o.id) ?? [],
+    shipping: (o.shipping as AdminDeliveryShipping | null) ?? null,
   }));
   rows.sort((a, b) => {
     const aBucket = a.delivery

@@ -272,14 +272,21 @@ export async function sendOrderShippedEmail(args: {
   carrier?: string | null;
   trackingNumber?: string | null;
   shipping?: ShippingInfo | null;
+  items?: OrderLine[];
+  totalCents?: number;
 }): Promise<SendResult> {
   const trackingUrl = buildTrackingUrl(args.orderRef, args.viewToken);
+  const itemsHtml =
+    args.items && args.items.length > 0 && typeof args.totalCents === "number"
+      ? itemsTable(args.items, args.totalCents)
+      : "";
   const body = `<tr><td style="padding:36px 32px 32px">
   <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Boutique InesPNJ</p>
   <h1 style="margin:8px 0 0;font-size:28px;font-weight:600;line-height:1.2;color:#0c1340">Ta commande est partie 🚀</h1>
   <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:#374151">Ta commande <strong style="font-family:'SF Mono',Menlo,monospace;color:#0c1340">${escapeHtml(args.orderRef)}</strong> vient d&apos;être expédiée. Tu vas la recevoir d&apos;ici quelques jours.</p>
   ${trackingButton(trackingUrl, "Suivre ma commande")}
   ${carrierBlock(args.carrier, args.trackingNumber)}
+  ${itemsHtml}
   ${shippingBlock(args.shipping ?? null)}
   <p style="margin-top:32px;font-size:12px;line-height:1.5;color:#9ca3af">Tu peux suivre l&apos;état de ta commande à tout moment via le bouton ci-dessus. Une question ? Réponds simplement à cet email.</p>
 </td></tr>`;
@@ -298,13 +305,20 @@ export async function sendOrderDeliveredEmail(args: {
   to: string;
   orderRef: string;
   viewToken: string;
+  items?: OrderLine[];
+  totalCents?: number;
 }): Promise<SendResult> {
   const trackingUrl = buildTrackingUrl(args.orderRef, args.viewToken);
+  const itemsHtml =
+    args.items && args.items.length > 0 && typeof args.totalCents === "number"
+      ? itemsTable(args.items, args.totalCents)
+      : "";
   const body = `<tr><td style="padding:36px 32px 32px">
   <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Boutique InesPNJ</p>
   <h1 style="margin:8px 0 0;font-size:28px;font-weight:600;line-height:1.2;color:#0c1340">Ta commande est arrivée 📦</h1>
   <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:#374151">D&apos;après le suivi, ta commande <strong style="font-family:'SF Mono',Menlo,monospace;color:#0c1340">${escapeHtml(args.orderRef)}</strong> vient d&apos;être livrée. On espère que tu vas kiffer le merch !</p>
   ${trackingButton(trackingUrl, "Voir ma commande")}
+  ${itemsHtml}
   <p style="margin-top:16px;font-size:14px;line-height:1.55;color:#374151">Si quelque chose cloche (article manquant, taille, défaut…) réponds simplement à cet email, on s&apos;en occupe.</p>
   <p style="margin-top:32px;font-size:12px;color:#9ca3af">Merci pour ta commande sur la boutique InesPNJ ❤️</p>
 </td></tr>`;

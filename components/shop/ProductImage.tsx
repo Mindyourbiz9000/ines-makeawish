@@ -39,15 +39,6 @@ export default function ProductImage({
           className="absolute inset-0 h-full w-full object-cover"
         />
       ) : null}
-      <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5">
-        <span
-          aria-hidden="true"
-          className="h-1 w-1 rounded-full bg-neon-pink"
-        />
-        <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">
-          Mockup
-        </span>
-      </div>
     </div>
   );
 }

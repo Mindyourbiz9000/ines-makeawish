@@ -11,7 +11,7 @@ import Link from "next/link";
 import { PRODUCTS, formatPrice } from "@/lib/shop/products";
 
 export const metadata = {
-  title: "Boutique · InesPNJ (preview)",
+  title: "Boutique · InesPNJ",
   robots: { index: false, follow: false },
 };
 

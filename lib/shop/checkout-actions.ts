@@ -1,6 +1,6 @@
 "use server";
 
-// Server actions du checkout mockup. La principale, placeMockOrderAction,
+// Server actions du checkout mockup. La principale, placeOrderAction,
 // crée une vraie ligne dans shop_orders + shop_order_items à partir du
 // panier sérialisé en JSON. Une fois la commande créée, redirige vers
 // /shop/success?ref=MOCK-XXXXXX. La page success lira la commande depuis
@@ -24,7 +24,12 @@ function generateRef(): string {
   for (let i = 0; i < 6; i++) {
     out += REF_CHARSET[Math.floor(Math.random() * REF_CHARSET.length)];
   }
-  return `MOCK-${out}`;
+  return `SLAY-${out}`;
+}
+
+function isValidEmail(value: string): boolean {
+  // Validation simple, suffisante pour le client : format général d'email.
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 function parseCart(raw: unknown): IncomingLine[] {
@@ -48,7 +53,7 @@ function parseCart(raw: unknown): IncomingLine[] {
   }
 }
 
-export async function placeMockOrderAction(formData: FormData) {
+export async function placeOrderAction(formData: FormData) {
   const lines = parseCart(formData.get("cart_json"));
   if (lines.length === 0) {
     throw new Error("Panier vide ou invalide");
@@ -87,12 +92,36 @@ export async function placeMockOrderAction(formData: FormData) {
   const ref = generateRef();
   const supabase = createServerClient();
 
-  // Lookup customer-fournis fields (mostly placeholders en mockup mais on les
-  // capture quand même au cas où on les expose un jour).
-  const customer_email =
-    (formData.get("email") as string | null)?.trim() || null;
-  const customer_name =
-    (formData.get("name") as string | null)?.trim() || null;
+  // Lecture + validation des champs client (email + adresse de livraison).
+  const email = ((formData.get("email") as string | null) ?? "").trim();
+  const fullName = ((formData.get("full_name") as string | null) ?? "").trim();
+  const addressLine1 = ((formData.get("address_line_1") as string | null) ?? "").trim();
+  const addressLine2 = ((formData.get("address_line_2") as string | null) ?? "").trim();
+  const postalCode = ((formData.get("postal_code") as string | null) ?? "").trim();
+  const city = ((formData.get("city") as string | null) ?? "").trim();
+  const country = ((formData.get("country") as string | null) ?? "").trim();
+  const phone = ((formData.get("phone") as string | null) ?? "").trim();
+
+  if (!email || !isValidEmail(email)) {
+    throw new Error("Adresse e-mail invalide");
+  }
+  if (!fullName) throw new Error("Nom complet requis");
+  if (!addressLine1) throw new Error("Adresse requise");
+  if (!postalCode) throw new Error("Code postal requis");
+  if (!city) throw new Error("Ville requise");
+  if (!country) throw new Error("Pays requis");
+
+  const customer_email = email;
+  const customer_name = fullName;
+  const shipping = {
+    fullName,
+    addressLine1,
+    addressLine2: addressLine2 || null,
+    postalCode,
+    city,
+    country,
+    phone: phone || null,
+  };
 
   // 1. Create the order
   const { data: order, error: orderErr } = await supabase
@@ -102,9 +131,13 @@ export async function placeMockOrderAction(formData: FormData) {
       status: "pending",
       customer_email,
       customer_name,
+      shipping,
       subtotal_cents: subtotal,
-      total_cents: subtotal, // mockup: pas de shipping/tax
+      total_cents: subtotal, // pas de shipping/tax pour l'instant
       currency: "EUR",
+      // Flag interne : tant qu'il n'y a pas d'intégration paiement réelle,
+      // toutes les commandes sont marquées mock=true. Permet à l'admin de
+      // distinguer plus tard les vraies des fausses.
       mock: true,
     })
     .select()

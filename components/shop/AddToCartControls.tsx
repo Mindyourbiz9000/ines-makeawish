@@ -105,9 +105,6 @@ export default function AddToCartControls({ product }: Props) {
         >
           {justAdded ? "✓ Ajouté · retour au catalogue…" : "Ajouter au panier"}
         </button>
-        <p className="mt-3 text-center text-[11px] uppercase tracking-[0.18em] text-white/35">
-          Aperçu mockup · aucun paiement réel
-        </p>
       </div>
     </div>
   );

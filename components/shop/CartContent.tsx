@@ -149,9 +149,6 @@ export default function CartContent() {
           >
             Passer au paiement
           </Link>
-          <p className="mt-3 text-center text-[11px] uppercase tracking-[0.18em] text-white/35">
-            Aperçu mockup · aucun paiement réel
-          </p>
         </div>
       </aside>
     </div>

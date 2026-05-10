@@ -4,7 +4,7 @@ import CheckoutForm from "@/components/shop/CheckoutForm";
 import Colophon from "@/components/shop/Colophon";
 
 export const metadata = {
-  title: "Paiement · Boutique InesPNJ (preview)",
+  title: "Paiement · Boutique InesPNJ",
   robots: { index: false, follow: false },
 };
 

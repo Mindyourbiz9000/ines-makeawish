@@ -63,10 +63,14 @@ export default function PlaceholderProductCard({
         </div>
 
         <div className="mt-3">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-white/45 transition-colors duration-500 group-hover:text-white/75">
-            {code}
+          {code && code !== name ? (
+            <p className="text-[11px] uppercase tracking-[0.28em] text-white/45 transition-colors duration-500 group-hover:text-white/75">
+              {code}
+            </p>
+          ) : null}
+          <p className={`${code && code !== name ? "mt-1" : ""} text-sm font-medium text-white`}>
+            {name}
           </p>
-          <p className="mt-1 text-sm font-medium text-white">{name}</p>
           <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/35 tabular-nums">
             {priceLabel ?? "À venir"}
           </p>

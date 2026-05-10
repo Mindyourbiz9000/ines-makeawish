@@ -1,13 +1,17 @@
 "use client";
 
-// Formulaire de checkout MOCKUP. Tous les inputs sont désactivés. Seul le
-// bouton "Simuler le paiement" cliquable, qui génère une référence aléatoire
-// et redirige vers /shop/success.
+// Formulaire de checkout MOCKUP. Les inputs adresse/paiement sont désactivés
+// (juste pour la mise en scène). Le bouton "Simuler le paiement" déclenche
+// une vraie server action qui insère un order + items dans Supabase, puis
+// redirige sur /shop/success?ref=...
+//
+// Le panier (slug + size + qty) est sérialisé en JSON dans un hidden input
+// pour que le serveur puisse rejouer les prix à partir du catalogue source.
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "./CartProvider";
 import { formatPrice } from "@/lib/shop/products";
+import { placeMockOrderAction } from "@/lib/shop/checkout-actions";
 
 const COUNTRIES_EU = [
   "France",
@@ -23,15 +27,6 @@ const COUNTRIES_EU = [
   "Irlande",
 ];
 
-function generateRef(): string {
-  const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-  let out = "";
-  for (let i = 0; i < 6; i++) {
-    out += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return `MOCK-${out}`;
-}
-
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <p className="mb-1.5 text-[11px] uppercase tracking-[0.22em] text-white/45">
@@ -44,20 +39,8 @@ const baseInput =
   "w-full min-h-[48px] rounded-md bg-white/[0.025] px-3 text-[15px] text-white/85 ring-1 ring-white/[0.08] placeholder:text-white/25 disabled:cursor-not-allowed disabled:text-white/40";
 
 export default function CheckoutForm() {
-  const router = useRouter();
-  const { hydrated, subtotalCents, count, ready } = useCart();
+  const { lines, hydrated, subtotalCents, count, ready } = useCart();
   const [submitting, setSubmitting] = useState(false);
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (submitting) return;
-    setSubmitting(true);
-    const ref = generateRef();
-    // petit délai pour que le visiteur sente que "ça paye"
-    window.setTimeout(() => {
-      router.push(`/shop/success?ref=${encodeURIComponent(ref)}`);
-    }, 600);
-  }
 
   // Pendant l'hydration : skeleton minimal
   if (!ready) {
@@ -83,11 +66,18 @@ export default function CheckoutForm() {
     );
   }
 
+  // Snapshot du panier sérialisé pour le hidden input.
+  const cartJson = JSON.stringify(
+    lines.map((l) => ({ slug: l.slug, size: l.size, qty: l.qty }))
+  );
+
   return (
     <form
-      onSubmit={handleSubmit}
+      action={placeMockOrderAction}
+      onSubmit={() => setSubmitting(true)}
       className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-[1fr_minmax(280px,360px)] md:gap-14"
     >
+      <input type="hidden" name="cart_json" value={cartJson} />
       {/* Form fields */}
       <div className="flex flex-col gap-6">
         {/* Mockup banner */}

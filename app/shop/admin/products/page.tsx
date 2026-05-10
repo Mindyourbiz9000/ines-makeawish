@@ -87,17 +87,22 @@ export default async function AdminProductsPage() {
 
                 <label className="block md:col-span-2">
                   <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-                    Code (label court)
-                  </span>
-                  <input name="code" defaultValue={p.code} className={inputBase} />
-                </label>
-
-                <label className="block">
-                  <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-                    Nom
+                    Nom du produit
                   </span>
                   <input name="name" defaultValue={p.name} className={inputBase} />
                 </label>
+
+                <details className="md:col-span-2">
+                  <summary className="cursor-pointer text-[11px] uppercase tracking-[0.18em] text-white/35 hover:text-white/60">
+                    Avancé · code (label court personnalisé)
+                  </summary>
+                  <input
+                    name="code"
+                    defaultValue={p.code}
+                    className={`${inputBase} mt-2`}
+                    placeholder="Laisse vide pour utiliser le nom"
+                  />
+                </details>
 
                 <label className="block">
                   <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
@@ -250,24 +255,19 @@ export default async function AdminProductsPage() {
         <h2 className="text-xl font-medium text-white">Ajouter un produit</h2>
         <p className="mt-1 text-sm text-white/55">
           Le produit est créé avec ses tailles initiales et un stock de 10 par
-          défaut. L&apos;URL (slug) est générée automatiquement depuis le code.
+          défaut. L&apos;URL (slug) et le code (label court) sont générés
+          automatiquement depuis le nom.
         </p>
         <form
           action={createProductAction}
           encType="multipart/form-data"
           className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2"
         >
-          <label className="block">
+          <label className="block md:col-span-2">
             <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-              Code * <span className="text-white/35">(label court, ex. &quot;Hoodie crème&quot;)</span>
+              Nom du produit * <span className="text-white/35">(ex. &quot;Hoodie crème&quot;)</span>
             </span>
-            <input name="code" required className={inputBase} placeholder="Hoodie crème" />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-              Nom *
-            </span>
-            <input name="name" required className={inputBase} placeholder="SLAY" />
+            <input name="name" required className={inputBase} placeholder="Hoodie crème" />
           </label>
           <label className="block">
             <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">

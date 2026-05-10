@@ -431,10 +431,21 @@ export async function upsertDeliveryAction(formData: FormData) {
   if (shouldNotifyShipped || shouldNotifyDelivered) {
     const { data: order } = await supabase
       .from("shop_orders")
-      .select("ref, customer_email, shipping, view_token")
+      .select("ref, customer_email, shipping, view_token, total_cents")
       .eq("id", order_id)
       .maybeSingle();
     if (order?.customer_email && order.view_token) {
+      const { data: itemRows } = await supabase
+        .from("shop_order_items")
+        .select("code, name, size, quantity, unit_price_cents")
+        .eq("order_id", order_id);
+      const items = (itemRows ?? []).map((i) => ({
+        code: i.code,
+        name: i.name,
+        size: i.size,
+        quantity: i.quantity,
+        unit_price_cents: i.unit_price_cents,
+      }));
       const result = shouldNotifyShipped
         ? await sendOrderShippedEmail({
             to: order.customer_email,
@@ -445,11 +456,15 @@ export async function upsertDeliveryAction(formData: FormData) {
             shipping: order.shipping as Parameters<
               typeof sendOrderShippedEmail
             >[0]["shipping"],
+            items,
+            totalCents: order.total_cents,
           })
         : await sendOrderDeliveredEmail({
             to: order.customer_email,
             orderRef: order.ref,
             viewToken: order.view_token,
+            items,
+            totalCents: order.total_cents,
           });
       if (!result.ok) {
         // eslint-disable-next-line no-console

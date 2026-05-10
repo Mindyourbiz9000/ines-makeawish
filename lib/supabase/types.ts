@@ -140,6 +140,7 @@ export type Database = {
           total_cents: number;
           currency: string;
           mock: boolean;
+          view_token: string;
           created_at: string;
           updated_at: string;
         };
@@ -160,6 +161,7 @@ export type Database = {
           total_cents: number;
           currency?: string;
           mock?: boolean;
+          view_token?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -180,6 +182,7 @@ export type Database = {
           total_cents?: number;
           currency?: string;
           mock?: boolean;
+          view_token?: string;
           created_at?: string;
           updated_at?: string;
         };

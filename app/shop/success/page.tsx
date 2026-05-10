@@ -174,7 +174,27 @@ export default async function SuccessPage({
         </section>
       ) : null}
 
-      <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:gap-4">
+      {result?.order.view_token ? (
+        <section className="mt-10 rounded-2xl bg-white/[0.025] p-5 ring-1 ring-white/[0.08] sm:p-6">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+            Suivi de ta commande
+          </p>
+          <p className="mt-3 text-sm text-white/70">
+            Bookmarke ce lien pour suivre ta commande à tout moment — il est
+            unique et privé.
+          </p>
+          <Link
+            href={`/orders/${encodeURIComponent(
+              result.order.ref
+            )}?t=${encodeURIComponent(result.order.view_token)}`}
+            className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-white/[0.06] px-4 text-sm font-medium text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.10]"
+          >
+            Voir le suivi de la commande →
+          </Link>
+        </section>
+      ) : null}
+
+      <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
         <Link
           href="/shop"
           className="flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-semibold uppercase tracking-[0.18em] text-night-900 transition-colors hover:bg-white/90"

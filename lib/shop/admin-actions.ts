@@ -430,14 +430,15 @@ export async function upsertDeliveryAction(formData: FormData) {
   if (shouldNotifyShipped || shouldNotifyDelivered) {
     const { data: order } = await supabase
       .from("shop_orders")
-      .select("ref, customer_email, shipping")
+      .select("ref, customer_email, shipping, view_token")
       .eq("id", order_id)
       .maybeSingle();
-    if (order?.customer_email) {
+    if (order?.customer_email && order.view_token) {
       const result = shouldNotifyShipped
         ? await sendOrderShippedEmail({
             to: order.customer_email,
             orderRef: order.ref,
+            viewToken: order.view_token,
             carrier,
             trackingNumber: tracking_number,
             shipping: order.shipping as Parameters<
@@ -447,6 +448,7 @@ export async function upsertDeliveryAction(formData: FormData) {
         : await sendOrderDeliveredEmail({
             to: order.customer_email,
             orderRef: order.ref,
+            viewToken: order.view_token,
           });
       if (!result.ok) {
         // eslint-disable-next-line no-console

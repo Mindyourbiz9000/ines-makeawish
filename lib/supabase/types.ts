@@ -221,6 +221,24 @@ export type Database = {
         };
         Relationships: [];
       };
+      shop_settings: {
+        Row: {
+          key: string;
+          value: unknown;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          value: unknown;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          value?: unknown;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       shop_deliveries: {
         Row: {
           id: number;

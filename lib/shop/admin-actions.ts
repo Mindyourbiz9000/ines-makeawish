@@ -11,6 +11,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/types";
+import {
+  sendOrderShippedEmail,
+  sendOrderDeliveredEmail,
+} from "@/lib/shop/email";
 
 type ProductUpdate = Database["public"]["Tables"]["shop_products"]["Update"];
 
@@ -358,6 +362,13 @@ export async function upsertDeliveryAction(formData: FormData) {
   }
   const supabase = createServerClient();
 
+  // Récupère l'ancien statut delivery pour décider quelle notif envoyer après.
+  const { data: previous } = await supabase
+    .from("shop_deliveries")
+    .select("status")
+    .eq("order_id", order_id)
+    .maybeSingle();
+
   // Met à jour shipped_at / delivered_at quand le statut change vers shipped/delivered
   const now = new Date().toISOString();
   const updates: {
@@ -406,6 +417,44 @@ export async function upsertDeliveryAction(formData: FormData) {
       .from("shop_orders")
       .update({ status: orderStatus })
       .eq("id", order_id);
+  }
+
+  // Notification email best-effort. Si SMTP n'est pas configuré ou rate, on
+  // log et on continue — le flow admin ne doit jamais casser à cause d'un mail.
+  const shouldNotifyShipped =
+    (status === "shipped" || status === "in_transit") &&
+    (!previous || previous.status === "preparing" || previous.status !== status);
+  const shouldNotifyDelivered =
+    status === "delivered" && previous?.status !== "delivered";
+
+  if (shouldNotifyShipped || shouldNotifyDelivered) {
+    const { data: order } = await supabase
+      .from("shop_orders")
+      .select("ref, customer_email, shipping")
+      .eq("id", order_id)
+      .maybeSingle();
+    if (order?.customer_email) {
+      const result = shouldNotifyShipped
+        ? await sendOrderShippedEmail({
+            to: order.customer_email,
+            orderRef: order.ref,
+            carrier,
+            trackingNumber: tracking_number,
+            shipping: order.shipping as Parameters<
+              typeof sendOrderShippedEmail
+            >[0]["shipping"],
+          })
+        : await sendOrderDeliveredEmail({
+            to: order.customer_email,
+            orderRef: order.ref,
+          });
+      if (!result.ok) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[shop] Email ${shouldNotifyShipped ? "shipped" : "delivered"} non envoyé : ${result.reason}`
+        );
+      }
+    }
   }
 
   revalidatePath("/shop/admin");

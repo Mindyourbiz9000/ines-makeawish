@@ -1,23 +1,16 @@
-// Admin Orders : liste des commandes (mockup ou réelles), changement de
-// statut inline. Quand on passe en "shipped", une livraison est créée
-// automatiquement (cf. updateOrderStatusAction).
+// Admin Orders : vue en lecture seule de toutes les commandes. Le statut
+// se gère dans /shop/admin/deliveries (qui synchronise automatiquement la
+// commande). Seule action possible ici : annuler une commande, ce qui
+// déclenchera un remboursement quand Stripe sera connecté.
 
+import Link from "next/link";
 import { listAllOrders } from "@/lib/shop/admin-queries";
-import { updateOrderStatusAction } from "@/lib/shop/admin-actions";
+import { cancelOrderAction } from "@/lib/shop/admin-actions";
 import { formatPrice } from "@/lib/shop/products";
 
 export const dynamic = "force-dynamic";
 
-const STATUSES = [
-  "pending",
-  "paid",
-  "shipped",
-  "delivered",
-  "cancelled",
-  "refunded",
-] as const;
-
-const STATUS_COLORS: Record<(typeof STATUSES)[number], string> = {
+const STATUS_COLORS: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-300 ring-amber-500/30",
   paid: "bg-emerald-500/15 text-emerald-300 ring-emerald-500/30",
   shipped: "bg-neon-blue/15 text-neon-blue ring-neon-blue/40",
@@ -26,14 +19,26 @@ const STATUS_COLORS: Record<(typeof STATUSES)[number], string> = {
   refunded: "bg-[#9146FF]/15 text-[#bf94ff] ring-[#9146FF]/30",
 };
 
-const inputBase =
-  "min-h-[40px] rounded-md bg-white/[0.04] px-3 text-[13px] text-white/90 ring-1 ring-white/10 focus:outline-none focus:ring-white/30";
+const CANCELLABLE = new Set(["pending", "paid", "shipped"]);
 
 export default async function AdminOrdersPage() {
   const orders = await listAllOrders(200);
 
   return (
     <section>
+      <p className="mb-6 max-w-2xl text-sm text-white/55">
+        Vue lecture seule. Le statut d&apos;une commande se gère depuis l&apos;onglet{" "}
+        <Link
+          href="/shop/admin/deliveries"
+          className="text-white/85 underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+        >
+          Livraisons
+        </Link>{" "}
+        — il se met à jour automatiquement quand tu planifies l&apos;expédition.
+        Tu peux annuler une commande ici (un remboursement sera déclenché
+        automatiquement quand Stripe sera connecté).
+      </p>
+
       {orders.length === 0 ? (
         <p className="text-sm text-white/55">
           Aucune commande pour l&apos;instant.
@@ -52,7 +57,8 @@ export default async function AdminOrdersPage() {
                   </p>
                   <span
                     className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ring-1 ${
-                      STATUS_COLORS[o.status]
+                      STATUS_COLORS[o.status] ??
+                      "bg-white/[0.06] text-white/55 ring-white/10"
                     }`}
                   >
                     {o.status}
@@ -78,26 +84,17 @@ export default async function AdminOrdersPage() {
                 {formatPrice(o.total_cents)}
               </p>
 
-              <form action={updateOrderStatusAction} className="flex items-center gap-2">
-                <input type="hidden" name="id" value={o.id} />
-                <select
-                  name="status"
-                  defaultValue={o.status}
-                  className={inputBase}
-                >
-                  {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="submit"
-                  className="min-h-[40px] rounded-md bg-white/[0.06] px-3 text-[12px] uppercase tracking-[0.18em] text-white/80 ring-1 ring-white/10 transition-colors hover:bg-white/[0.10] hover:text-white"
-                >
-                  OK
-                </button>
-              </form>
+              {CANCELLABLE.has(o.status) ? (
+                <form action={cancelOrderAction}>
+                  <input type="hidden" name="id" value={o.id} />
+                  <button
+                    type="submit"
+                    className="min-h-[40px] rounded-md bg-red-500/10 px-3 text-[12px] uppercase tracking-[0.18em] text-red-300 ring-1 ring-red-500/30 transition-colors hover:bg-red-500/20"
+                  >
+                    Annuler
+                  </button>
+                </form>
+              ) : null}
             </li>
           ))}
         </ul>

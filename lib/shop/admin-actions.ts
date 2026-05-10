@@ -387,5 +387,74 @@ export async function upsertDeliveryAction(formData: FormData) {
       { onConflict: "order_id" }
     );
   if (error) throw new Error(`Upsert delivery : ${error.message}`);
+
+  // Synchronise le statut de la commande à partir du statut de la livraison.
+  // C'est l'unique source de vérité du flow logistique : on ne peut plus
+  // changer le statut d'une commande directement depuis /shop/admin/orders.
+  let orderStatus:
+    | "paid"
+    | "shipped"
+    | "delivered"
+    | null = null;
+  if (status === "preparing") orderStatus = "paid";
+  else if (status === "shipped" || status === "in_transit")
+    orderStatus = "shipped";
+  else if (status === "delivered") orderStatus = "delivered";
+  // exception : on ne change pas le statut commande automatiquement.
+  if (orderStatus) {
+    await supabase
+      .from("shop_orders")
+      .update({ status: orderStatus })
+      .eq("id", order_id);
+  }
+
+  revalidatePath("/shop/admin");
+  revalidatePath("/shop/admin/orders");
+  revalidatePath("/shop/admin/deliveries");
+}
+
+/**
+ * Annule une commande. Pour l'instant : flip status → 'cancelled' et marque
+ * la livraison associée en 'exception' si elle existe.
+ *
+ * Quand on connectera Stripe, c'est ici qu'on déclenchera stripe.refunds.create()
+ * pour rembourser le client automatiquement (cf. payment_intent stocké sur
+ * shop_orders).
+ */
+export async function cancelOrderAction(formData: FormData) {
+  const id = readNumber(formData, "id");
+  if (!id) throw new Error("id manquant");
+  const supabase = createServerClient();
+
+  // Vérifie l'état actuel — on ne ré-annule pas une commande déjà annulée.
+  const { data: existing } = await supabase
+    .from("shop_orders")
+    .select("status")
+    .eq("id", id)
+    .maybeSingle();
+  if (!existing) throw new Error("Commande introuvable");
+  if (existing.status === "cancelled" || existing.status === "refunded") {
+    return; // no-op : déjà annulée
+  }
+
+  const { error } = await supabase
+    .from("shop_orders")
+    .update({ status: "cancelled" })
+    .eq("id", id);
+  if (error) throw new Error(`Annulation : ${error.message}`);
+
+  // Si une livraison est en cours, on la marque en exception (pour notifier
+  // qu'elle ne doit pas partir).
+  await supabase
+    .from("shop_deliveries")
+    .update({ status: "exception", notes: "Commande annulée" })
+    .eq("order_id", id);
+
+  // TODO Stripe : si on a stripe_payment_intent stocké, déclencher un refund :
+  //   await stripe.refunds.create({ payment_intent: order.stripe_payment_intent });
+  //   await supabase.from('shop_orders').update({ status: 'refunded' }).eq('id', id);
+
+  revalidatePath("/shop/admin");
+  revalidatePath("/shop/admin/orders");
   revalidatePath("/shop/admin/deliveries");
 }

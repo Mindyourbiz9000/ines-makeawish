@@ -50,7 +50,7 @@ function daysAgo(iso: string): string {
 }
 
 export default function DeliveryCard({ row }: { row: AdminOrderWithDelivery }) {
-  const { order: o, delivery: d } = row;
+  const { order: o, delivery: d, items, shipping } = row;
   const status = d?.status ?? "none";
   const isException = status === "exception";
 
@@ -126,6 +126,69 @@ export default function DeliveryCard({ row }: { row: AdminOrderWithDelivery }) {
       </summary>
 
       <div className="border-t border-white/[0.08] p-4">
+        {/* Order details : articles + adresse pour préparer le colis */}
+        <div className="mb-4 grid grid-cols-1 gap-4 rounded-md bg-white/[0.02] p-3 ring-1 ring-white/[0.06] sm:grid-cols-2">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.22em] text-white/45">
+              Articles à préparer
+            </p>
+            {items.length === 0 ? (
+              <p className="mt-2 text-[12px] text-white/45">Aucun article.</p>
+            ) : (
+              <ul className="mt-2 space-y-1.5 text-[12px]">
+                {items.map((it, i) => (
+                  <li
+                    key={i}
+                    className="flex items-baseline justify-between gap-2"
+                  >
+                    <span className="min-w-0 text-white/85">
+                      <span className="font-medium text-white">
+                        {it.name}
+                      </span>{" "}
+                      <span className="text-white/45">
+                        · {it.size} · ×{it.quantity}
+                      </span>
+                    </span>
+                    <span className="shrink-0 tabular-nums text-white/70">
+                      {formatPrice(it.unit_price_cents * it.quantity)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.22em] text-white/45">
+              Adresse de livraison
+            </p>
+            {shipping ? (
+              <address className="mt-2 not-italic text-[12px] leading-relaxed text-white/85">
+                {shipping.fullName ? (
+                  <p className="font-medium text-white">{shipping.fullName}</p>
+                ) : null}
+                {shipping.addressLine1 ? <p>{shipping.addressLine1}</p> : null}
+                {shipping.addressLine2 ? <p>{shipping.addressLine2}</p> : null}
+                {shipping.postalCode || shipping.city ? (
+                  <p>
+                    {[shipping.postalCode, shipping.city]
+                      .filter(Boolean)
+                      .join(" ")}
+                  </p>
+                ) : null}
+                {shipping.country ? <p>{shipping.country}</p> : null}
+                {shipping.phone ? (
+                  <p className="mt-1 text-white/55">{shipping.phone}</p>
+                ) : null}
+              </address>
+            ) : (
+              <p className="mt-2 text-[12px] text-white/45">
+                Pas d&apos;adresse renseignée.
+              </p>
+            )}
+          </div>
+        </div>
+
         {o.customer_email ? (
           <p className="mb-3 text-[11px] text-white/45">
             <span className="uppercase tracking-[0.18em]">Email · </span>

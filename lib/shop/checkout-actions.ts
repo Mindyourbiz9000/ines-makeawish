@@ -14,6 +14,11 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createServerClient } from "@/lib/supabase/server";
 import { getProductBySlug } from "@/lib/shop/products";
+import {
+  sendOrderPlacedCustomerEmail,
+  sendOrderPlacedAdminEmail,
+} from "@/lib/shop/email";
+import { getSmtpConfig } from "@/lib/shop/settings";
 
 type IncomingLine = { slug: string; size: string; qty: number };
 
@@ -199,5 +204,47 @@ export async function placeOrderAction(formData: FormData) {
 
   revalidatePath("/shop/admin");
   revalidatePath("/shop/admin/orders");
+
+  // 4. Emails best-effort : confirmation client + notification admin.
+  //    Échec silencieux — pas question de casser le checkout pour un SMTP HS.
+  const emailItems = resolved.map((i) => ({
+    code: i.code,
+    name: i.name,
+    size: i.size,
+    quantity: i.qty,
+    unit_price_cents: i.unitPriceCents,
+  }));
+  // Le view_token est généré côté DB (default gen_random_uuid()). Le select()
+  // au-dessus le ramène ; on cast pour TS car le type généré peut être lâche.
+  const viewToken = (order as { view_token?: string }).view_token ?? "";
+  try {
+    await sendOrderPlacedCustomerEmail({
+      to: customer_email,
+      orderRef: ref,
+      viewToken,
+      items: emailItems,
+      totalCents: subtotal,
+      shipping,
+    });
+  } catch {
+    /* swallow */
+  }
+  try {
+    const smtp = await getSmtpConfig();
+    if (smtp?.fromEmail) {
+      await sendOrderPlacedAdminEmail({
+        to: smtp.fromEmail,
+        orderRef: ref,
+        customerName: customer_name,
+        customerEmail: customer_email,
+        items: emailItems,
+        totalCents: subtotal,
+        shipping,
+      });
+    }
+  } catch {
+    /* swallow */
+  }
+
   redirect(`/shop/success?ref=${encodeURIComponent(ref)}`);
 }

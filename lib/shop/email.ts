@@ -9,6 +9,9 @@
 import nodemailer from "nodemailer";
 import { getSmtpConfig, type SmtpConfig } from "./settings";
 
+const SHOP_BASE_URL =
+  process.env.NEXT_PUBLIC_APP_URL ?? "https://inespnj.com";
+
 export type SendResult =
   | { ok: true; messageId: string }
   | { ok: false; reason: string };
@@ -47,23 +50,45 @@ export async function sendEmail(args: {
   }
 }
 
-/** Test rapide : envoie un email "Hello world" pour valider la conf. */
-export async function sendTestEmail(to: string): Promise<SendResult> {
-  return sendEmail({
-    to,
-    subject: "Test SMTP · Boutique InesPNJ",
-    html: `<div style="font-family:Inter,system-ui,sans-serif;line-height:1.5;color:#111">
-      <h1 style="font-weight:600;margin:0 0 12px">SMTP configuré ✓</h1>
-      <p>Si tu reçois ce mail, ta config SMTP fonctionne — les notifications de livraison s'enverront aux clients sans intervention manuelle.</p>
-      <p style="color:#666;font-size:13px;margin-top:24px">Envoyé depuis /shop/admin/settings · Boutique InesPNJ</p>
-    </div>`,
-    text: "SMTP configuré. Si tu reçois ce mail, ta config SMTP fonctionne.",
-  });
+// ---------------------------------------------------------------
+// Templates
+// ---------------------------------------------------------------
+
+/**
+ * Wrapper d'email : card blanche centrée sur fond crème, bande de marque
+ * néon-pink → néon-yellow en haut, signature InesPNJ en footer. Conçu pour
+ * fonctionner partout (Gmail, Outlook, Apple Mail) — inline styles + tables.
+ */
+function shellHtml(args: {
+  preheader: string;
+  bodyHtml: string;
+}): string {
+  return `<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+</head>
+<body style="margin:0;padding:0;background:#f6f4f0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#0c1340">
+<div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden">${args.preheader}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f4f0;padding:40px 16px">
+  <tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(12,19,64,0.08)">
+      <tr><td style="background:linear-gradient(90deg,#ff3aa6 0%,#ffd84a 100%);height:6px;line-height:6px;font-size:0">&nbsp;</td></tr>
+      ${args.bodyHtml}
+      <tr><td style="background:#f6f4f0;padding:20px 32px;text-align:center;font-size:11px;color:#9ca3af;letter-spacing:0.2em;text-transform:uppercase">© InesPNJ</td></tr>
+    </table>
+  </td></tr>
+</table>
+</body></html>`;
 }
 
-// ---------------------------------------------------------------
-// Notifications transactionnelles
-// ---------------------------------------------------------------
+function trackingButton(href: string, label: string): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0">
+  <tr><td style="border-radius:9999px;background:#0c1340">
+    <a href="${href}" style="display:inline-block;padding:14px 28px;color:#ffffff;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase">${label} →</a>
+  </td></tr>
+</table>`;
+}
 
 type ShippingInfo = {
   fullName?: string | null;
@@ -74,7 +99,7 @@ type ShippingInfo = {
   country?: string | null;
 };
 
-function shippingAddressHtml(shipping: ShippingInfo | null): string {
+function shippingBlock(shipping: ShippingInfo | null): string {
   if (!shipping) return "";
   const lines = [
     shipping.fullName,
@@ -84,50 +109,121 @@ function shippingAddressHtml(shipping: ShippingInfo | null): string {
     shipping.country,
   ].filter(Boolean);
   if (lines.length === 0) return "";
-  return `<p style="color:#444;margin:16px 0">${lines.join("<br>")}</p>`;
+  return `<p style="margin:24px 0 4px;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9ca3af">Adresse de livraison</p>
+<p style="margin:0;font-size:14px;line-height:1.5;color:#374151">${lines
+    .map((l) => escapeHtml(l ?? ""))
+    .join("<br>")}</p>`;
 }
+
+function carrierBlock(carrier?: string | null, tracking?: string | null): string {
+  if (!carrier && !tracking) return "";
+  return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#f6f4f0;border-radius:12px;padding:0;margin:0">
+  <tr><td style="padding:16px 20px">
+    ${
+      carrier
+        ? `<p style="margin:0;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9ca3af">Transporteur</p>
+           <p style="margin:4px 0 0;font-size:15px;font-weight:500;color:#0c1340">${escapeHtml(carrier)}</p>`
+        : ""
+    }
+    ${
+      tracking
+        ? `<p style="margin:${carrier ? "12px" : "0"} 0 0;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9ca3af">N° de suivi</p>
+           <p style="margin:4px 0 0;font-size:15px;font-family:'SF Mono',Menlo,monospace;color:#0c1340;word-break:break-all">${escapeHtml(tracking)}</p>`
+        : ""
+    }
+  </td></tr>
+</table>`;
+}
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildTrackingUrl(ref: string, viewToken: string): string {
+  return `${SHOP_BASE_URL}/orders/${encodeURIComponent(ref)}?t=${encodeURIComponent(viewToken)}`;
+}
+
+// ---------------------------------------------------------------
+// Test mail
+// ---------------------------------------------------------------
+
+export async function sendTestEmail(to: string): Promise<SendResult> {
+  const body = `<tr><td style="padding:36px 32px 28px">
+  <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Boutique InesPNJ</p>
+  <h1 style="margin:8px 0 0;font-size:26px;font-weight:600;line-height:1.2;color:#0c1340">SMTP configuré ✓</h1>
+  <p style="margin-top:16px;font-size:15px;line-height:1.55;color:#374151">Si tu reçois ce mail, ta config SMTP fonctionne — les notifications de livraison s&apos;enverront aux clients sans intervention manuelle.</p>
+  <p style="margin-top:24px;font-size:12px;color:#9ca3af">Envoyé depuis /shop/admin/settings.</p>
+</td></tr>`;
+  return sendEmail({
+    to,
+    subject: "Test SMTP · Boutique InesPNJ",
+    html: shellHtml({
+      preheader: "Ta config SMTP fonctionne.",
+      bodyHtml: body,
+    }),
+    text: "SMTP configuré. Si tu reçois ce mail, ta config SMTP fonctionne.",
+  });
+}
+
+// ---------------------------------------------------------------
+// Notifications transactionnelles
+// ---------------------------------------------------------------
 
 export async function sendOrderShippedEmail(args: {
   to: string;
   orderRef: string;
+  viewToken: string;
   carrier?: string | null;
   trackingNumber?: string | null;
   shipping?: ShippingInfo | null;
 }): Promise<SendResult> {
-  const tracking =
-    args.carrier || args.trackingNumber
-      ? `<p style="margin:16px 0">
-          ${args.carrier ? `Transporteur : <strong>${args.carrier}</strong><br>` : ""}
-          ${args.trackingNumber ? `N° de suivi : <strong>${args.trackingNumber}</strong>` : ""}
-        </p>`
-      : "";
+  const trackingUrl = buildTrackingUrl(args.orderRef, args.viewToken);
+  const body = `<tr><td style="padding:36px 32px 32px">
+  <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Boutique InesPNJ</p>
+  <h1 style="margin:8px 0 0;font-size:28px;font-weight:600;line-height:1.2;color:#0c1340">Ta commande est partie 🚀</h1>
+  <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:#374151">Ta commande <strong style="font-family:'SF Mono',Menlo,monospace;color:#0c1340">${escapeHtml(args.orderRef)}</strong> vient d&apos;être expédiée. Tu vas la recevoir d&apos;ici quelques jours.</p>
+  ${trackingButton(trackingUrl, "Suivre ma commande")}
+  ${carrierBlock(args.carrier, args.trackingNumber)}
+  ${shippingBlock(args.shipping ?? null)}
+  <p style="margin-top:32px;font-size:12px;line-height:1.5;color:#9ca3af">Tu peux suivre l&apos;état de ta commande à tout moment via le bouton ci-dessus. Une question ? Réponds simplement à cet email.</p>
+</td></tr>`;
   return sendEmail({
     to: args.to,
     subject: `Ta commande ${args.orderRef} a été expédiée ✓`,
-    html: `<div style="font-family:Inter,system-ui,sans-serif;line-height:1.5;color:#111;max-width:560px">
-      <h1 style="font-weight:600;margin:0 0 12px">Ta commande est partie 🚀</h1>
-      <p>Ta commande <strong>${args.orderRef}</strong> vient d'être expédiée. Tu vas la recevoir d'ici quelques jours.</p>
-      ${tracking}
-      ${shippingAddressHtml(args.shipping ?? null)}
-      <p style="color:#666;font-size:13px;margin-top:24px">Merci pour ta commande sur la boutique InesPNJ ❤️</p>
-    </div>`,
-    text: `Ta commande ${args.orderRef} a été expédiée. ${args.carrier ? `Transporteur : ${args.carrier}. ` : ""}${args.trackingNumber ? `N° de suivi : ${args.trackingNumber}. ` : ""}`,
+    html: shellHtml({
+      preheader: `Suivi : ${args.carrier ?? "expédiée"}${args.trackingNumber ? ` · ${args.trackingNumber}` : ""}`,
+      bodyHtml: body,
+    }),
+    text: `Ta commande ${args.orderRef} a été expédiée. ${args.carrier ? `Transporteur : ${args.carrier}. ` : ""}${args.trackingNumber ? `N° de suivi : ${args.trackingNumber}. ` : ""}Suivi : ${trackingUrl}`,
   });
 }
 
 export async function sendOrderDeliveredEmail(args: {
   to: string;
   orderRef: string;
+  viewToken: string;
 }): Promise<SendResult> {
+  const trackingUrl = buildTrackingUrl(args.orderRef, args.viewToken);
+  const body = `<tr><td style="padding:36px 32px 32px">
+  <p style="margin:0;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:#9ca3af">Boutique InesPNJ</p>
+  <h1 style="margin:8px 0 0;font-size:28px;font-weight:600;line-height:1.2;color:#0c1340">Ta commande est arrivée 📦</h1>
+  <p style="margin:16px 0 0;font-size:15px;line-height:1.55;color:#374151">D&apos;après le suivi, ta commande <strong style="font-family:'SF Mono',Menlo,monospace;color:#0c1340">${escapeHtml(args.orderRef)}</strong> vient d&apos;être livrée. On espère que tu vas kiffer le merch !</p>
+  ${trackingButton(trackingUrl, "Voir ma commande")}
+  <p style="margin-top:16px;font-size:14px;line-height:1.55;color:#374151">Si quelque chose cloche (article manquant, taille, défaut…) réponds simplement à cet email, on s&apos;en occupe.</p>
+  <p style="margin-top:32px;font-size:12px;color:#9ca3af">Merci pour ta commande sur la boutique InesPNJ ❤️</p>
+</td></tr>`;
   return sendEmail({
     to: args.to,
     subject: `Ta commande ${args.orderRef} est arrivée ✓`,
-    html: `<div style="font-family:Inter,system-ui,sans-serif;line-height:1.5;color:#111;max-width:560px">
-      <h1 style="font-weight:600;margin:0 0 12px">Ta commande est arrivée 📦</h1>
-      <p>D'après le suivi, ta commande <strong>${args.orderRef}</strong> vient d'être livrée. On espère que tu vas kiffer le merch !</p>
-      <p>Si quelque chose cloche (article manquant, taille, etc.) réponds à cet email, on s'en occupe.</p>
-      <p style="color:#666;font-size:13px;margin-top:24px">Merci pour ta commande sur la boutique InesPNJ ❤️</p>
-    </div>`,
-    text: `Ta commande ${args.orderRef} a été livrée. Merci !`,
+    html: shellHtml({
+      preheader: "Ta commande a été livrée.",
+      bodyHtml: body,
+    }),
+    text: `Ta commande ${args.orderRef} a été livrée. Détails : ${trackingUrl}`,
   });
 }

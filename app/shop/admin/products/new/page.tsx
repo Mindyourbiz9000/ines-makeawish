@@ -57,15 +57,17 @@ export default function AdminProductNewPage() {
           </label>
           <label className="block">
             <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-              Prix (centimes) *
+              Prix (€) *
             </span>
             <input
-              name="price_cents"
+              name="price_euros"
               type="number"
               min={0}
+              step="0.01"
+              inputMode="decimal"
               required
               className={inputBase}
-              placeholder="6500"
+              placeholder="65.00"
             />
           </label>
           <label className="block">

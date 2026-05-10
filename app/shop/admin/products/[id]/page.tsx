@@ -12,6 +12,7 @@ import {
   addVariantAction,
 } from "@/lib/shop/admin-actions";
 import { formatPrice } from "@/lib/shop/products";
+import EnterSubmitForm from "@/components/shop/admin/EnterSubmitForm";
 
 export const dynamic = "force-dynamic";
 
@@ -86,7 +87,7 @@ export default async function AdminProductDetailPage({
           </div>
 
           {/* Edit form */}
-          <form
+          <EnterSubmitForm
             action={updateProductAction}
             encType="multipart/form-data"
             className="grid flex-1 grid-cols-1 gap-3 md:grid-cols-2"
@@ -118,13 +119,15 @@ export default async function AdminProductDetailPage({
 
             <label className="block">
               <span className="mb-1 block text-[11px] uppercase tracking-[0.18em] text-white/45">
-                Prix (centimes) · {formatPrice(p.price_cents)}
+                Prix (€) · {formatPrice(p.price_cents)}
               </span>
               <input
-                name="price_cents"
+                name="price_euros"
                 type="number"
                 min={0}
-                defaultValue={p.price_cents}
+                step="0.01"
+                inputMode="decimal"
+                defaultValue={(p.price_cents / 100).toFixed(2)}
                 className={inputBase}
               />
             </label>
@@ -203,7 +206,7 @@ export default async function AdminProductDetailPage({
                 Annuler
               </Link>
             </div>
-          </form>
+          </EnterSubmitForm>
         </div>
 
         {/* Variants / stock */}

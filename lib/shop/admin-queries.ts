@@ -240,7 +240,7 @@ export async function listOrdersForDeliveries(): Promise<AdminOrderWithDelivery[
   const { data: orders } = await supabase
     .from("shop_orders")
     .select("*")
-    .not("status", "in", "(cancelled,refunded)")
+    .in("status", ["pending", "paid", "shipped", "delivered"])
     .order("created_at", { ascending: false })
     .limit(200);
   if (!orders || orders.length === 0) return [];

@@ -248,6 +248,7 @@ export async function deleteProductAction(formData: FormData) {
   const { error } = await supabase.from("shop_products").delete().eq("id", id);
   if (error) throw new Error(`Suppression produit : ${error.message}`);
   revalidatePath("/shop/admin/products");
+  redirect("/shop/admin/products");
 }
 
 // ============================================================

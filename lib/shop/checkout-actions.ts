@@ -13,7 +13,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createServerClient } from "@/lib/supabase/server";
-import { getProductBySlug } from "@/lib/shop/products";
+import { getCatalogProductBySlug } from "@/lib/shop/catalog-queries";
 import {
   sendOrderPlacedCustomerEmail,
   sendOrderPlacedAdminEmail,
@@ -75,7 +75,7 @@ export async function placeOrderAction(formData: FormData) {
   };
   const resolved: ResolvedItem[] = [];
   for (const l of lines) {
-    const p = getProductBySlug(l.slug);
+    const p = await getCatalogProductBySlug(l.slug);
     if (!p) continue;
     resolved.push({
       slug: l.slug,
@@ -83,7 +83,7 @@ export async function placeOrderAction(formData: FormData) {
       name: p.name,
       size: l.size,
       qty: Math.min(99, Math.max(1, Math.floor(l.qty))),
-      unitPriceCents: p.priceCents,
+      unitPriceCents: p.price_cents,
     });
   }
   if (resolved.length === 0) {

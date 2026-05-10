@@ -1,5 +1,6 @@
-// PDP — page détail produit. Server component qui lit le catalogue mockup,
-// délègue les contrôles (taille / qty / add to cart) à un client component.
+// PDP — page détail produit. Server component qui lit le produit depuis
+// Supabase via getCatalogProductBySlug. Délègue les contrôles taille/qty au
+// client component AddToCartControls.
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -7,18 +8,18 @@ import ShopMasthead from "@/components/shop/ShopMasthead";
 import ProductImage from "@/components/shop/ProductImage";
 import AddToCartControls from "@/components/shop/AddToCartControls";
 import Colophon from "@/components/shop/Colophon";
-import { PRODUCTS, getProductBySlug, formatPrice } from "@/lib/shop/products";
+import { getCatalogProductBySlug } from "@/lib/shop/catalog-queries";
+import { formatPrice } from "@/lib/shop/products";
 
-export function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }) {
-  const product = getProductBySlug(params.slug);
+  const product = await getCatalogProductBySlug(params.slug);
   if (!product) return { title: "Produit introuvable" };
   return {
     title: `${product.code} · ${product.name} — Boutique InesPNJ`,
@@ -26,12 +27,12 @@ export async function generateMetadata({
   };
 }
 
-export default function ProductDetailPage({
+export default async function ProductDetailPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const product = getProductBySlug(params.slug);
+  const product = await getCatalogProductBySlug(params.slug);
   if (!product) notFound();
 
   return (
@@ -41,9 +42,9 @@ export default function ProductDetailPage({
       <section className="mt-10 grid grid-cols-1 gap-8 md:mt-16 md:grid-cols-[1.2fr_1fr] md:gap-12">
         {/* Image */}
         <ProductImage
-          imageSrc={product.imageSrc}
+          imageSrc={product.image_src ?? ""}
           alt={`${product.code} · ${product.name}`}
-          index={product.index}
+          index={1}
         />
 
         {/* Infos */}
@@ -62,17 +63,21 @@ export default function ProductDetailPage({
               {product.name}
             </h1>
             <p className="mt-4 text-2xl font-medium tabular-nums text-white sm:text-3xl">
-              {formatPrice(product.priceCents)}
+              {formatPrice(product.price_cents)}
             </p>
           </div>
 
-          <div className="border-t border-white/[0.08] pt-5">
-            <p className="text-[15px] leading-relaxed text-white/70">
-              {product.description}
-            </p>
-          </div>
+          {product.description ? (
+            <div className="border-t border-white/[0.08] pt-5">
+              <p className="text-[15px] leading-relaxed text-white/70">
+                {product.description}
+              </p>
+            </div>
+          ) : null}
 
-          <AddToCartControls product={product} />
+          <AddToCartControls
+            product={{ slug: product.slug, sizes: product.sizes }}
+          />
         </div>
       </section>
 

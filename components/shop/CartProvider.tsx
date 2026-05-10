@@ -13,13 +13,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { PRODUCTS, type Product, type ProductSize } from "@/lib/shop/products";
+import { PRODUCTS, type Product } from "@/lib/shop/products";
 
 const STORAGE_KEY = "inespnj.shop.cart.v1";
 
 export type CartLine = {
   slug: string;
-  size: ProductSize;
+  size: string;
   qty: number;
 };
 
@@ -34,9 +34,9 @@ type CartCtx = {
   hydrated: CartLineHydrated[];
   count: number;
   subtotalCents: number;
-  add: (slug: string, size: ProductSize, qty?: number) => void;
-  setQty: (slug: string, size: ProductSize, qty: number) => void;
-  remove: (slug: string, size: ProductSize) => void;
+  add: (slug: string, size: string, qty?: number) => void;
+  setQty: (slug: string, size: string, qty: number) => void;
+  remove: (slug: string, size: string) => void;
   clear: () => void;
   ready: boolean;
 };
@@ -90,7 +90,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (ready) writeStorage(lines);
   }, [lines, ready]);
 
-  const add = useCallback((slug: string, size: ProductSize, qty = 1) => {
+  const add = useCallback((slug: string, size: string, qty = 1) => {
     setLines((prev) => {
       const existing = prev.find((l) => l.slug === slug && l.size === size);
       if (existing) {
@@ -104,7 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const setQty = useCallback((slug: string, size: ProductSize, qty: number) => {
+  const setQty = useCallback((slug: string, size: string, qty: number) => {
     setLines((prev) => {
       if (qty <= 0) {
         return prev.filter((l) => !(l.slug === slug && l.size === size));
@@ -117,7 +117,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const remove = useCallback((slug: string, size: ProductSize) => {
+  const remove = useCallback((slug: string, size: string) => {
     setLines((prev) =>
       prev.filter((l) => !(l.slug === slug && l.size === size))
     );

@@ -7,16 +7,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "./CartProvider";
-import type { Product, ProductSize } from "@/lib/shop/products";
 
 type Props = {
-  product: Product;
+  product: { slug: string; sizes: string[] };
 };
 
 export default function AddToCartControls({ product }: Props) {
   const { add } = useCart();
   const router = useRouter();
-  const [size, setSize] = useState<ProductSize | null>(null);
+  const [size, setSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
 

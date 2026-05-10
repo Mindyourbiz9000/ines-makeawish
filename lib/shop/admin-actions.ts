@@ -39,6 +39,21 @@ function readBool(form: FormData, key: string): boolean {
   return v === "on" || v === "true" || v === "1";
 }
 
+// Lit un prix en euros (champ "price_euros", décimal accepté avec , ou .)
+// et le convertit en centimes pour la DB. Fallback vers "price_cents" si le
+// formulaire envoie encore l'ancien champ.
+function readPriceCents(form: FormData): number {
+  const eurosRaw = form.get("price_euros");
+  if (typeof eurosRaw === "string" && eurosRaw.trim() !== "") {
+    const normalized = eurosRaw.replace(",", ".").trim();
+    const euros = Number(normalized);
+    if (Number.isFinite(euros) && euros >= 0) {
+      return Math.round(euros * 100);
+    }
+  }
+  return readNumber(form, "price_cents", 0);
+}
+
 // ============================================================
 // Image upload (Supabase Storage)
 // ============================================================
@@ -164,7 +179,7 @@ export async function createProductAction(formData: FormData) {
   const description = readString(formData, "description");
   const resolvedImage = await resolveImageSrc(formData, slug);
   const image_src = resolvedImage === undefined ? null : resolvedImage;
-  const price_cents = readNumber(formData, "price_cents", 0);
+  const price_cents = readPriceCents(formData);
   const sort_order = readNumber(formData, "sort_order", 0);
   const sizesRaw = readString(formData, "sizes");
   const sizes =
@@ -223,7 +238,7 @@ export async function updateProductAction(formData: FormData) {
     code: explicitCode ?? newName ?? undefined,
     name: newName ?? undefined,
     description: readString(formData, "description"),
-    price_cents: readNumber(formData, "price_cents", 0),
+    price_cents: readPriceCents(formData),
     sort_order: readNumber(formData, "sort_order", 0),
     active: readBool(formData, "active"),
   };

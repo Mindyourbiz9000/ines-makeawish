@@ -51,15 +51,6 @@ export default function PlaceholderProductCard({
             />
           ) : null}
 
-          <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5">
-            <span
-              aria-hidden="true"
-              className="h-1 w-1 rounded-full bg-neon-pink"
-            />
-            <span className="text-[10px] uppercase tracking-[0.25em] text-white/70">
-              Mockup
-            </span>
-          </div>
         </div>
 
         <div className="mt-3">
@@ -71,9 +62,11 @@ export default function PlaceholderProductCard({
           <p className={`${code && code !== name ? "mt-1" : ""} text-sm font-medium text-white`}>
             {name}
           </p>
-          <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-white/35 tabular-nums">
-            {priceLabel ?? "À venir"}
-          </p>
+          {priceLabel ? (
+            <p className="mt-2 text-sm font-medium tabular-nums text-white">
+              {priceLabel}
+            </p>
+          ) : null}
         </div>
       </article>
     </Link>

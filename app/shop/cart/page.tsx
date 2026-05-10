@@ -4,7 +4,7 @@ import CartContent from "@/components/shop/CartContent";
 import Colophon from "@/components/shop/Colophon";
 
 export const metadata = {
-  title: "Panier · Boutique InesPNJ (preview)",
+  title: "Panier · Boutique InesPNJ",
   robots: { index: false, follow: false },
 };
 

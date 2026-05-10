@@ -21,7 +21,7 @@ export async function generateMetadata({
   const product = getProductBySlug(params.slug);
   if (!product) return { title: "Produit introuvable" };
   return {
-    title: `${product.code} · ${product.name} — Boutique InesPNJ (preview)`,
+    title: `${product.code} · ${product.name} — Boutique InesPNJ`,
     robots: { index: false, follow: false },
   };
 }

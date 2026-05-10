@@ -45,58 +45,84 @@ export default async function AdminOrdersPage() {
         </p>
       ) : (
         <ul className="space-y-3">
-          {orders.map((o) => (
-            <li
-              key={o.id}
-              className="flex flex-col gap-3 rounded-2xl bg-white/[0.02] p-5 ring-1 ring-white/[0.08] sm:flex-row sm:items-center sm:gap-5"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-baseline gap-3">
-                  <p className="font-mono text-sm font-semibold tabular-nums text-white">
-                    {o.ref}
-                  </p>
-                  <span
-                    className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ring-1 ${
-                      STATUS_COLORS[o.status] ??
-                      "bg-white/[0.06] text-white/55 ring-white/10"
+          {orders.map((o) => {
+            const isCancelled =
+              o.status === "cancelled" || o.status === "refunded";
+            return (
+              <li
+                key={o.id}
+                className={`flex flex-col gap-3 rounded-2xl p-5 ring-1 sm:flex-row sm:items-center sm:gap-5 ${
+                  isCancelled
+                    ? "bg-red-500/[0.04] ring-red-500/20"
+                    : "bg-white/[0.02] ring-white/[0.08]"
+                }`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-3">
+                    <p
+                      className={`font-mono text-sm font-semibold tabular-nums ${
+                        isCancelled ? "text-white/55 line-through" : "text-white"
+                      }`}
+                    >
+                      {o.ref}
+                    </p>
+                    <span
+                      className={`rounded px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ring-1 ${
+                        STATUS_COLORS[o.status] ??
+                        "bg-white/[0.06] text-white/55 ring-white/10"
+                      }`}
+                    >
+                      {o.status}
+                    </span>
+                    {o.mock ? (
+                      <span className="rounded bg-neon-pink/15 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-neon-pink/85">
+                        mockup
+                      </span>
+                    ) : null}
+                  </div>
+                  <p
+                    className={`mt-1 text-[12px] ${
+                      isCancelled ? "text-white/35" : "text-white/55"
                     }`}
                   >
-                    {o.status}
-                  </span>
-                  {o.mock ? (
-                    <span className="rounded bg-neon-pink/15 px-1.5 py-0.5 text-[10px] uppercase tracking-[0.18em] text-neon-pink/85">
-                      mockup
-                    </span>
-                  ) : null}
+                    {new Date(o.created_at).toLocaleString("fr-FR", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                    {" · "}
+                    {o.item_count} article{o.item_count > 1 ? "s" : ""}
+                    {o.customer_email ? ` · ${o.customer_email}` : ""}
+                  </p>
                 </div>
-                <p className="mt-1 text-[12px] text-white/55">
-                  {new Date(o.created_at).toLocaleString("fr-FR", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
-                  {" · "}
-                  {o.item_count} article{o.item_count > 1 ? "s" : ""}
-                  {o.customer_email ? ` · ${o.customer_email}` : ""}
+
+                <p
+                  className={`shrink-0 text-base font-semibold tabular-nums sm:text-right ${
+                    isCancelled
+                      ? "text-white/40 line-through decoration-red-300/60"
+                      : "text-white"
+                  }`}
+                >
+                  {formatPrice(o.total_cents)}
                 </p>
-              </div>
 
-              <p className="shrink-0 text-base font-semibold tabular-nums text-white sm:text-right">
-                {formatPrice(o.total_cents)}
-              </p>
-
-              {CANCELLABLE.has(o.status) ? (
-                <form action={cancelOrderAction}>
-                  <input type="hidden" name="id" value={o.id} />
-                  <button
-                    type="submit"
-                    className="min-h-[40px] rounded-md bg-red-500/10 px-3 text-[12px] uppercase tracking-[0.18em] text-red-300 ring-1 ring-red-500/30 transition-colors hover:bg-red-500/20"
-                  >
-                    Annuler
-                  </button>
-                </form>
-              ) : null}
-            </li>
-          ))}
+                {isCancelled ? (
+                  <span className="inline-flex min-h-[40px] shrink-0 items-center justify-center rounded-md bg-red-500/15 px-3 text-[12px] uppercase tracking-[0.18em] text-red-300 ring-1 ring-red-500/30">
+                    {o.status === "cancelled" ? "Annulée" : "Remboursée"}
+                  </span>
+                ) : CANCELLABLE.has(o.status) ? (
+                  <form action={cancelOrderAction}>
+                    <input type="hidden" name="id" value={o.id} />
+                    <button
+                      type="submit"
+                      className="min-h-[40px] rounded-md bg-red-500/10 px-3 text-[12px] uppercase tracking-[0.18em] text-red-300 ring-1 ring-red-500/30 transition-colors hover:bg-red-500/20"
+                    >
+                      Annuler
+                    </button>
+                  </form>
+                ) : null}
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>

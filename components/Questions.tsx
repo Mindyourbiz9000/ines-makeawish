@@ -27,6 +27,10 @@ const QUESTIONS: QA[] = [
     answer: "BigFlo",
     href: "https://www.instagram.com/bigflo/",
   },
+  {
+    question: "Est-ce que ce sont mes vrais yeux ?",
+    answer: "Oui ma caille",
+  },
 ];
 
 export default function Questions() {

@@ -231,7 +231,10 @@ export default async function HomePage() {
         {/* 11. Footer */}
         <footer className="mt-24 flex flex-col items-center justify-between gap-4 border-t border-white/[0.05] pt-8 text-[12px] text-white/40 sm:flex-row">
           <Socials variant="footer" />
-          <span>© InesPNJ {new Date().getFullYear()}</span>
+          <span>
+            © InesPNJ {new Date().getFullYear()}
+            <span className="text-white/30"> · par LeBarv__</span>
+          </span>
         </footer>
       </main>
 

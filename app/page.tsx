@@ -12,7 +12,6 @@ import SullyGnomeStats from "@/components/SullyGnomeStats";
 import AboutTabs from "@/components/AboutTabs";
 import MobileDonateBar from "@/components/MobileDonateBar";
 import SectionHeader from "@/components/SectionHeader";
-import ParisRpRibbon from "@/components/ParisRpRibbon";
 import { fetchLiveState } from "@/lib/twitch";
 
 const TWITCH_LOGIN = "inespnj";
@@ -51,10 +50,7 @@ export default async function HomePage() {
         className="mx-auto max-w-3xl px-4 pb-28 pt-6 sm:pb-16 sm:pt-10"
         style={{ paddingTop: "max(1.5rem, env(safe-area-inset-top))" }}
       >
-        {/* 1. Paris RP ribbon — tout en haut */}
-        <ParisRpRibbon />
-
-        {/* 2. Identity strip + socials */}
+        {/* 1. Identity strip + socials */}
         <header className="mt-6 flex flex-col gap-4">
           <div className="flex items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}

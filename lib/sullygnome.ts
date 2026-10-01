@@ -1,4 +1,4 @@
-import { createServerClient } from "./supabase/server";
+import { unstable_cache } from "next/cache";
 
 // Stats SullyGnome via leurs endpoints JSON internes (Highcharts config).
 // Bien plus fiable que le HTML scraping : les endpoints renvoient des objets
@@ -157,32 +157,36 @@ function topPieSlice(
 }
 
 // ---------------------------------------------------------------------------
-// Cached version (read from Supabase)
+// Cached version (Next.js data cache, refreshed every 6h)
 // ---------------------------------------------------------------------------
 
-export const SULLY_CACHE_KEY = (login: string, period: SullyPeriod) =>
-  `sullygnome:${login.toLowerCase()}:${period}`;
+const SULLY_CACHE_SECONDS = 21600; // 6h
+
+// On lève une erreur quand SullyGnome ne répond pas : unstable_cache garde
+// alors la dernière version valide au lieu de mettre `null` en cache.
+const getStatsOrThrow = unstable_cache(
+  async (login: string, period: SullyPeriod): Promise<SullyStats> => {
+    const stats = await fetchSullyGnomeStats(login, period);
+    if (!stats) throw new Error("SullyGnome fetch failed");
+    return stats;
+  },
+  ["sullygnome-stats"],
+  { revalidate: SULLY_CACHE_SECONDS }
+);
 
 export async function getCachedSullyStats(
   login: string,
   period: SullyPeriod = 7
 ): Promise<SullyStats | null> {
   try {
-    const supabase = createServerClient();
-    const { data, error } = await supabase
-      .from("cached_data")
-      .select("payload")
-      .eq("key", SULLY_CACHE_KEY(login, period))
-      .maybeSingle();
-    if (error || !data?.payload) return null;
-    return data.payload as SullyStats;
+    return await getStatsOrThrow(login.toLowerCase(), period);
   } catch {
     return null;
   }
 }
 
 // ---------------------------------------------------------------------------
-// Live fetch (used by the cron to refresh the cache)
+// Live fetch
 // ---------------------------------------------------------------------------
 
 export async function fetchSullyGnomeStats(

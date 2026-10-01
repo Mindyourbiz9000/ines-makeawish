@@ -1,5 +1,3 @@
-import { createServerClient } from "@/lib/supabase/server";
-import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
 import TwitchPill from "@/components/TwitchPill";
 import InesStats from "@/components/InesStats";
@@ -22,27 +20,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const supabase = createServerClient();
-  const [{ data, error }, live] = await Promise.all([
-    supabase
-      .from("donation_goals")
-      .select("*")
-      .order("sort_order", { ascending: true }),
-    fetchLiveState(TWITCH_LOGIN),
-  ]);
-
-  if (error) {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <h1 className="neon-title text-5xl">InesPNJ</h1>
-        <p className="mt-8 rounded-lg border border-red-500/30 bg-red-950/40 p-4 text-red-200">
-          Impossible de charger les paliers: {error.message}
-        </p>
-      </main>
-    );
-  }
-
-  const goals = data ?? [];
+  const live = await fetchLiveState(TWITCH_LOGIN);
 
   return (
     <>
@@ -192,7 +170,7 @@ export default async function HomePage() {
               </summary>
 
               <div className="border-t border-white/[0.06] px-5 py-6 sm:px-7 sm:py-8">
-                <div className="mb-8 rounded-2xl bg-white/[0.02] px-5 py-6 text-center sm:px-7 sm:py-8">
+                <div className="rounded-2xl bg-white/[0.02] px-5 py-6 text-center sm:px-7 sm:py-8">
                   <p className="text-[11px] uppercase tracking-[0.25em] text-white/45">
                     Total récolté
                   </p>
@@ -217,8 +195,6 @@ export default async function HomePage() {
                     </a>
                   </p>
                 </div>
-
-                <GoalList initialGoals={goals} showCounter />
               </div>
             </details>
           </details>

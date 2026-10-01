@@ -1,7 +1,5 @@
 import Socials from "@/components/Socials";
 import TwitchPill from "@/components/TwitchPill";
-import InesStats from "@/components/InesStats";
-import InesTotal from "@/components/InesTotal";
 import Setup from "@/components/Setup";
 import Questions from "@/components/Questions";
 import LiveBanner from "@/components/LiveBanner";
@@ -115,89 +113,6 @@ export default async function HomePage() {
             className="mb-5"
           />
           <AboutTabs setup={<Setup />} questions={<Questions />} />
-        </section>
-
-        {/* 10. Événements passés — Make a Wish archivé */}
-        <section className="mt-16 border-t border-white/[0.06] pt-8">
-          <details className="group">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm font-medium uppercase tracking-[0.22em] text-white/65 transition-colors hover:text-white">
-              <span className="flex items-center gap-2.5">
-                <span aria-hidden="true">📦</span>
-                <span>Événements passés</span>
-              </span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4 transition-transform group-open:rotate-180"
-                aria-hidden="true"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </summary>
-
-            <details className="group/maw mt-4 overflow-hidden rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-medium uppercase tracking-[0.2em] text-white/75 transition-colors hover:text-white sm:text-base">
-                <span className="flex items-center gap-2.5">
-                  <span aria-hidden="true">💖</span>
-                  <span>Make a Wish · Avril 2026</span>
-                </span>
-                <span className="flex items-center gap-3">
-                  <span className="flex items-baseline gap-1.5 normal-case tracking-normal">
-                    <span className="text-base sm:text-lg">
-                      <InesTotal variant="subtle" />
-                    </span>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-white/55 sm:text-xs">
-                      récolté
-                    </span>
-                  </span>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4 shrink-0 transition-transform group-open/maw:rotate-180"
-                    aria-hidden="true"
-                  >
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </span>
-              </summary>
-
-              <div className="border-t border-white/[0.06] px-5 py-6 sm:px-7 sm:py-8">
-                <div className="rounded-2xl bg-white/[0.02] px-5 py-6 text-center sm:px-7 sm:py-8">
-                  <p className="text-[11px] uppercase tracking-[0.25em] text-white/45">
-                    Total récolté
-                  </p>
-                  <p className="mt-3 text-4xl leading-none sm:text-5xl">
-                    <InesTotal />
-                  </p>
-                  <div className="mt-4 flex justify-center">
-                    <InesStats />
-                  </div>
-                  <p className="mt-5 text-xs text-white/55 sm:text-sm">
-                    Shout-out à{" "}
-                    <span className="font-semibold text-white/85">Jozy</span>{" "}
-                    <span className="text-neon-pink">♥</span>
-                    {" · "}
-                    <a
-                      href="https://www.twitch.tv/inespnj/videos?category=509663&filter=archives"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
-                    >
-                      rediffs sur Twitch
-                    </a>
-                  </p>
-                </div>
-              </div>
-            </details>
-          </details>
         </section>
 
         {/* 11. Footer */}

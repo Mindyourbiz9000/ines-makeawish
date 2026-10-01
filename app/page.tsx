@@ -1,5 +1,3 @@
-import { createServerClient } from "@/lib/supabase/server";
-import GoalList from "@/components/GoalList";
 import Socials from "@/components/Socials";
 import InesStats from "@/components/InesStats";
 import InesTotal from "@/components/InesTotal";
@@ -11,26 +9,7 @@ import TikTokReels from "@/components/TikTokReels";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function HomePage() {
-  const supabase = createServerClient();
-  const { data, error } = await supabase
-    .from("donation_goals")
-    .select("*")
-    .order("sort_order", { ascending: true });
-
-  if (error) {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <h1 className="neon-title text-5xl">InesPNJ · Donation goals</h1>
-        <p className="mt-8 rounded-lg border border-red-500/30 bg-red-950/40 p-4 text-red-200">
-          Impossible de charger les paliers: {error.message}
-        </p>
-      </main>
-    );
-  }
-
-  const goals = data ?? [];
-
+export default function HomePage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">
       <header className="mb-8 flex items-center gap-5 sm:gap-6">
@@ -148,7 +127,7 @@ export default async function HomePage() {
               </summary>
 
               <div className="border-t border-white/10 px-4 py-5 sm:px-5 sm:py-6">
-                <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-center sm:px-8 sm:py-8">
+                <section className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-center sm:px-8 sm:py-8">
                   <p className="text-xs uppercase tracking-[0.25em] text-white/50">
                     Total récolté — merci à tous
                   </p>
@@ -173,8 +152,6 @@ export default async function HomePage() {
                     </a>
                   </p>
                 </section>
-
-                <GoalList initialGoals={goals} showCounter />
               </div>
             </details>
           </div>

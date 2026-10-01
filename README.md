@@ -1,6 +1,6 @@
 # InesPNJ
 
-Site d'InesPNJ : liens, live Twitch, stats, FAQ, setup et événements passés.
+Site d'InesPNJ : liens, live Twitch, stats, FAQ et setup.
 
 **Stack** : Next.js 14 (App Router) · TypeScript · Tailwind CSS · Vercel.
 

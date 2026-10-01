@@ -1,28 +1,23 @@
-// Barre flottante en bas de l'écran sur mobile, avec le CTA "Faire un don".
+// Pastille flottante en bas de l'écran sur mobile, avec le CTA "Faire un don".
 // Visible uniquement sous sm:. Respecte safe-area-inset-bottom (iPhone home indicator).
 
 export default function MobileDonateBar() {
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-night-900/85 px-4 pt-3 backdrop-blur-lg sm:hidden"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 0.75rem)" }}
+      className="fixed inset-x-3 z-40 sm:hidden"
+      style={{ bottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
     >
-      <a
-        href="https://streamelements.com/inespnj/tip"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-gradient-to-r from-neon-pink to-neon-yellow text-base font-bold uppercase tracking-wide text-white shadow-glow-soft"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="h-5 w-5"
-          aria-hidden="true"
+      <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-night-800/85 py-2 pl-5 pr-2 backdrop-blur-lg">
+        <span className="neon-title-sm flex-1 text-lg">#freeines</span>
+        <a
+          href="https://streamelements.com/inespnj/tip"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-12 items-center rounded-full bg-gradient-to-r from-neon-pink to-neon-yellow px-6 text-[15px] font-semibold text-night-900 shadow-[0_8px_30px_-8px_rgba(255,58,166,0.8)]"
         >
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-        </svg>
-        Faire un don
-      </a>
+          Faire un don
+        </a>
+      </div>
     </div>
   );
 }

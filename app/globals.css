@@ -62,18 +62,18 @@ body {
   }
 }
 
-/* Titre "Donation goals" avec effet néon rose.
-   Utilise Pacifico (chargée via <link> dans layout.tsx) pour un J
-   majuscule clairement lisible — Brush Script MT ressemblait trop à un G. */
+/* Wordmark néon rose (Pacifico). */
 .neon-title {
   font-family: var(--font-display), "Pacifico", cursive;
   color: #ff9ed1;
   text-shadow:
-    0 0 6px #ff3aa6,
-    0 0 14px #ff3aa6;
+    0 0 8px #ff3aa6,
+    0 0 28px #ff3aa6,
+    0 0 60px rgba(255, 58, 166, 0.5);
 }
 
-.hero-title {
-  font-size: clamp(2.5rem, 10vw, 4.25rem);
-  line-height: 0.9;
+.neon-title-sm {
+  font-family: var(--font-display), "Pacifico", cursive;
+  color: #ff9ed1;
+  text-shadow: 0 0 10px rgba(255, 58, 166, 0.7);
 }

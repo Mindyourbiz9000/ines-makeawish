@@ -1,8 +1,11 @@
 "use client";
 
+// À propos : sur mobile, onglets Questions / Setup ; sur desktop, les deux
+// côte à côte (FAQ à gauche, setup à droite).
+
 import { useState, type ReactNode } from "react";
 
-type Tab = "setup" | "questions";
+type Tab = "questions" | "setup";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "questions", label: "Questions" },
@@ -16,22 +19,27 @@ type Props = {
 
 export default function AboutTabs({ setup, questions }: Props) {
   const [active, setActive] = useState<Tab>("questions");
-  const panes: Record<Tab, ReactNode> = { setup, questions };
+
   return (
-    <div className="rounded-3xl border border-white/[0.06] bg-white/[0.02] backdrop-blur-xl p-2">
-      <div role="tablist" className="flex gap-1">
+    <div>
+      <div
+        role="tablist"
+        aria-label="À propos"
+        className="mb-3.5 grid grid-cols-2 gap-1 rounded-full border border-white/[0.08] bg-white/[0.05] p-1 lg:hidden"
+      >
         {TABS.map((tab) => {
           const isActive = active === tab.id;
           return (
             <button
               key={tab.id}
+              type="button"
               role="tab"
+              id={`tab-${tab.id}`}
+              aria-controls={`pane-${tab.id}`}
               aria-selected={isActive}
               onClick={() => setActive(tab.id)}
-              className={`flex-1 min-h-[44px] rounded-2xl px-4 py-2.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-white/[0.06] text-white ring-1 ring-white/10 shadow-inner"
-                  : "text-white/55 hover:text-white"
+              className={`min-h-[44px] rounded-full text-[15px] font-semibold transition-colors ${
+                isActive ? "bg-white text-night-900" : "text-white/75 hover:text-white"
               }`}
             >
               {tab.label}
@@ -39,8 +47,24 @@ export default function AboutTabs({ setup, questions }: Props) {
           );
         })}
       </div>
-      <div role="tabpanel" className="px-4 sm:px-5 py-5">
-        {panes[active]}
+
+      <div className="grid gap-4 lg:grid-cols-12">
+        <div
+          id="pane-questions"
+          role="tabpanel"
+          aria-labelledby="tab-questions"
+          className={`${active === "questions" ? "block" : "hidden"} lg:col-span-5 lg:block`}
+        >
+          {questions}
+        </div>
+        <div
+          id="pane-setup"
+          role="tabpanel"
+          aria-labelledby="tab-setup"
+          className={`${active === "setup" ? "block" : "hidden"} lg:col-span-7 lg:block`}
+        >
+          {setup}
+        </div>
       </div>
     </div>
   );

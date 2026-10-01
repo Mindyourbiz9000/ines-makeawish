@@ -1,4 +1,4 @@
-// Liens sociaux d'Inès, en boutons icônes ronds (44×44) — variant header ou footer.
+// Liens sociaux d'Inès : pastilles avec libellé (desktop) ou grille d'icônes (mobile).
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -60,54 +60,63 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
+function TwitchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" />
+    </svg>
+  );
+}
+
 const LINKS = [
-  {
-    href: "https://www.instagram.com/inespnj/",
-    label: "Instagram",
-    Icon: InstagramIcon,
-    hover: "group-hover:text-[#E1306C]",
-  },
-  {
-    href: "https://discord.gg/qdvuaat6UP",
-    label: "Discord",
-    Icon: DiscordIcon,
-    hover: "group-hover:text-[#5865F2]",
-  },
-  {
-    href: "https://www.tiktok.com/@inespnj",
-    label: "TikTok",
-    Icon: TikTokIcon,
-    hover: "group-hover:text-white",
-  },
-  {
-    href: "https://www.youtube.com/@inespnj",
-    label: "YouTube",
-    Icon: YouTubeIcon,
-    hover: "group-hover:text-[#FF0000]",
-  },
+  { href: "https://www.twitch.tv/inespnj", label: "Twitch", Icon: TwitchIcon },
+  { href: "https://www.instagram.com/inespnj/", label: "Instagram", Icon: InstagramIcon },
+  { href: "https://www.tiktok.com/@inespnj", label: "TikTok", Icon: TikTokIcon },
+  { href: "https://www.youtube.com/@inespnj", label: "YouTube", Icon: YouTubeIcon },
+  { href: "https://discord.gg/qdvuaat6UP", label: "Discord", Icon: DiscordIcon },
 ];
 
-type SocialsVariant = "header" | "footer";
-
-export default function Socials({
-  variant = "header",
-}: {
-  variant?: SocialsVariant;
-} = {}) {
+export default function Socials() {
   return (
-    <div className="flex gap-2">
-      {LINKS.map(({ href, label, Icon, hover }) => (
-        <a
-          key={href}
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={label}
-          className={`group grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/5 text-white/75 transition-colors hover:border-white/30 hover:bg-white/[0.08]`}
-        >
-          <Icon className={`h-4 w-4 transition-colors ${hover}`} />
-        </a>
-      ))}
-    </div>
+    <section aria-label="Réseaux">
+      {/* Mobile : grille d'icônes */}
+      <div className="grid grid-cols-5 gap-2 sm:hidden">
+        {LINKS.map(({ href, label, Icon }) => (
+          <a
+            key={href}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={label}
+            className="grid h-14 place-items-center rounded-[18px] border border-white/[0.08] bg-white/[0.05] text-white transition-colors hover:border-white/25 hover:bg-white/[0.08]"
+          >
+            <Icon className="h-5 w-5" />
+          </a>
+        ))}
+      </div>
+
+      {/* Desktop : pastilles avec libellé */}
+      <div className="hidden flex-wrap gap-2.5 sm:flex">
+        {LINKS.map(({ href, label, Icon }) => (
+          <a
+            key={href}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-12 items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.04] px-5 text-[15px] font-medium text-white transition-colors hover:border-white/25 hover:bg-white/[0.08]"
+          >
+            <Icon className="h-[18px] w-[18px]" />
+            {label}
+          </a>
+        ))}
+      </div>
+    </section>
   );
 }

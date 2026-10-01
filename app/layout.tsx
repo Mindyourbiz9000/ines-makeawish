@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { Inter, Pacifico } from "next/font/google";
+import { Bricolage_Grotesque, Pacifico } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
-const body = Inter({
+const heading = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-heading",
   display: "swap",
 });
 
@@ -31,7 +32,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${body.variable} ${display.variable}`}>
+    <html
+      lang="fr"
+      className={`${GeistSans.variable} ${heading.variable} ${display.variable}`}
+    >
       <body className="stars font-body antialiased">
         {children}
         <Analytics />

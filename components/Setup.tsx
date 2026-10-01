@@ -1,4 +1,4 @@
-// Liste du setup d'Inès. Plus de <details> wrapper — c'est intégré dans <AboutTabs>.
+// Le setup d'Inès, en fiche technique.
 
 type GearItem = { label: string; value: string };
 
@@ -25,15 +25,28 @@ const GEAR: GearItem[] = [
 
 export default function Setup() {
   return (
-    <ul className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
-      {GEAR.map((item) => (
-        <li key={item.label} className="flex flex-col">
-          <span className="text-[11px] uppercase tracking-[0.18em] text-white/40">
-            {item.label}
-          </span>
-          <span className="text-[15px] text-white/95">{item.value}</span>
-        </li>
-      ))}
-    </ul>
+    <div className="rounded-[28px] border border-white/[0.08] bg-gradient-to-b from-night-600/70 to-night-800/70 p-5 sm:p-7">
+      <div className="mb-5 flex items-center justify-between">
+        <h3 className="font-heading text-2xl font-extrabold">Le setup</h3>
+        <span className="text-[13px] font-medium text-neon-yellow">
+          {GEAR.length} pièces
+        </span>
+      </div>
+      <ul className="grid grid-cols-2 gap-2.5">
+        {GEAR.map((item) => (
+          <li
+            key={item.label}
+            className="rounded-2xl border border-white/[0.06] bg-night-900/55 px-4 py-3.5"
+          >
+            <p className="text-[11px] uppercase tracking-[0.12em] text-white/60 sm:text-xs">
+              {item.label}
+            </p>
+            <p className="mt-1.5 text-sm font-medium leading-snug sm:text-[15px]">
+              {item.value}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

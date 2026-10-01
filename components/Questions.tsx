@@ -1,4 +1,4 @@
-// FAQ d'Inès. Plus de <details> wrapper — intégrée dans <AboutTabs>.
+// FAQ d'Inès, une carte par question.
 
 type QA = { question: string; answer: string; href?: string };
 
@@ -6,8 +6,7 @@ type QA = { question: string; answer: string; href?: string };
 const QUESTIONS: QA[] = [
   {
     question: "Quel est ton métier ?",
-    answer:
-      "Assistante de direction (bientôt streameuse professionnelle dans le top 1 français)",
+    answer: "Streameuse à plein temps. Elle Slayyy.",
   },
   { question: "Ton signe astrologique ?", answer: "Scorpion" },
   {
@@ -35,24 +34,27 @@ const QUESTIONS: QA[] = [
 
 export default function Questions() {
   return (
-    <ul className="space-y-5">
+    <ul className="flex flex-col gap-2.5">
       {QUESTIONS.map((qa) => (
-        <li key={qa.question} className="flex flex-col">
-          <span className="text-[13px] text-white/60">{qa.question}</span>
-          <span className="mt-0.5 text-[15px] text-white/95">
+        <li
+          key={qa.question}
+          className="rounded-[20px] border border-white/[0.08] bg-white/[0.04] px-5 py-4"
+        >
+          <p className="text-sm text-white/65">{qa.question}</p>
+          <p className="mt-1.5 text-base font-medium text-white sm:text-[17px]">
             {qa.href ? (
               <a
                 href={qa.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+                className="underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
               >
                 {qa.answer}
               </a>
             ) : (
               qa.answer
             )}
-          </span>
+          </p>
         </li>
       ))}
     </ul>

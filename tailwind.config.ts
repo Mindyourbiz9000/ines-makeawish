@@ -25,7 +25,8 @@ const config: Config = {
       },
       fontFamily: {
         display: ["var(--font-display)", "cursive"],
-        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        heading: ["var(--font-heading)", "system-ui", "sans-serif"],
+        body: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
       },
       boxShadow: {
         glow: "0 0 20px rgba(74, 214, 255, 0.45)",

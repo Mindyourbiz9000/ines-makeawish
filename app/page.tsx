@@ -247,8 +247,15 @@ export default async function HomePage() {
 
           {/* Bandeau don (desktop) */}
           <section className="mb-16 hidden flex-wrap items-center justify-between gap-6 rounded-[36px] bg-[linear-gradient(110deg,#ff3aa6_0%,#ff7a8a_45%,#ffd84a_100%)] px-12 py-16 text-night-900 sm:flex">
-            <div>
-              <p className="font-display text-[56px] leading-[1.2]">#freeines</p>
+            <div className="max-w-[640px]">
+              <p className="font-heading text-[48px] font-extrabold leading-[1.05] tracking-[-0.02em]">
+                On oublie pas de{" "}
+                <span className="inline-block -rotate-2 font-display text-[1.25em] font-normal leading-[1.2] tracking-normal">
+                  soutenir
+                </span>
+                <br />
+                la chaîne
+              </p>
               <p className="mt-2 text-lg font-medium">Soutiens Inès via StreamElements.</p>
             </div>
             <a

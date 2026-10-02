@@ -7,8 +7,13 @@ export default function MobileDonateBar() {
       className="fixed inset-x-3 z-40 sm:hidden"
       style={{ bottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
     >
-      <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-night-800/85 py-2 pl-5 pr-2 backdrop-blur-lg">
-        <span className="neon-title-sm flex-1 text-lg">#freeines</span>
+      <div className="flex items-center gap-2.5 rounded-full border border-white/10 bg-night-800/85 py-2 pl-4 pr-2 backdrop-blur-lg">
+        <span className="flex-1 font-heading text-[13px] font-bold leading-tight">
+          On oublie pas de{" "}
+          <span className="neon-title-sm text-[15px] font-normal">soutenir</span>
+          <br />
+          la chaîne
+        </span>
         <a
           href="https://streamelements.com/inespnj/tip"
           target="_blank"

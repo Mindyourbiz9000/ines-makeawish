@@ -128,12 +128,35 @@ export default async function HomePage() {
                 <span className="hidden h-px w-7 bg-neon-blue lg:inline-block" />
                 Streameuse Twitch
               </p>
-              <h1 className="mt-3 font-heading text-[40px] font-extrabold leading-[0.95] tracking-[-0.03em] sm:mt-5 sm:text-[clamp(48px,7vw,96px)]">
-                Il est temps de
+              <h1 className="mt-4 font-heading text-[38px] font-extrabold leading-[1.02] tracking-[-0.03em] sm:mt-6 sm:text-[clamp(48px,6vw,80px)]">
+                Tu vois le{" "}
+                <span className="neon-title inline-block -rotate-2 px-1 align-[-0.08em] text-[1.35em] font-normal leading-[1.2] tracking-normal">
+                  Facetime
+                </span>{" "}
+                <span className="relative inline-block whitespace-nowrap">
+                  inutile
+                  <svg
+                    viewBox="0 0 200 16"
+                    preserveAspectRatio="none"
+                    className="absolute -bottom-[0.12em] left-0 h-[0.22em] w-full text-neon-yellow"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M2 11 C 30 3, 55 15, 85 8 S 140 2, 165 9 S 190 12, 198 6"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+                <br />
+                avec ta{" "}
+                <span className="bg-gradient-to-r from-neon-blue to-[#ff9ed1] bg-clip-text text-transparent">
+                  copine
+                </span>
+                {"\u00a0?"}
               </h1>
-              <p className="neon-title mt-1 text-[68px] leading-[1.15] sm:text-[clamp(64px,10vw,140px)] sm:leading-[1.1]">
-                #freeines
-              </p>
               <p className="mx-auto mt-3 max-w-[460px] text-base leading-relaxed text-white/70 sm:mt-6 sm:text-lg lg:mx-0">
                 Fini le bureau : Inès Slayyy à plein temps sur Twitch.
               </p>

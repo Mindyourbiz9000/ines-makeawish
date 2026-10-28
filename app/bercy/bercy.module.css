@@ -1,0 +1,380 @@
+/* Page /bercy : ambiance disco néon (boule à facettes, lasers, égaliseur). */
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(255, 58, 166, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 60%, rgba(74, 214, 255, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 80%, rgba(168, 85, 247, 0.22) 0%, transparent 50%),
+    #05020f;
+}
+
+/* Sol de danse en perspective */
+.floor {
+  position: absolute;
+  inset: auto -50% 0 -50%;
+  height: 55vh;
+  background-image:
+    linear-gradient(rgba(255, 58, 166, 0.55) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(74, 214, 255, 0.55) 2px, transparent 2px);
+  background-size: 80px 80px;
+  transform: perspective(500px) rotateX(65deg);
+  transform-origin: bottom;
+  mask-image: linear-gradient(to top, black 10%, transparent 90%);
+  animation: floor-scroll 2.4s linear infinite;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+@keyframes floor-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 80px;
+  }
+}
+
+/* Faisceaux lasers */
+.lasers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.laser {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  width: 3px;
+  height: 140%;
+  transform-origin: top center;
+  filter: blur(1px);
+  opacity: 0.55;
+  mix-blend-mode: screen;
+}
+
+.laser:nth-child(1) {
+  background: linear-gradient(#ff3aa6, transparent 80%);
+  animation: sweep 5s ease-in-out infinite alternate;
+}
+.laser:nth-child(2) {
+  background: linear-gradient(#4ad6ff, transparent 80%);
+  animation: sweep 6.5s ease-in-out infinite alternate-reverse;
+}
+.laser:nth-child(3) {
+  background: linear-gradient(#f472b6, transparent 80%);
+  animation: sweep 4.2s ease-in-out infinite alternate;
+  animation-delay: -2s;
+}
+.laser:nth-child(4) {
+  background: linear-gradient(#a855f7, transparent 80%);
+  animation: sweep 7s ease-in-out infinite alternate-reverse;
+  animation-delay: -3s;
+}
+.laser:nth-child(5) {
+  background: linear-gradient(#39ff88, transparent 80%);
+  animation: sweep 5.8s ease-in-out infinite alternate;
+  animation-delay: -1s;
+}
+
+@keyframes sweep {
+  from {
+    transform: rotate(-38deg);
+  }
+  to {
+    transform: rotate(38deg);
+  }
+}
+
+/* Boule à facettes */
+.ballWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.string {
+  width: 2px;
+  height: 48px;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.6));
+}
+
+.ball {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95) 0%, transparent 25%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 12px),
+    conic-gradient(from 0deg, #c7d2fe, #f9a8d4, #a5f3fc, #e9d5ff, #c4b5fd, #c7d2fe);
+  background-size: 100% 100%, 100% 100%, 24px 100%, 200% 200%;
+  box-shadow:
+    0 0 40px rgba(255, 255, 255, 0.45),
+    0 0 90px rgba(255, 58, 166, 0.55),
+    0 0 140px rgba(74, 214, 255, 0.35),
+    inset -18px -18px 40px rgba(0, 0, 0, 0.55);
+  animation: ball-spin 3s linear infinite;
+}
+
+@keyframes ball-spin {
+  from {
+    background-position: 0 0, 0 0, 0 0, 0% 50%;
+  }
+  to {
+    background-position: 0 0, 0 0, 24px 0, 200% 50%;
+  }
+}
+
+/* Reflets lumineux projetés par la boule */
+.sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8);
+  animation: twinkle-dot 2.2s ease-in-out infinite;
+}
+
+@keyframes twinkle-dot {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Titre néon disco */
+.title {
+  font-family: var(--font-monoton), var(--font-display), cursive;
+  line-height: 1;
+  color: #fff0fa;
+  text-shadow:
+    0 0 6px #fff,
+    0 0 14px #ff3aa6,
+    0 0 30px #ff3aa6,
+    0 0 60px #c01c7c,
+    0 0 90px #c01c7c;
+  animation: flicker 4s infinite;
+}
+
+@keyframes flicker {
+  0%,
+  18%,
+  22%,
+  25%,
+  53%,
+  57%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.55;
+  }
+}
+
+.neonBlue {
+  color: #dff7ff;
+  text-shadow:
+    0 0 6px #4ad6ff,
+    0 0 16px #4ad6ff,
+    0 0 32px #1b8fc4;
+}
+
+.neonPurple {
+  color: #f3e8ff;
+  text-shadow:
+    0 0 6px #c084fc,
+    0 0 16px #a855f7,
+    0 0 32px #7e22ce;
+}
+
+.rainbowText {
+  background: linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow 6s linear infinite;
+}
+
+@keyframes rainbow {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* Cadre néon animé : fond sombre + bordure arc-en-ciel qui défile */
+.neonCard {
+  position: relative;
+  border: 2px solid transparent;
+  border-radius: 1.25rem;
+  background:
+    linear-gradient(rgba(12, 5, 34, 0.94), rgba(12, 5, 34, 0.94)) padding-box,
+    linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6) border-box;
+  background-size: 100% 100%, 300% 100%;
+  box-shadow:
+    0 0 18px rgba(255, 58, 166, 0.35),
+    0 0 40px rgba(74, 214, 255, 0.15);
+  animation: border-flow 6s linear infinite;
+}
+
+@keyframes border-flow {
+  to {
+    background-position: 0 0, 300% 0;
+  }
+}
+
+/* Égaliseur */
+.eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 48px;
+}
+
+.eq span {
+  width: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to top, #ff3aa6, #4ad6ff);
+  box-shadow: 0 0 8px rgba(255, 58, 166, 0.8);
+  animation: eq-bounce 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes eq-bounce {
+  from {
+    height: 15%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+/* Vinyle qui tourne */
+.vinyl {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle, #ff3aa6 0 14%, #05020f 14% 16%, transparent 16%),
+    repeating-radial-gradient(circle, #111 0 2px, #1d1d1d 2px 4px);
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.08),
+    0 0 40px rgba(255, 58, 166, 0.5);
+  animation: spin 2.4s linear infinite;
+}
+
+.vinyl::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 40deg,
+    rgba(255, 255, 255, 0.18) 50deg,
+    transparent 60deg 220deg,
+    rgba(255, 255, 255, 0.12) 230deg,
+    transparent 240deg
+  );
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Bandeau défilant */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 22s linear infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Bouclier sécu qui pulse */
+.shield {
+  filter: drop-shadow(0 0 12px rgba(74, 214, 255, 0.8));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+/* Love Bus qui traverse la carte */
+.busTrack {
+  container-type: inline-size;
+}
+
+.bus {
+  left: 0;
+  animation: bus-drive 7s linear infinite;
+}
+
+@keyframes bus-drive {
+  0% {
+    transform: translateX(-120px) translateY(0);
+  }
+  25% {
+    transform: translateX(calc(25cqw)) translateY(-3px);
+  }
+  50% {
+    transform: translateX(calc(50cqw)) translateY(0);
+  }
+  75% {
+    transform: translateX(calc(75cqw)) translateY(-3px);
+  }
+  100% {
+    transform: translateX(calc(100cqw + 20px)) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floor,
+  .laser,
+  .ball,
+  .sparkle,
+  .title,
+  .rainbowText,
+  .neonCard,
+  .eq span,
+  .vinyl,
+  .marquee,
+  .bus,
+  .shield {
+    animation: none !important;
+  }
+}

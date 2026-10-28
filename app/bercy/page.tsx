@@ -12,9 +12,9 @@ const monoton = Monoton({
 // Page accessible uniquement via l'URL directe : pas de lien depuis
 // l'accueil et pas d'indexation par les moteurs de recherche.
 export const metadata: Metadata = {
-  title: "Ines Land · Bercy 2028",
+  title: "Ines Land · 2028",
   description:
-    "Ines Land à Bercy : une nuit disco géante, 20 000 personnes, DJ Bens aux platines. Paris, 2028.",
+    "Ines Land : une nuit disco géante, 20 000 personnes, DJ surprise aux platines. Paris, 2028.",
   robots: { index: false, follow: false },
 };
 
@@ -34,7 +34,7 @@ const SPARKLES = [
 const EQ_BARS = [0, 0.15, 0.3, 0.05, 0.45, 0.2, 0.6, 0.1, 0.35, 0.25, 0.5, 0.4];
 
 const STATS = [
-  { value: "20 000", label: "danseurs", tone: "neonBlue" },
+  { value: "20 000", label: "danseurs", tone: "neonBlue" },
   { value: "1", label: "nuit mythique", tone: "neonPurple" },
   { value: "1", label: "DJ légendaire", tone: "neonBlue" },
   { value: "∞", label: "paillettes", tone: "neonPurple" },
@@ -53,8 +53,8 @@ const PROGRAMME = [
   },
   {
     emoji: "🎧",
-    title: "DJ Bens aux platines",
-    text: "Le set principal. 20 000 personnes, un seul dancefloor géant.",
+    title: "Le DJ mystère aux platines",
+    text: "Le set principal. 20 000 personnes, un seul dancefloor géant.",
   },
   {
     emoji: "🎉",
@@ -64,7 +64,7 @@ const PROGRAMME = [
 ];
 
 const MARQUEE =
-  "INES LAND ✦ BERCY ✦ PARIS ✦ 2028 ✦ DJ BENS ✦ 20 000 PERSONNES ✦ LEBARV LOVE BUS ✦ SÉCURITÉ BY RORO ✦ DISCO NIGHT ✦ ";
+  "INES LAND ✦ PARIS ✦ 2028 ✦ DJ MYSTÈRE ✦ 20 000 PERSONNES ✦ LEBARV LOVE BUS ✦ LIEU SECRET ✦ DISCO NIGHT ✦ ";
 
 export default function BercyPage() {
   return (
@@ -96,7 +96,7 @@ export default function BercyPage() {
           </div>
 
           <p className="mt-8 text-xs font-semibold uppercase tracking-[0.45em] text-white/70 sm:text-sm">
-            Paris · Bercy · 2028
+            Paris · 2028
           </p>
 
           <h1
@@ -108,10 +108,11 @@ export default function BercyPage() {
           <p className="mt-6 max-w-xl text-base text-white/80 sm:text-lg">
             La plus grande soirée disco jamais organisée par la commu.{" "}
             <span className={`${styles.rainbowText} font-bold`}>
-              20 000 personnes
+              20 000 personnes
             </span>
-            , une arène entière transformée en dancefloor, et{" "}
-            <span className="font-bold text-white">DJ Bens</span> aux platines.
+            , une arène entière transformée en dancefloor, et un{" "}
+            <span className="font-bold text-white">DJ mystère</span> aux
+            platines.
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-3">
@@ -161,7 +162,7 @@ export default function BercyPage() {
           ))}
         </section>
 
-        {/* DJ Bens */}
+        {/* DJ mystère */}
         <section className="mt-16 sm:mt-24">
           <h2 className="text-center text-xs font-semibold uppercase tracking-[0.45em] text-white/60 sm:text-sm">
             Aux platines
@@ -177,12 +178,13 @@ export default function BercyPage() {
               <h3
                 className={`${styles.title} mt-3 text-5xl sm:text-6xl`}
               >
-                DJ Bens
+                DJ ???
               </h3>
               <p className="mt-4 text-white/80">
-                Le maître du groove prend le contrôle de Bercy. Disco, funk,
-                house et gros classiques remixés : un set taillé pour faire
-                danser 20 000 personnes jusqu&apos;au dernier beat.
+                Le nom reste secret pour l&apos;instant. Disco, funk, house et
+                gros classiques remixés : un set taillé pour faire danser
+                20 000 personnes jusqu&apos;au dernier beat. Révélation
+                bientôt.
               </p>
               <div
                 className={`${styles.eq} mt-6 justify-center sm:justify-start`}
@@ -231,15 +233,14 @@ export default function BercyPage() {
               Le lieu
             </p>
             <h3 className={`${styles.neonBlue} mt-3 text-3xl font-black`}>
-              Bercy, Paris
+              Annoncé bientôt
             </h3>
             <p className="mt-3 text-white/80">
-              Accor Arena
-              <br />
-              8 Boulevard de Bercy, 75012 Paris
+              Une arène géante à Paris, capable d&apos;accueillir 20 000
+              danseurs. Le lieu exact sera dévoilé plus tard.
             </p>
             <p className="mt-3 text-sm text-white/60">
-              Métro Bercy · lignes 6 et 14
+              Restez connectés pour la révélation
             </p>
           </div>
           <div className={`${styles.neonCard} p-6 sm:p-8`}>
@@ -278,7 +279,7 @@ export default function BercyPage() {
             <p className="mx-auto mt-4 max-w-xl text-white/80">
               Le LeBarv Love Bus débarque pour amener tout le monde au show. Rose,
               néon, musique à fond dès le départ : la fête commence dans le bus
-              et ne s&apos;arrête qu&apos;au pied de Bercy.
+              et ne s&apos;arrête qu&apos;au pied de l&apos;arène.
             </p>
             <p className="mt-4 text-sm uppercase tracking-[0.3em] text-white/60">
               Trajets et points de départ annoncés bientôt
@@ -299,12 +300,11 @@ export default function BercyPage() {
                 Sécurité
               </p>
               <h2 className={`${styles.neonBlue} mt-3 text-3xl font-black sm:text-4xl`}>
-                Gérée par Roro
+                Une équipe aux petits soins
               </h2>
               <p className="mt-3 text-white/80">
-                Roro veille sur les 20 000 danseurs de Bercy. Une équipe sécu
-                aux petits soins, pour que la seule chose qui déborde ce soir-là
-                soit la piste de danse.
+                Une équipe sécu veille sur les 20 000 danseurs, pour que la
+                seule chose qui déborde ce soir-là soit la piste de danse.
               </p>
             </div>
           </div>
@@ -313,7 +313,7 @@ export default function BercyPage() {
         {/* Final */}
         <section className="mt-16 text-center sm:mt-24">
           <p className={`${styles.title} text-4xl sm:text-6xl`}>
-            On se voit à Bercy
+            On se voit en 2028
           </p>
           <p className="mt-4 text-sm uppercase tracking-[0.35em] text-white/60">
             Ines Land · 2028 · Prévente en ligne bientôt

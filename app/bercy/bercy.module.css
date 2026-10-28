@@ -11,6 +11,13 @@
     #05020f;
 }
 
+/* Page floutée tant que l'événement n'est pas annoncé */
+.page > * {
+  filter: blur(16px);
+  user-select: none;
+  pointer-events: none;
+}
+
 /* Sol de danse en perspective */
 .floor {
   position: absolute;

@@ -197,6 +197,61 @@
   }
 }
 
+/* Bouton musique */
+.musicButton {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(rgba(18, 6, 42, 0.92), rgba(18, 6, 42, 0.92)) padding-box,
+    linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6) border-box;
+  background-size: 100% 100%, 300% 100%;
+  box-shadow:
+    0 0 20px rgba(255, 58, 166, 0.55),
+    0 0 50px rgba(74, 214, 255, 0.25);
+  backdrop-filter: blur(8px);
+  animation: border-flow 3s linear infinite;
+}
+
+.musicMuted {
+  animation:
+    border-flow 3s linear infinite,
+    gift-pulse 1.2s ease-in-out infinite;
+}
+
+.musicEq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+}
+
+.musicEq span {
+  width: 4px;
+  border-radius: 2px;
+  background: linear-gradient(to top, #ff3aa6, #4ad6ff);
+  animation: eq-bounce 0.8s ease-in-out infinite alternate;
+}
+
+.musicEq span:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.musicEq span:nth-child(3) {
+  animation-delay: -0.55s;
+}
+
+.musicEq span:nth-child(4) {
+  animation-delay: -0.15s;
+}
+
+@keyframes eq-bounce {
+  from {
+    height: 20%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
 /* Cadre néon du GIF */
 .gifFrame {
   position: relative;
@@ -368,7 +423,10 @@
   .finalOverlay,
   .finalDigit,
   .giftButton,
-  .gifFrame {
+  .gifFrame,
+  .musicButton,
+  .musicMuted,
+  .musicEq span {
     animation: none !important;
   }
 }

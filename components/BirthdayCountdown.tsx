@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "./BirthdayCountdown.module.css";
+import BirthdayMusic from "./BirthdayMusic";
 import BirthdayParty, {
   BirthdayGif,
   FinalCountdown,
@@ -15,6 +16,8 @@ const BIRTHDAY = Date.parse("2026-11-03T00:00:00+01:00");
 const BIRTHDAY_END = Date.parse("2026-11-04T00:00:00+01:00");
 // Le GIF reste affiché de 00:00 à 00:10.
 const GIF_END = BIRTHDAY + 10 * 60 * 1000;
+// La musique tourne en boucle de 00:00 à 12:00 le 3 novembre.
+const MUSIC_END = Date.parse("2026-11-03T12:00:00+01:00");
 const BANNER_END = Date.parse("2026-11-08T00:00:00+01:00");
 
 const COLORS = [
@@ -52,6 +55,7 @@ export default function BirthdayCountdown() {
 
   const isBirthday = now >= BIRTHDAY;
   const showGif = isBirthday && now < GIF_END;
+  const playMusic = isBirthday && now < MUSIC_END;
   const left = Math.max(0, BIRTHDAY - now);
   const totalSeconds = Math.floor(left / 1000);
   const finalSeconds = Math.ceil(left / 1000);
@@ -66,6 +70,7 @@ export default function BirthdayCountdown() {
       {isBirthday && now < BIRTHDAY_END ? (
         <BirthdayParty showGif={showGif} />
       ) : null}
+      {playMusic ? <BirthdayMusic /> : null}
       {!isBirthday && finalSeconds <= 10 ? (
         <FinalCountdown seconds={finalSeconds} />
       ) : null}

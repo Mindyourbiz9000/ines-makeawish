@@ -125,14 +125,15 @@ export default function BirthdayMusic() {
     }
   };
 
-  // Mini-lecteur flottant : petit sur mobile (à côté du bouton), carré de
-  // 200×200 px sur ordinateur.
+  // Lecteur YouTube invisible (pas de pochette affichée) : seul le bouton
+  // néon est visible.
   return (
-    <div className="fixed bottom-28 right-3 z-[70] flex flex-row-reverse items-center gap-2 sm:bottom-6 sm:right-6 sm:flex-col sm:items-end">
-      <div className={styles.videoFrame}>
-        <div className="relative h-[72px] w-[128px] overflow-hidden rounded-[10px] bg-black sm:h-[200px] sm:w-[200px] sm:rounded-[12px]">
-          <div ref={hostRef} className="absolute inset-0 h-full w-full" />
-        </div>
+    <div className="fixed bottom-28 right-3 z-[70] sm:bottom-6 sm:right-6">
+      <div
+        className="pointer-events-none fixed bottom-0 right-0 h-px w-px overflow-hidden opacity-0"
+        aria-hidden="true"
+      >
+        <div ref={hostRef} />
       </div>
       <button
         type="button"

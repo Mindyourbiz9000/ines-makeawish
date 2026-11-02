@@ -252,21 +252,6 @@
   }
 }
 
-/* Cadre néon du lecteur YouTube */
-.videoFrame {
-  padding: 3px;
-  border: 2px solid transparent;
-  border-radius: 16px;
-  background:
-    linear-gradient(#12062a, #12062a) padding-box,
-    linear-gradient(90deg, #4ad6ff, #a855f7, #ff3aa6, #c084fc, #4ad6ff) border-box;
-  background-size: 100% 100%, 300% 100%;
-  box-shadow:
-    0 0 30px rgba(74, 214, 255, 0.5),
-    0 0 80px rgba(255, 58, 166, 0.3);
-  animation: border-flow 3s linear infinite;
-}
-
 /* Cadre néon du GIF */
 .gifFrame {
   position: relative;
@@ -440,7 +425,6 @@
   .giftButton,
   .gifFrame,
   .musicButton,
-  .videoFrame,
   .musicMuted,
   .musicEq span {
     animation: none !important;

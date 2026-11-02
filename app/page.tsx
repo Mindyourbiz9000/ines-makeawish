@@ -4,6 +4,7 @@ import Questions from "@/components/Questions";
 import AboutTabs from "@/components/AboutTabs";
 import ChannelSection from "@/components/ChannelSection";
 import MobileDonateBar from "@/components/MobileDonateBar";
+import BirthdayCountdown from "@/components/BirthdayCountdown";
 import { fetchLiveState } from "@/lib/twitch";
 
 const TWITCH_LOGIN = "inespnj";
@@ -121,6 +122,9 @@ export default async function HomePage() {
         </header>
 
         <main id="top" className="mx-auto max-w-[1200px] px-4 pb-28 sm:px-6 sm:pb-0">
+          {/* Anniversaire d'Inès */}
+          <BirthdayCountdown />
+
           {/* Hero */}
           <section className="flex flex-col items-center gap-10 pb-10 pt-10 text-center sm:pb-[72px] sm:pt-24 lg:flex-row lg:items-center lg:gap-12 lg:text-left">
             <div className="order-2 min-w-0 flex-1 lg:order-1">

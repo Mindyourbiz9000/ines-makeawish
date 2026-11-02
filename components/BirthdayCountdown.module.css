@@ -1,0 +1,179 @@
+/* Compte à rebours anniversaire : ambiance disco néon. */
+
+.wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(rgba(10, 4, 30, 0.92), rgba(10, 4, 30, 0.92)) padding-box,
+    linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6) border-box;
+  background-size: 100% 100%, 300% 100%;
+  box-shadow:
+    0 0 30px rgba(255, 58, 166, 0.45),
+    0 0 80px rgba(74, 214, 255, 0.2);
+  animation: border-flow 6s linear infinite;
+}
+
+@keyframes border-flow {
+  to {
+    background-position: 0 0, 300% 0;
+  }
+}
+
+/* Spots de lumière qui balaient */
+.spot {
+  position: absolute;
+  top: -40%;
+  width: 40%;
+  height: 180%;
+  pointer-events: none;
+  filter: blur(30px);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+}
+
+.spot:nth-of-type(1) {
+  left: 0;
+  background: radial-gradient(ellipse at top, #ff3aa6, transparent 70%);
+  animation: sway 4s ease-in-out infinite alternate;
+}
+
+.spot:nth-of-type(2) {
+  right: 0;
+  background: radial-gradient(ellipse at top, #4ad6ff, transparent 70%);
+  animation: sway 5s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes sway {
+  from {
+    transform: rotate(-25deg);
+  }
+  to {
+    transform: rotate(25deg);
+  }
+}
+
+/* Boule à facettes */
+.ball {
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95) 0%, transparent 25%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.35) 0 1px, transparent 1px 8px),
+    conic-gradient(from 0deg, #c7d2fe, #f9a8d4, #a5f3fc, #e9d5ff, #c4b5fd, #c7d2fe);
+  background-size: 100% 100%, 100% 100%, 16px 100%, 200% 200%;
+  box-shadow:
+    0 0 30px rgba(255, 255, 255, 0.4),
+    0 0 60px rgba(255, 58, 166, 0.5);
+  animation: ball-spin 2.5s linear infinite;
+}
+
+@keyframes ball-spin {
+  to {
+    background-position: 0 0, 0 0, 16px 0, 200% 50%;
+  }
+}
+
+/* Chiffres néon */
+.digit {
+  font-variant-numeric: tabular-nums;
+  color: #fff0fa;
+  text-shadow:
+    0 0 6px #fff,
+    0 0 16px #ff3aa6,
+    0 0 36px #ff3aa6,
+    0 0 70px #c01c7c;
+}
+
+.tile {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 24px rgba(255, 58, 166, 0.15);
+}
+
+.tick {
+  animation: tick 1s ease-out;
+}
+
+@keyframes tick {
+  from {
+    transform: scale(1.12);
+    filter: brightness(1.6);
+  }
+  to {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.colon {
+  color: #4ad6ff;
+  text-shadow: 0 0 12px #4ad6ff;
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.title {
+  font-family: var(--font-display), cursive;
+  color: #ff9ed1;
+  text-shadow:
+    0 0 6px #ff3aa6,
+    0 0 14px #ff3aa6,
+    0 0 28px #c01c7c;
+}
+
+.rainbow {
+  background: linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: rainbow 4s linear infinite;
+}
+
+@keyframes rainbow {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+/* Confettis */
+.confetti {
+  position: absolute;
+  top: -10%;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  pointer-events: none;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    transform: translateY(140vh) rotate(720deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap,
+  .spot,
+  .ball,
+  .tick,
+  .colon,
+  .rainbow,
+  .confetti {
+    animation: none !important;
+  }
+}

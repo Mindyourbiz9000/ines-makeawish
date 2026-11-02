@@ -166,6 +166,155 @@
   }
 }
 
+/* Bouton "Régalez Inès" */
+.giftButton {
+  position: relative;
+  background: linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6);
+  background-size: 300% 100%;
+  box-shadow:
+    0 0 25px rgba(255, 58, 166, 0.7),
+    0 0 60px rgba(168, 85, 247, 0.45);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  animation: rainbow 4s linear infinite, gift-pulse 1.6s ease-in-out infinite;
+  transition: transform 0.2s;
+}
+
+.giftButton:hover {
+  transform: scale(1.06);
+}
+
+@keyframes gift-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 25px rgba(255, 58, 166, 0.7),
+      0 0 60px rgba(168, 85, 247, 0.45);
+  }
+  50% {
+    box-shadow:
+      0 0 40px rgba(255, 58, 166, 0.95),
+      0 0 100px rgba(74, 214, 255, 0.6);
+  }
+}
+
+/* Fête plein écran */
+.splash {
+  background: radial-gradient(ellipse at center, rgba(40, 6, 60, 0.82) 0%, rgba(5, 2, 15, 0.92) 70%);
+  backdrop-filter: blur(6px);
+  animation: splash-in 0.5s ease-out both;
+}
+
+@keyframes splash-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at center, #ffffff 0%, #ff3aa6 30%, #4ad6ff 55%, transparent 75%);
+  mix-blend-mode: screen;
+  animation: flash 1.6s ease-out both, strobe 0.9s 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 0.15;
+    transform: scale(2.2);
+  }
+}
+
+@keyframes strobe {
+  from {
+    opacity: 0.08;
+    filter: hue-rotate(0deg);
+  }
+  to {
+    opacity: 0.3;
+    filter: hue-rotate(120deg);
+  }
+}
+
+.splashTitle {
+  animation: pop 0.9s cubic-bezier(0.2, 1.6, 0.4, 1) both, glow 1.2s 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.2) rotate(-6deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(-2deg);
+    opacity: 1;
+  }
+}
+
+@keyframes glow {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.5);
+  }
+}
+
+.ballBig {
+  width: 110px;
+  height: 110px;
+  background-size: 100% 100%, 100% 100%, 22px 100%, 200% 200%;
+  animation: ball-spin-big 1.6s linear infinite;
+}
+
+@keyframes ball-spin-big {
+  to {
+    background-position: 0 0, 0 0, 22px 0, 200% 50%;
+  }
+}
+
+.ambient {
+  top: -5%;
+  opacity: 0.75;
+}
+
+/* Les 10 dernières secondes */
+.finalOverlay {
+  background: radial-gradient(ellipse at center, rgba(40, 6, 60, 0.75) 0%, rgba(5, 2, 15, 0.9) 70%);
+  backdrop-filter: blur(4px);
+  animation: splash-in 0.4s ease-out both;
+}
+
+.finalDigit {
+  font-size: clamp(160px, 38vw, 420px);
+  animation: final-pop 1s ease-out both;
+}
+
+@keyframes final-pop {
+  0% {
+    transform: scale(1.8);
+    opacity: 0;
+    filter: brightness(2);
+  }
+  25% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.6;
+    filter: brightness(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wrap,
   .spot,
@@ -173,7 +322,14 @@
   .tick,
   .colon,
   .rainbow,
-  .confetti {
+  .confetti,
+  .splash,
+  .flash,
+  .splashTitle,
+  .ballBig,
+  .finalOverlay,
+  .finalDigit,
+  .giftButton {
     animation: none !important;
   }
 }

@@ -197,6 +197,44 @@
   }
 }
 
+/* Cadre néon du GIF */
+.gifFrame {
+  position: relative;
+  padding: 6px;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  background:
+    linear-gradient(#12062a, #12062a) padding-box,
+    linear-gradient(90deg, #ff3aa6, #c084fc, #4ad6ff, #a855f7, #ff3aa6) border-box;
+  background-size: 100% 100%, 300% 100%;
+  box-shadow:
+    0 0 30px rgba(255, 58, 166, 0.65),
+    0 0 80px rgba(74, 214, 255, 0.35);
+  animation:
+    border-flow 3s linear infinite,
+    gif-sway 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes gif-sway {
+  from {
+    transform: rotate(-2.5deg) scale(1);
+  }
+  to {
+    transform: rotate(2deg) scale(1.03);
+  }
+}
+
+/* Teinte rose/bleu sur le GIF noir et blanc */
+.gifTint {
+  position: absolute;
+  inset: 6px;
+  border-radius: 14px;
+  pointer-events: none;
+  background: linear-gradient(135deg, #ff3aa6 0%, #c084fc 50%, #4ad6ff 100%);
+  mix-blend-mode: color;
+  opacity: 0.6;
+}
+
 /* Fête plein écran */
 .splash {
   background: radial-gradient(ellipse at center, rgba(40, 6, 60, 0.82) 0%, rgba(5, 2, 15, 0.92) 70%);
@@ -329,7 +367,8 @@
   .ballBig,
   .finalOverlay,
   .finalDigit,
-  .giftButton {
+  .giftButton,
+  .gifFrame {
     animation: none !important;
   }
 }

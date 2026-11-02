@@ -2,13 +2,19 @@
 
 import { useEffect, useState } from "react";
 import styles from "./BirthdayCountdown.module.css";
-import BirthdayParty, { FinalCountdown, GiftButton } from "./BirthdayParty";
+import BirthdayParty, {
+  BirthdayGif,
+  FinalCountdown,
+  GiftButton,
+} from "./BirthdayParty";
 
 // Anniversaire d'Inès : minuit heure de Paris le 3 novembre 2026.
 // La grosse fête plein écran se joue le 3 novembre ; le bandeau reste
 // jusqu'à la fin du 7 novembre puis disparaît.
 const BIRTHDAY = Date.parse("2026-11-03T00:00:00+01:00");
 const BIRTHDAY_END = Date.parse("2026-11-04T00:00:00+01:00");
+// Le GIF reste affiché de 00:00 à 00:10.
+const GIF_END = BIRTHDAY + 10 * 60 * 1000;
 const BANNER_END = Date.parse("2026-11-08T00:00:00+01:00");
 
 const COLORS = [
@@ -45,6 +51,7 @@ export default function BirthdayCountdown() {
   if (now === null || now >= BANNER_END) return null;
 
   const isBirthday = now >= BIRTHDAY;
+  const showGif = isBirthday && now < GIF_END;
   const left = Math.max(0, BIRTHDAY - now);
   const totalSeconds = Math.floor(left / 1000);
   const finalSeconds = Math.ceil(left / 1000);
@@ -56,7 +63,9 @@ export default function BirthdayCountdown() {
 
   return (
     <>
-      {isBirthday && now < BIRTHDAY_END ? <BirthdayParty /> : null}
+      {isBirthday && now < BIRTHDAY_END ? (
+        <BirthdayParty showGif={showGif} />
+      ) : null}
       {!isBirthday && finalSeconds <= 10 ? (
         <FinalCountdown seconds={finalSeconds} />
       ) : null}
@@ -102,6 +111,9 @@ export default function BirthdayCountdown() {
                 </span>{" "}
                 🪩
               </p>
+              {showGif ? (
+                <BirthdayGif className="mt-8 w-[min(420px,80vw)]" />
+              ) : null}
               <GiftButton className="mt-8" />
             </>
           ) : (

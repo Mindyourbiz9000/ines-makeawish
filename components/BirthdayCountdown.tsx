@@ -5,9 +5,11 @@ import styles from "./BirthdayCountdown.module.css";
 import BirthdayParty, { FinalCountdown, GiftButton } from "./BirthdayParty";
 
 // Anniversaire d'Inès : minuit heure de Paris le 3 novembre 2026.
-// Le bloc fête l'anniversaire toute la journée puis disparaît.
+// La grosse fête plein écran se joue le 3 novembre ; le bandeau reste
+// jusqu'à la fin du 7 novembre puis disparaît.
 const BIRTHDAY = Date.parse("2026-11-03T00:00:00+01:00");
-const PARTY_END = Date.parse("2026-11-04T00:00:00+01:00");
+const BIRTHDAY_END = Date.parse("2026-11-04T00:00:00+01:00");
+const BANNER_END = Date.parse("2026-11-08T00:00:00+01:00");
 
 const COLORS = [
   "#ff3aa6",
@@ -40,7 +42,7 @@ export default function BirthdayCountdown() {
     return () => clearInterval(id);
   }, []);
 
-  if (now === null || now >= PARTY_END) return null;
+  if (now === null || now >= BANNER_END) return null;
 
   const isBirthday = now >= BIRTHDAY;
   const left = Math.max(0, BIRTHDAY - now);
@@ -54,7 +56,7 @@ export default function BirthdayCountdown() {
 
   return (
     <>
-      {isBirthday ? <BirthdayParty /> : null}
+      {isBirthday && now < BIRTHDAY_END ? <BirthdayParty /> : null}
       {!isBirthday && finalSeconds <= 10 ? (
         <FinalCountdown seconds={finalSeconds} />
       ) : null}

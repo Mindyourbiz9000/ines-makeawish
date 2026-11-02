@@ -24,6 +24,23 @@ export function GiftButton({ className = "" }: { className?: string }) {
   );
 }
 
+// GIF "Happy birthday" dans un cadre néon, affiché les 10 premières minutes.
+export function BirthdayGif({ className = "" }: { className?: string }) {
+  return (
+    <div className={`${styles.gifFrame} ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/birthday/happy-birthday.gif"
+        alt="Happy birthday"
+        width={268}
+        height={150}
+        className="block h-auto w-full rounded-[14px]"
+      />
+      <span className={styles.gifTint} aria-hidden="true" />
+    </div>
+  );
+}
+
 const COLORS = [
   "#ff3aa6",
   "#4ad6ff",
@@ -251,7 +268,11 @@ function ConfettiCannons() {
 
 const SEEN_KEY = "ines-birthday-party";
 
-export default function BirthdayParty() {
+export default function BirthdayParty({
+  showGif = false,
+}: {
+  showGif?: boolean;
+}) {
   // La grosse fête ne se joue qu'une fois par onglet ; la pluie légère reste.
   const [fresh] = useState(() => {
     try {
@@ -282,10 +303,14 @@ export default function BirthdayParty() {
         >
           <div className={styles.flash} aria-hidden="true" />
           <div className="relative flex flex-col items-center">
-            <div
-              className={`${styles.ball} ${styles.ballBig}`}
-              aria-hidden="true"
-            />
+            {showGif ? (
+              <BirthdayGif className="w-[min(360px,82vw)]" />
+            ) : (
+              <div
+                className={`${styles.ball} ${styles.ballBig}`}
+                aria-hidden="true"
+              />
+            )}
             <p className="mt-8 text-sm font-semibold uppercase tracking-[0.5em] text-neon-blue sm:text-base">
               3 novembre · minuit
             </p>
